@@ -8,7 +8,7 @@ from rest_framework import status
 import requests
 
 from .models import DepositProducts, DepositOptions, SavingProducts, SavingOptions
-from .serializers import DepositProductsSerializer, DepositOptionsSerializer, SavingProductsSerializer, SavingOptionsSerializer
+from .serializers import DepositProductsSerializer, DepositOptionsSerializer, DepositListSerializer ,SavingProductsSerializer, SavingOptionsSerializer
 
 # Create your views here.
 
@@ -122,7 +122,11 @@ def get_saving_products(request):
                 serializer.save(saving_product = product)
     return Response('데이터 가져오기 성공!')
 
-    
-
+# 예금 리스트 조회
+@api_view(['GET',])    
+def deposit_product_list(request):
+    deposit_products = DepositProducts.objects.all()
+    serializer = DepositListSerializer(deposit_products, many = True)
+    return Response(serializer.data)
 
 

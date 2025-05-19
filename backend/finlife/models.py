@@ -4,7 +4,7 @@ from django.conf import settings
 # Create your models here.
 # 예금
 class DepositProducts(models.Model):
-    interest_user = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='interest_deposit',blank=True)       # 찜하기 누른 사용자
+    interest_users = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='interest_deposit',blank=True)       # 찜하기 누른 사용자
     joined_users = models.ManyToManyField(settings.AUTH_USER_MODEL,blank=True)
     dcls_month = models.TextField() # 공시 제출월 [YYYYMM]
     
