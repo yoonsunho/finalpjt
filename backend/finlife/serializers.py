@@ -18,35 +18,29 @@ class DepositOptionsSerializer(serializers.ModelSerializer):
 
 # 전체 리스트에 띄울애들
 class DepositListSerializer(serializers.ModelSerializer):
-    depositoptions_set = serializers.SerializerMethodField()
-
-    class Meta:
-        model = DepositProducts
-        fields = (
-            'id', 
-            'kor_co_nm', 
-            'fin_prdt_nm', 
-            'join_way', 
-            'depositoptions_set'  # 커스텀 필드
-        )
     
-    def get_depositoptions_set(self, obj):
-        # 옵션에서 save_trm, intr_rate2만 추출
-        options = obj.depositoptions_set.all()
-        return [
-            {"save_trm": opt.save_trm, "intr_rate2": opt.intr_rate2}
-            for opt in options
-        ]
+    # 인라인 방식으로 변경(option에서 읽어올 product정보)
+    deposit_product = serializers.SerializerMethodField()
+    
+    class Meta:
+        model = DepositOptions
+        fields =('id','save_trm','intr_rate2','deposit_product',)
+    
+    def get_deposit_product(self, obj):
+        return {
+            "kor_co_nm": obj.deposit_product.kor_co_nm,
+            "fin_prdt_nm": obj.deposit_product.fin_prdt_nm
+        }
     
 
 class DepositDetailSerializer(serializers.ModelSerializer):
 
-    depositoptions_set = DepositOptionsSerializer(many=True, read_only=True)
-    
+    deposit_product = DepositProductsSerializer(read_only=True)
+        
     class Meta:
-        model = DepositProducts
+        model = DepositOptions
         fields = '__all__'
-        read_only_fields =('interest_users','joined_users',)
+        
         
 # saving
 class SavingProductsSerializer(serializers.ModelSerializer):

@@ -9,7 +9,7 @@ urlpatterns = [
 
     # deposit
     path('deposit/',views.deposit_product_list),
-    path('deposit/<str:deposit_name>/',views.deposit_detail),
+    path('deposit/<int:option_id>/',views.deposit_detail),
     
     # # saving
     # path('saving/',views.saving_product_list),
