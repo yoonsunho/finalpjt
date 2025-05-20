@@ -1,24 +1,19 @@
-<script setup>
-import { RouterLink, RouterView } from 'vue-router'
-</script>
-
 <template>
-  <header>
-    <div class="wrapper">
-      <nav>
-        <!-- <RouterLink to="/main">Main</RouterLink> -->
-        <!-- <RouterLink to="/login">Login</RouterLink>
-        <RouterLink to="/signup">SignUp</RouterLink>
-        <RouterLink to="/profile">Profile</RouterLink> -->
-      </nav>
-    </div>
-  </header>
-
-  <RouterView />
+  <div>
+    <NavbarComponent />
+    <main class="main-content">
+      <h1>내용</h1>
+    </main>
+  </div>
 </template>
 
+<script setup>
+import NavbarComponent from './components/NavbarComponent.vue'
+</script>
+
 <style scoped>
-* {
-  font-family: 'Pretendard';
+.main-content {
+  padding: 2rem;
+  font-family: Pretendard;
 }
 </style>
