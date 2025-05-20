@@ -1,80 +1,27 @@
+from django.contrib.auth.models import AbstractUser
 from django.db import models
-from django.contrib.auth.models import AbstractUser, BaseUserManager
-from django.core.validators import MinValueValidator
-
-class UserManager(BaseUserManager):
-    def create_user(self, email, password=None, **extra_fields):
-        if not email:
-            raise ValueError('이메일은 필수입니다')
-        user = self.model(email=email, **extra_fields)
-        user.set_password(password)
-        user.save(using=self._db)
-        return user
-
-    def create_superuser(self, email, password=None, **extra_fields):
-        extra_fields.setdefault('is_staff', True)
-        extra_fields.setdefault('is_superuser', True)
-        if extra_fields.get('is_staff') is not True:
-            raise ValueError('')
-        if extra_fields.get('is_superuser') is not True:
-            raise ValueError('')
-        return self.create_user(email, password, **extra_fields)
 
 class User(AbstractUser):
-    username = None
+    username = models.CharField(max_length=150, unique=True,)
     email = models.EmailField(unique=True)
     nickname = models.CharField(max_length=20, unique=True)
 
-    # 성별
-    GENDER_CHOICES = [
-      (1, 'Male'),
-      (2, 'Female'),
-      ]
-      
-    # 소득 / 월급으로 ? 연봉으로? 
-    SALARY_CHOICES = [
-      (1, '250만원 이하'),
-      (2, '250만원 이상 ~ 300만원 이하'),
-      (3, '300만원 이상 ~ 400만원 이하'),
-      (4, '400만원 이상 ~ 500만원 이하'),
-      (5, '500만원 이상'),
-    ]
+    GENDER_CHOICES = [('M', '남성'), ('F', '여성')]
+    SALARY_CHOICES = [(1, '3천만원 미만'), (2, '3~5천'), (3, '5천~1억'), (4, '1억 이상')]
+    WEALTH_CHOICES = [(1, '1천 미만'), (2, '1천~3천'), (3, '3천~5천'), (4, '5천~1억'), (5, '1억 이상')]
+    TENDENCY_CHOICES = [(1, '안정형'), (2, '중립형'), (3, '공격형')]
+    DEPOSIT_AMOUNT_CHOICES = [(1, '10만원 미만'), (2, '10~50'), (3, '50~100'), (4, '100 이상')]
+    DEPOSIT_PERIOD_CHOICES = [(1, '6개월 미만'), (2, '6~12개월'), (3, '1~2년'), (4, '2년 이상')]
 
-    # 자산
-    WEALTH_CHOICES = [
-      (1, '1천만원 이하'),
-      (2, '1천만 ~ 5천만'),
-      (3, '5천만 ~ 1억'),
-      (4, '1억 ~ 3억'),
-      (5, '3억 이상'),
-    ]
+    gender = models.CharField(max_length=1, choices=GENDER_CHOICES, null=True)
+    salary = models.IntegerField(choices=SALARY_CHOICES, null=True)
+    wealth = models.IntegerField(choices=WEALTH_CHOICES, null=True)
+    tendency = models.IntegerField(choices=TENDENCY_CHOICES, null=True)
+    deposit_amount = models.IntegerField(choices=DEPOSIT_AMOUNT_CHOICES, null=True)
+    deposit_period = models.IntegerField(choices=DEPOSIT_PERIOD_CHOICES, null=True)
 
-    # 투자성향
-    TENDENCY_CHOICES = [
-      (1, '안정형'),    
-      (2, '중립형'),    
-      (3, '공격형'),      
-    ]
-
-    gender = models.PositiveSmallIntegerField(choices=GENDER_CHOICES)
-    salary = models.PositiveIntegerField(choices=SALARY_CHOICES)
-    wealth = models.PositiveIntegerField(choices=WEALTH_CHOICES)
-    tendency = models.PositiveIntegerField(choices=TENDENCY_CHOICES)
-
-    # 희망 저축금액 / 최소 1만원
-    deposit_amount = models.PositiveIntegerField(
-        validators=[MinValueValidator(10000)]
-        )
-
-    # 희망 저축기간 / 최소 1개월
-    deposit_period = models.PositiveIntegerField(
-        validators=[MinValueValidator(1)],
-    )
-
-    USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['nickname']
-
-    objects = UserManager()
+    USERNAME_FIELD = 'username'
+    REQUIRED_FIELDS = ['email', 'nickname']
 
     def __str__(self):
-        return self.nickname
+        return self.username

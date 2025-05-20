@@ -1,36 +1,41 @@
-# accounts/serializers.py
-
+from dj_rest_auth.registration.serializers import RegisterSerializer
 from rest_framework import serializers
-from django.contrib.auth import get_user_model
+from .models import User
 
-User = get_user_model()
+class SignUpSerializer(RegisterSerializer):
+    email = serializers.EmailField(required=True)
+    nickname = serializers.CharField(required=True)
+    gender = serializers.ChoiceField(choices=User.GENDER_CHOICES, required=True)
+    salary = serializers.IntegerField(required=True)
+    wealth = serializers.IntegerField(required=True)
+    tendency = serializers.IntegerField(required=True)
+    deposit_amount = serializers.IntegerField(required=True)
+    deposit_period = serializers.IntegerField(required=True)
 
-class SignupSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = [
-            'email', 'password', 'nickname',
-            'gender', 'salary', 'wealth', 'tendency',
-            'deposit_amount', 'deposit_period'
-        ]
-        extra_kwargs = {
-            'password': {'write_only': True}
-        }
+    def validate_username(self, value):
+        if User.objects.filter(username=value).exists():
+            raise serializers.ValidationError("이미 사용 중인 아이디입니다.")
+        return value
 
-    def create(self, validated_data):
-        user = User.objects.create_user(**validated_data)
-        return user
+    def validate_nickname(self, value):
+        if User.objects.filter(nickname=value).exists():
+            raise serializers.ValidationError("이미 사용 중인 닉네임입니다.")
+        return value
 
+    def custom_signup(self, request, user):
+        user.email = self.validated_data.get('email')
+        user.nickname = self.validated_data.get('nickname')
+        user.gender = self.validated_data.get('gender')
+        user.salary = self.validated_data.get('salary')
+        user.wealth = self.validated_data.get('wealth')
+        user.tendency = self.validated_data.get('tendency')
+        user.deposit_amount = self.validated_data.get('deposit_amount')
+        user.deposit_period = self.validated_data.get('deposit_period')
+        user.save()
 
-class UserUpdateSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = [
-            'nickname', 'gender', 'salary',
-            'wealth', 'tendency', 'deposit_amount', 'deposit_period'
-        ]
-
-
-class ChangePasswordSerializer(serializers.Serializer):
-    old_password = serializers.CharField()
-    new_password = serializers.CharField()
+    def get_cleaned_data(self):
+        data = super().get_cleaned_data()
+        extra_fields = ['username', 'email', 'nickname', 'gender', 'salary', 'wealth', 'tendency', 'deposit_amount', 'deposit_period']
+        for field in extra_fields:
+            data[field] = self.validated_data.get(field)
+        return data
