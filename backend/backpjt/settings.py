@@ -9,27 +9,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-
-# Application definition
-
-INSTALLED_APPS = [
-    'accounts',
-    'rest_framework',
-    'rest_framework.authtoken',
-    'dj_rest_auth',
-    'corsheaders',  # 추가
-    'django.contrib.sites',
-    'allauth',
-    'allauth.account',
-    'allauth.socialaccount',
-    'dj_rest_auth.registration',
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
-]
+SITE_ID = 1
 
 REST_FRAMEWORK = {
     # Authentication
@@ -42,6 +22,31 @@ REST_FRAMEWORK = {
     ],
 }
 
+# Application definition
+
+INSTALLED_APPS = [
+    'accounts',
+    'rest_framework',
+    'rest_framework.authtoken',
+    'dj_rest_auth', # 추가
+    'corsheaders',  # 추가
+    ##
+    'django.contrib.sites',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'dj_rest_auth.registration',
+    ##
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+]
+
+
+
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',    # 추가
     'django.middleware.common.CommonMiddleware',
@@ -52,7 +57,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'allauth.account.middleware.AccountMiddleware',
+    'allauth.account.middleware.AccountMiddleware',     # 추가
 ]
 
 CORS_ALLOWED_ORIGINS = [
@@ -133,27 +138,23 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-AUTH_USER_MODEL = 'accounts.User'
+# AUTH_USER_MODEL = 'accounts.User'
 
-# corsheaders 추가
-CORS_ALLOW_CREDENTIALS = True
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173",
-    "http://127.0.0.1:5173",
-    "http://localhost:5174",
-    "http://127.0.0.1:5174",
-]
-
+####
 # username 삭제
+AUTH_USER_MODEL = 'accounts.CustomUser'
 ACCOUNT_USER_MODEL_USERNAME_FIELD = None
-ACCOUNT_USERNAME_REQUIRED = False
+ACCOUNT_EMAIL_REQUIRED = True        # 이메일 필수
+ACCOUNT_USERNAME_REQUIRED = False   # username 비필수
 ACCOUNT_AUTHENTICATION_METHOD = 'email'
+# ✅ 이메일 인증 OFF
 ACCOUNT_EMAIL_VERIFICATION = 'none'
-ACCOUNT_CONFIRM_EMAIL_ON_GET = False
-ACCOUNT_EMAIL_REQUIRED = True
 
+## 추가! 내가만들 serializer쓸 수 있도록 등록
 REST_AUTH_REGISTER_SERIALIZERS = {
-    'REGISTER_SERIALIZER': 'accounts.serializers.SignUpSerializer',
+    'REGISTER_SERIALIZER': 'accounts.serializers.CustomRegisterSerializer',
 }
 
-SITE_ID = 1
+# REST_AUTH_REGISTER_SERIALIZERS = {
+#     'REGISTER_SERIALIZER': 'accounts.serializers.SignUpSerializer',
+# }
