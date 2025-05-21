@@ -1,16 +1,20 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import MainPage from '@/views/MainPage.vue'
-import LoginPage from '@/views/LoginPage.vue'
-import SignUpPage from '@/views/SignUpPage.vue'
-import ProfilePage from '@/views/ProfilePage.vue'
-import ExchangePage from '@/views/ExchangePage.vue'
-import MapPage from '@/views/MapPage.vue'
-import ArticleDetail from '@/views/ArticleDetail.vue'
-import CreateView from '@/views/CreateArticle.vue'
-import DepositView from '@/views/DepositView.vue'
-import DepositDetail from '@/views/DepositDetail.vue'
-import CommunityPage from '@/views/CommunityPage.vue'
-import EtcPage from '@/views/EtcPage.vue'
+
+import LoginPage from '@/views/authpages/LoginPage.vue'
+import SignUpPage from '@/views/authpages/SignUpPage.vue'
+import ProfilePage from '@/views/authpages/ProfilePage.vue'
+
+import CommunityPage from '@/views/community/CommunityPage.vue'
+import ArticleDetail from '@/views/community/ArticleDetail.vue'
+import CreateArticle from '@/views/community/CreateArticle.vue'
+
+import EtcPage from '@/views/etcpages/EtcPage.vue'
+import ExchangePage from '@/views/etcpages/ExchangePage.vue'
+import MapPage from '@/views/etcpages/MapPage.vue'
+
+import DepositView from '@/views/deposit/DepositView.vue'
+// import DepositDetail from '@/views/deposit/DepositDetail.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -46,9 +50,9 @@ const router = createRouter({
       component: ArticleDetail,
     },
     {
-      path: '/community/articles/create',
-      name: 'createview',
-      component: CreateView,
+      path: '/community/create',
+      name: 'createarticle',
+      component: CreateArticle,
     },
     {
       path: '/etc',
@@ -57,12 +61,12 @@ const router = createRouter({
     },
     {
       path: '/exchange',
-      name: 'exchangepage',
+      name: 'exchange',
       component: ExchangePage,
     },
     {
       path: '/map',
-      name: 'mappage',
+      name: 'map',
       component: MapPage,
     },
     {
@@ -70,20 +74,10 @@ const router = createRouter({
       name: 'deposits',
       component: DepositView,
     },
-    {
-      path: '/deposits/detail',
-      name: 'depositdetail',
-      component: DepositView,
-    },
     // {
-    //   path: '/deposits/예금',
-    //   name: '',
-    //   component: ,
-    // },
-    // {
-    //   path: '/deposits/적금',
-    //   name: '',
-    //   component: ,
+    //   path: '/deposits/detail/:id',
+    //   name: 'depositdetail',
+    //   component: DepositDetail,
     // },
   ],
 })

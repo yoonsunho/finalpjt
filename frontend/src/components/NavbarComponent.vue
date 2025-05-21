@@ -63,6 +63,15 @@
             </a>
           </li>
         </ul>
+
+        <!-- 로그인상태에는 프로필 노출 -->
+        <!-- <ul class="">
+          <li class="nav-item">
+            <a href="#" class="nav-link">
+              <RouterLink :to="{ name: 'profile' }">프로필</RouterLink>
+            </a>
+          </li>
+        </ul> -->
       </div>
     </div>
   </nav>
