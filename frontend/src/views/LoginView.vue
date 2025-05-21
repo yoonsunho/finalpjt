@@ -1,105 +1,120 @@
 <template>
   <div class="login-container">
     <h2>로그인</h2>
-    <div v-if="successMessage" class="success-message">
+    <!-- <div v-if="successMessage" class="success-message">
       {{ successMessage }}
-    </div>
-    <form @submit.prevent="submitForm">
+    </div> -->
+    <form @submit.prevent="onLogIn">
       <div class="form-group">
         <label for="email">이메일</label>
-        <input type="email" id="email" v-model="formData.email" required>
-        <div v-if="errors.email" class="error">{{ errors.email }}</div>
+        <input type="email" id="email" v-model="email" required>
+        <!-- <div v-if="errors.email" class="error">{{ errors.email }}</div> -->
       </div>
 
       <div class="form-group">
         <label for="password">비밀번호</label>
-        <input type="password" id="password" v-model="formData.password" required>
-        <div v-if="errors.password" class="error">{{ errors.password }}</div>
+        <input type="password" id="password" v-model="password" required>
+        <!-- <div v-if="errors.password" class="error">{{ errors.password }}</div> -->
       </div>
 
-      <button type="submit" :disabled="isSubmitting">로그인</button>
-      <div v-if="errors.non_field_errors" class="error general-error">
+      <button type="submit">로그인</button>
+      <!-- <div v-if="errors.non_field_errors" class="error general-error">
         {{ errors.non_field_errors }}
-      </div>
+      </div> -->
     </form>
     
-    <div class="signup-link">
-      계정이 없으신가요? <router-link to="/signup">회원가입</router-link>
+    <!-- <div class="signup-link">
+      계정이 없으신가요? <router-link :to="{name:'SignUpView'}">회원가입</router-link>
     </div>
-    
-    <div v-if="tokenInfo" class="token-info">
+     -->
+    <!-- <div v-if="tokenInfo" class="token-info">
       <h3>토큰 정보</h3>
       <pre>{{ tokenInfo }}</pre>
-    </div>
+    </div> -->
   </div>
 </template>
 
-<script>
-import axios from 'axios';
+<script setup>
+  import { ref } from 'vue';
+  import { useAccountStore } from '@/stores/user';
 
-export default {
-  name: 'Login',
-  data() {
-    return {
-      formData: {
-        email: '',
-        password: ''
-      },
-      errors: {},
-      isSubmitting: false,
-      tokenInfo: null,
-      successMessage: ''
-    };
-  },
-  created() {
-    const params = new URLSearchParams(window.location.search);
-    this.successMessage = params.get('message') || '';
-  },
-  methods: {
-    async submitForm() {
-      this.isSubmitting = true;
-      this.errors = {};
-      this.tokenInfo = null;
-      
-      try {
-        const response = await axios.post('/api/dj-rest-auth/login/', {
-          email: this.formData.email,
-          password: this.formData.password
-        });
-        
-        console.log('로그인 성공:', response.data);
-        localStorage.setItem('token', response.data.key);
-        
-        this.tokenInfo = {
-          token: response.data.key,
-          timestamp: new Date().toLocaleString()
-        };
-        axios.defaults.headers.common['Authorization'] = `Token ${response.data.key}`;
-        this.getUserInfo();
-        
-        this.successMessage = '로그인에 성공했습니다.';
-      } catch (error) {
-        console.error('로그인 실패:', error);
-        
-        if (error.response && error.response.data) {
-          this.errors = error.response.data;
-        } else {
-          this.errors = { non_field_errors: ['로그인 중 오류가 발생했습니다. 다시 시도해주세요.'] };
-        }
-      } finally {
-        this.isSubmitting = false;
-      }
-    },
-    async getUserInfo() {
-      try {
-        const response = await axios.get('/api/dj-rest-auth/user/');
-        console.log('사용자 정보:', response.data);
-      } catch (error) {
-        console.error('사용자 정보 가져오기 실패:', error);
-      }
+  const accountStore = useAccountStore()
+
+  const email = ref('')
+  const password = ref('')
+  const onLogIn = function(){
+    const userInfo ={
+      email: email.value,
+      password  : password.value
     }
+    accountStore.logIn(userInfo)
   }
-};
+
+// import axios from 'axios';
+
+// export default {
+//   name: 'Login',
+//   data() {
+//     return {
+//       formData: {
+//         email: '',
+//         password: ''
+//       },
+//       errors: {},
+//       isSubmitting: false,
+//       tokenInfo: null,
+//       successMessage: ''
+//     };
+//   },
+//   created() {
+//     const params = new URLSearchParams(window.location.search);
+//     this.successMessage = params.get('message') || '';
+//   },
+//   methods: {
+//     async submitForm() {
+//       this.isSubmitting = true;
+//       this.errors = {};
+//       this.tokenInfo = null;
+      
+//       try {
+//         const response = await axios.post('/api/dj-rest-auth/login/', {
+//           email: this.formData.email,
+//           password: this.formData.password
+//         });
+        
+//         console.log('로그인 성공:', response.data);
+//         localStorage.setItem('token', response.data.key);
+        
+//         this.tokenInfo = {
+//           token: response.data.key,
+//           timestamp: new Date().toLocaleString()
+//         };
+//         axios.defaults.headers.common['Authorization'] = `Token ${response.data.key}`;
+//         this.getUserInfo();
+        
+//         this.successMessage = '로그인에 성공했습니다.';
+//       } catch (error) {
+//         console.error('로그인 실패:', error);
+        
+//         if (error.response && error.response.data) {
+//           this.errors = error.response.data;
+//         } else {
+//           this.errors = { non_field_errors: ['로그인 중 오류가 발생했습니다. 다시 시도해주세요.'] };
+//         }
+//       } finally {
+//         this.isSubmitting = false;
+//       }
+//     },
+//     async getUserInfo() {
+//       try {
+//         const response = await axios.get('/api/dj-rest-auth/user/');
+//         console.log('사용자 정보:', response.data);
+//       } catch (error) {
+//         console.error('사용자 정보 가져오기 실패:', error);
+//       }
+//     }
+//   }
+// };
 </script>
 
 <style scoped>

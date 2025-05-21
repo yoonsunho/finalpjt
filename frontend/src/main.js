@@ -1,19 +1,19 @@
-import './assets/main.css'
+import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
+
+// npm install pinia-plugin-persistedstate 이거 해주기!!!
 
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
-import axios from 'axios'
+
 import App from './App.vue'
 import router from './router'
-import SignUp from './views/SignUpView.vue'
-import Login from './views/LoginView.vue'
-import MainPage from './views/MainPage.vue'
 
-axios.defaults.baseURL = 'http://localhost:8000'
-axios.defaults.withCredentials = true
 const app = createApp(App)
+const pinia = createPinia()
 
-app.use(createPinia())
+pinia.use(piniaPluginPersistedstate)
+// app.use(createPinia())
+app.use(pinia)
 app.use(router)
 
 app.mount('#app')
