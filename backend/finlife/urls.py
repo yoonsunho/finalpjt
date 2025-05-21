@@ -7,13 +7,13 @@ urlpatterns = [
     path('get_deposit_products/',views.get_deposit_products),
     path('get_saving_products/',views.get_saving_products),
 
-    # # deposit
-    # path('deposit/',views.deposit_product_list),
-    # path('deposit/<str:deposit_name>/',views.deposit_detail),
+    # deposit
+    path('deposit/',views.deposit_product_list),
+    path('deposit/<int:option_id>/',views.deposit_detail),
     
-    # # saving
-    # path('saving/',views.saving_product_list),
-    # path('saving/<str:saving_name>/',views.saving_detail),
+    # saving
+    path('saving/',views.saving_product_list),
+    path('saving/<int:option_id>/',views.saving_detail),
 
 
     # saving

@@ -40,28 +40,6 @@ REST_FRAMEWORK = {
 
 # Application definition
 
-INSTALLED_APPS = [
-    'finlife',
-    'rest_framework',
-    'accounts',
-    'rest_framework',
-    'rest_framework.authtoken',
-    'dj_rest_auth', # 추가
-    'corsheaders',  # 추가
-    ##
-    'django.contrib.sites',
-    'allauth',
-    'allauth.account',
-    'allauth.socialaccount',
-    'dj_rest_auth.registration',
-    ##
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
-]
 SITE_ID = 1
 
 REST_FRAMEWORK = {
@@ -78,6 +56,7 @@ REST_FRAMEWORK = {
 # Application definition
 
 INSTALLED_APPS = [
+    'finlife'
     'accounts',
     'rest_framework',
     'rest_framework.authtoken',
@@ -113,10 +92,12 @@ MIDDLEWARE = [
     'allauth.account.middleware.AccountMiddleware',     # 추가
 ]
 
+### 나는 이러한 출처들을 허용할거야
 CORS_ALLOWED_ORIGINS = [
     'http://127.0.0.1:5173',
     'http://localhost:5173',
 ]
+
 
 ROOT_URLCONF = 'backpjt.urls'
 

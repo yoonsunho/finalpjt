@@ -2,13 +2,14 @@ from django.shortcuts import render, redirect
 from django.views.decorators.http import require_http_methods,require_POST
 from django.http import JsonResponse
 from django.conf import settings
+from django.shortcuts import get_object_or_404
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework import status
 import requests
 
 from .models import DepositProducts, DepositOptions, SavingProducts, SavingOptions
-from .serializers import DepositProductsSerializer, DepositOptionsSerializer, SavingProductsSerializer, SavingOptionsSerializer
+from .serializers import DepositProductsSerializer, DepositOptionsSerializer, DepositListSerializer ,DepositDetailSerializer, SavingProductsSerializer, SavingOptionsSerializer, SavingListSerializer, SavingDetailSerializer
 
 # Create your views here.
 
@@ -122,7 +123,30 @@ def get_saving_products(request):
                 serializer.save(saving_product = product)
     return Response('데이터 가져오기 성공!')
 
+# 예금 리스트 조회
+@api_view(['GET',])    
+def deposit_product_list(request):
+    deposit_options = DepositOptions.objects.all()
     
+    serializer = DepositListSerializer(deposit_options, many = True)
+    return Response(serializer.data)
 
+@api_view(['GET'])
+def deposit_detail(request,option_id):
+    option = get_object_or_404(DepositOptions, pk = option_id)
+    serializer = DepositDetailSerializer(option)
+    return Response(serializer.data)
 
+# 적금 리스트 조회
+@api_view(['GET'])
+def saving_product_list(request):
+    saving_options = SavingOptions.objects.all()
 
+    serializer = SavingListSerializer(saving_options, many = True)
+    return Response(serializer.data)
+
+@api_view(['GET'])
+def saving_detail(request, option_id):
+    option = get_object_or_404(SavingOptions, pk = option_id)
+    serializer = SavingDetailSerializer(option)
+    return Response(serializer.data)
