@@ -11,9 +11,9 @@ urlpatterns = [
     path('deposit/',views.deposit_product_list),
     path('deposit/<int:option_id>/',views.deposit_detail),
     
-    # # saving
-    # path('saving/',views.saving_product_list),
-    # path('saving/<str:saving_name>/',views.saving_detail),
+    # saving
+    path('saving/',views.saving_product_list),
+    path('saving/<int:option_id>/',views.saving_detail),
 
 
     # saving

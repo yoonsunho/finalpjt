@@ -2,7 +2,8 @@
   <header>
     <div>
       <nav>
-        <RouterLink :to="{name: 'DepositList'}">Deposits</RouterLink>
+        <RouterLink :to="{name: 'DepositList'}">Deposits</RouterLink> | 
+        <RouterLink :to="{name: 'SavingList'}">Savings</RouterLink>
       </nav>
     </div>
   </header>

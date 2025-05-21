@@ -54,3 +54,29 @@ class SavingOptionsSerializer(serializers.ModelSerializer):
         model =SavingOptions
         fields='__all__'
         read_only_fields =('saving_product',)
+
+
+# 전체 리스트에 띄울애들
+class SavingListSerializer(serializers.ModelSerializer):
+    
+    # 인라인 방식으로 변경(option에서 읽어올 product정보)
+    saving_product = serializers.SerializerMethodField()
+    
+    class Meta:
+        model = SavingOptions
+        fields =('id','rsrv_type_nm','save_trm','intr_rate2','saving_product',)
+    
+    def get_saving_product(self, obj):
+        return {
+            "kor_co_nm": obj.saving_product.kor_co_nm,
+            "fin_prdt_nm": obj.saving_product.fin_prdt_nm
+        }
+    
+
+class SavingDetailSerializer(serializers.ModelSerializer):
+
+    saving_product = SavingProductsSerializer(read_only=True)
+        
+    class Meta:
+        model = SavingOptions
+        fields = '__all__'
