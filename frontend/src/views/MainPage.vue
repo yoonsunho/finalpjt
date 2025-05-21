@@ -1,12 +1,13 @@
 <template>
     <div>
         <Navbar/>
-        <h1>메인페이지</h1>
+        <Jumbotron/>
     </div>
 </template>
 
 <script setup>
     import Navbar from '@/components/NavbarComponent.vue'
+    
 </script>
 
 <style scoped>

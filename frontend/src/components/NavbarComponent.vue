@@ -1,235 +1,355 @@
-<!-- NavbarComponent.vue -->
 <template>
-  <section class="navigation">
-    <div class="nav-container">
-      <div class="logo">
-        <a href="#!">선호바보개</a>
+  <nav class="navbar">
+    <div class="container">
+      <div class="nav-brand">
+        <img src="" alt="선호바보개_로고" class="nav-logo" />
       </div>
-      <nav>
-        <div class="nav-left"></div>
-        <div class="nav-center"></div>
-        <div class="nav-right"></div>
 
-        <div class="nav-mobile" @click="toggleMobileMenu">
-          <a id="navbar-toggle" :class="{ active: isMobileOpen }"><span></span></a>
-        </div>
-        <ul class="nav-list" v-show="isMobileOpen || isDesktop">
-          <li>
-            <a href="#!" @click.prevent="toggleDropdown('deposit')">예적금</a>
-            <ul v-show="openDropdown === 'deposit'" class="navbar-dropdown">
-              <li><a href="#!">예금</a></li>
-              <li><a href="#!">적금</a></li>
+      <button class="menu-toggle" @click="toggleMenu" aria-label="메뉴 열기">
+        <span class="menu-icon">☰</span>
+      </button>
+      
+      <div :class="['nav-menu', { 'nav-menu-active': isMenuOpen }]">
+        <ul class="nav-list">
+          
+          <li class="nav-item dropdown" 
+              @mouseenter="openDropdown('deposit')" 
+              @mouseleave="closeDropdown">
+            <button 
+              class="nav-link dropdown-toggle" 
+              @click="toggleDropdown('deposit')"
+            >
+              예적금추천
+              <!-- <span class="dropdown-arrow">▼</span> -->
+            </button>
+            <ul :class="['dropdown-menu', { 'active': activeDropdown === 'deposit' }]">
+              <li><a href="#" class="dropdown-item">예금</a></li>
+              <li><a href="#" class="dropdown-item">적금</a></li>
             </ul>
           </li>
-          <li><a href="#!">커뮤니티</a></li>
-          <li><a href="#!">저축</a></li>
-          <li>
-            <a href="#!" @click.prevent="toggleDropdown('etc')">기타</a>
-            <ul v-show="openDropdown === 'etc'" class="navbar-dropdown">
-              <li><a href="#!">환율</a></li>
-              <li><a href="#!">지도</a></li>
+          
+          <li class="nav-item">
+            <a href="#" class="nav-link">커뮤니티</a>
+          </li>
+          <li class="nav-item">
+            <a href="#" class="nav-link">저축</a>
+          </li>
+          
+          <li class="nav-item dropdown"
+              @mouseenter="openDropdown('etc')" 
+              @mouseleave="closeDropdown">
+            <button 
+              class="nav-link dropdown-toggle" 
+              @click="toggleDropdown('etc')"
+            >
+              기타
+              <!-- <span class="dropdown-arrow">▼</span> -->
+            </button>
+            <ul :class="['dropdown-menu', { 'active': activeDropdown === 'etc' }]">
+              <li><a href="#" class="dropdown-item">환율</a></li>
+              <li><a href="#" class="dropdown-item">지도</a></li>
             </ul>
           </li>
-          <li><a href="#!">로그인</a></li>
-          <li><a href="#!">회원가입</a></li>
         </ul>
-      </nav>
+        
+        <ul class="auth-links">
+          <li class="nav-item">
+            <a href="#" class="nav-link">로그인</a>
+          </li>
+          <li class="nav-item">
+            <a href="#" class="nav-link sign-up-btn">회원가입</a>
+          </li>
+        </ul>
+      </div>
     </div>
-  </section>
+  </nav>
 </template>
 
 <script setup>
-import { ref, onMounted, onBeforeUnmount } from 'vue'
+import { ref, onMounted, onBeforeUnmount } from 'vue';
 
-const isMobileOpen = ref(false)
-const openDropdown = ref(null)
-const isDesktop = ref(window.innerWidth > 800)
+const isMenuOpen = ref(false);
+const activeDropdown = ref(null);
+const isDesktop = ref(window.innerWidth > 768);
 
-const toggleMobileMenu = () => {
-  isMobileOpen.value = !isMobileOpen.value
-}
-
-const toggleDropdown = (menuName) => {
-  openDropdown.value = openDropdown.value === menuName ? null : menuName
-}
-
-const handleResize = () => {
-  isDesktop.value = window.innerWidth > 800
-  if (isDesktop.value) {
-    isMobileOpen.value = true
+const toggleMenu = () => {
+  isMenuOpen.value = !isMenuOpen.value;
+  if (!isMenuOpen.value) {
+    activeDropdown.value = null;
   }
-}
+};
+const openDropdown = (menu) => {
+  if (isDesktop.value) {
+    activeDropdown.value = menu;
+  }
+};
+
+const closeDropdown = () => {
+  if (isDesktop.value) {
+    activeDropdown.value = null;
+  }
+};
+
+const toggleDropdown = (menu) => {
+  if (!isDesktop.value) {
+    activeDropdown.value = activeDropdown.value === menu ? null : menu;
+  }
+};
+const checkViewport = () => {
+  isDesktop.value = window.innerWidth > 768;
+  
+  if (isDesktop.value) {
+    isMenuOpen.value = false;
+  }
+};
 
 onMounted(() => {
-  window.addEventListener('resize', handleResize)
-  handleResize()
-  document.addEventListener('click', handleOutsideClick)
-})
+  window.addEventListener('resize', checkViewport);
+});
 
 onBeforeUnmount(() => {
-  window.removeEventListener('resize', handleResize)
-  document.removeEventListener('click', handleOutsideClick)
-})
-
-const handleOutsideClick = (e) => {
-  if (!e.target.closest('nav')) {
-    openDropdown.value = null
-  }
-}
+  window.removeEventListener('resize', checkViewport);
+});
 </script>
 
 <style scoped>
-/* 기본 세팅 */
-body {
-  margin: 0;
-  padding: 0;
-  font-family: 'Pretendard', sans-serif;
+.navbar {
+  width: 100%;
+  background-color: #ffffff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  position: relative;
+  z-index: 1000;
 }
-.navigation {
-  height: 55px;
-  background: linear-gradient(45deg, #4199fe, #74b4fe);
-}
-.logo {
-  position: absolute;
-  padding-left: 20px;
-  float: left;
-  line-height: 55px;
-  text-transform: uppercase;
-  font-size: 1.4em;
-}
-.logo a {
-  color: #ffffff;
-  text-decoration: none;
-}
-.nav-container {
-  max-width: 1000px;
+
+.container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1.25rem;
+  flex-wrap: wrap;
+  max-width: 1200px;
   margin: 0 auto;
 }
-nav {
-  float: right;
+
+.nav-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
-nav ul {
+
+.nav-logo {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+}
+
+.brand-text {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #3182f6;
+}
+
+.menu-toggle {
+  display: none;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem;
+  font-size: 1.5rem;
+}
+
+/* Navigation Menu */
+.nav-menu {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-grow: 1;
+}
+
+.nav-list,
+.auth-links {
+  display: flex;
   list-style: none;
   margin: 0;
   padding: 0;
-}
-nav ul li {
-  float: left;
-  position: relative;
-}
-nav ul li a {
-  display: block;
-  padding: 0 20px;
-  line-height: 55px;
-  color: #fff;
-  background: transparent;
-  text-decoration: none;
-}
-nav ul li a:hover {
-  background: #2581dc;
-  color: #ffffff;
-}
-.navbar-dropdown li a {
-  background: #2581dc;
-}
-nav ul li a:not(:only-child)::after {
-  padding-left: 4px;
-  content: ' \025BE';
-}
-nav ul li ul li {
-  min-width: 190px;
-}
-nav ul li ul li a {
-  padding: 15px;
-  line-height: 20px;
-}
-.navbar-dropdown {
-  position: absolute;
-  display: none;
-  z-index: 1;
-  background: #fff;
-  box-shadow: 0 0 35px 0 rgba(0, 0, 0, 0.25);
-}
-.navbar-dropdown[style*="display: block"] {
-  display: block !important;
+  gap: 1rem;
 }
 
-/* Mobile navigation */
-.nav-mobile {
-  display: none;
-  position: absolute;
-  top: 0;
-  right: 0;
-  background: transparent;
-  height: 55px;
-  width: 70px;
+.nav-list {
+  margin-left: 2rem;
 }
-@media only screen and (max-width: 800px) {
-  .nav-mobile {
+
+.auth-links {
+  margin-left: auto;
+}
+
+.nav-item {
+  position: relative;
+}
+
+.nav-link {
+  padding: 0.5rem 0.75rem;
+  color: #4b5563;
+  text-decoration: none;
+  font-size: 1rem;
+  font-weight: 500;
+  transition: color 0.2s ease;
+  display: block;
+}
+
+.nav-link:hover {
+  color: #2574e6;
+}
+
+.sign-up-btn {
+  background-color: #3182f6;
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 5rem;
+  font-weight: 500;
+}
+
+.sign-up-btn:hover {
+  background-color: #2574e6;
+  color: white;
+  transition: background .2s ease, color .1s ease;
+}
+
+.dropdown {
+  position: relative;
+}
+
+.dropdown-toggle {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.5rem 0.75rem;
+  color: #4b5563;
+  font-weight: 500;
+}
+
+.dropdown-arrow {
+  font-size: 0.75rem;
+  transition: transform 0.2s ease;
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 150px;
+  background-color: white;
+  border-radius: 0.25rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  list-style: none;
+  padding: 0.5rem 0;
+  margin: 0;
+  z-index: 1100;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s ease, visibility 0.2s ease;
+}
+
+.dropdown-menu.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.dropdown-item {
+  padding: 0.5rem 1rem;
+  color: #4b5563;
+  text-decoration: none;
+  display: block;
+  transition: background-color 0.2s ease;
+}
+
+.dropdown-item:hover {
+  background-color: #f3f4f6;
+  color: #2574e6;
+}
+
+@media (max-width: 768px) {
+  .container {
+    flex-wrap: wrap;
+  }
+  
+  .menu-toggle {
     display: block;
   }
-  nav {
-    width: 100%;
-    padding: 55px 0 15px;
-  }
-  nav ul {
+  
+  .nav-menu {
     display: none;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+    padding-top: 1rem;
+    overflow: hidden;
+    max-height: 0;
+    transition: max-height 0.3s ease;
   }
-  nav ul li {
-    float: none;
+  
+  .nav-menu-active {
+    display: flex;
+    max-height: 500px;
   }
-  nav ul li a {
-    padding: 15px;
-    line-height: 20px;
-    background: #262626;
+  
+  .nav-list,
+  .auth-links {
+    flex-direction: column;
+    width: 100%;
+    margin: 0;
+    gap: 0;
   }
-  nav ul li ul li a {
-    padding-left: 30px;
+  
+  .auth-links {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid #e5e7eb;
   }
-  .navbar-dropdown {
+  
+  .nav-link {
+    padding: 0.75rem 0;
+  }
+  
+  .sign-up-btn {
+    display: inline-block;
+    margin-top: 0.5rem;
+  }
+  
+  .dropdown-toggle {
+    width: 100%;
+    justify-content: space-between;
+    padding: 0.75rem 0;
+  }
+  
+  .dropdown-menu {
     position: static;
+    width: 100%;
+    box-shadow: none;
+    border-radius: 0;
+    padding-left: 1rem;
+    background-color: #f9fafb;
+    margin-bottom: 0.5rem;
+    opacity: 0;
+    visibility: hidden;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease, opacity 0.3s ease, visibility 0s linear 0.3s;
   }
-}
-@media screen and (min-width: 801px) {
-  .nav-list {
-    display: block !important;
+  
+  .dropdown-menu.active {
+    opacity: 1;
+    visibility: visible;
+    max-height: 200px;
+    transition: max-height 0.3s ease, opacity 0.3s ease, visibility 0s linear 0s;
   }
-}
-#navbar-toggle {
-  position: absolute;
-  left: 18px;
-  top: 15px;
-  cursor: pointer;
-  padding: 10px 35px 16px 0px;
-}
-#navbar-toggle span,
-#navbar-toggle span::before,
-#navbar-toggle span::after {
-  cursor: pointer;
-  border-radius: 1px;
-  height: 3px;
-  width: 30px;
-  background: #ffffff;
-  position: absolute;
-  display: block;
-  content: '';
-  transition: all 300ms ease-in-out;
-}
-#navbar-toggle span::before {
-  top: -10px;
-}
-#navbar-toggle span::after {
-  bottom: -10px;
-}
-#navbar-toggle.active span {
-  background-color: transparent;
-}
-#navbar-toggle.active span::before {
-  transform: rotate(45deg);
-  top: 0;
-}
-#navbar-toggle.active span::after {
-  transform: rotate(-45deg);
-  top: 0;
+  
+  .dropdown-item {
+    padding: 0.75rem 1rem;
+  }
 }
 </style>
