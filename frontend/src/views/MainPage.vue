@@ -1,15 +1,11 @@
 <template>
-    <div>
-        <Navbar/>
-        <Jumbotron/>
-    </div>
+  <Carousel />
+  <BannerComponent />
+  <main></main>
+  <BannerComponent />
 </template>
 
 <script setup>
-    import Navbar from '@/components/NavbarComponent.vue'
-    
+import Carousel from '@/components/Carousel.vue'
+import BannerComponent from '@/components/BannerComponent.vue'
 </script>
-
-<style scoped>
-
-</style>

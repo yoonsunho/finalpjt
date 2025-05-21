@@ -2,62 +2,65 @@
   <nav class="navbar">
     <div class="container">
       <div class="nav-brand">
-        <img src="" alt="선호바보개_로고" class="nav-logo" />
+        <RouterLink :to="{ name: 'main' }"
+          ><img src="" alt="선호바보개_로고" class="nav-logo"
+        /></RouterLink>
       </div>
 
       <button class="menu-toggle" @click="toggleMenu" aria-label="메뉴 열기">
         <span class="menu-icon">☰</span>
       </button>
-      
+
       <div :class="['nav-menu', { 'nav-menu-active': isMenuOpen }]">
         <ul class="nav-list">
-          
-          <li class="nav-item dropdown" 
-              @mouseenter="openDropdown('deposit')" 
-              @mouseleave="closeDropdown">
-            <button 
-              class="nav-link dropdown-toggle" 
-              @click="toggleDropdown('deposit')"
-            >
-              예적금추천
-              <!-- <span class="dropdown-arrow">▼</span> -->
+          <li
+            class="nav-item dropdown"
+            @mouseenter="openDropdown('deposit')"
+            @mouseleave="closeDropdown"
+          >
+            <button class="nav-link dropdown-toggle" @click="toggleDropdown('deposit')">
+              <RouterLink :to="{ name: 'deposits' }">예적금추천</RouterLink>
             </button>
-            <ul :class="['dropdown-menu', { 'active': activeDropdown === 'deposit' }]">
+            <ul :class="['dropdown-menu', { active: activeDropdown === 'deposit' }]">
               <li><a href="#" class="dropdown-item">예금</a></li>
               <li><a href="#" class="dropdown-item">적금</a></li>
             </ul>
           </li>
-          
+
           <li class="nav-item">
-            <a href="#" class="nav-link">커뮤니티</a>
+            <a href="#" class="nav-link">
+              <RouterLink :to="{ name: 'communitypage' }">커뮤니티</RouterLink>
+            </a>
           </li>
           <li class="nav-item">
             <a href="#" class="nav-link">저축</a>
           </li>
-          
-          <li class="nav-item dropdown"
-              @mouseenter="openDropdown('etc')" 
-              @mouseleave="closeDropdown">
-            <button 
-              class="nav-link dropdown-toggle" 
-              @click="toggleDropdown('etc')"
-            >
-              기타
-              <!-- <span class="dropdown-arrow">▼</span> -->
+
+          <li
+            class="nav-item dropdown"
+            @mouseenter="openDropdown('etc')"
+            @mouseleave="closeDropdown"
+          >
+            <button class="nav-link dropdown-toggle" @click="toggleDropdown('etc')">
+              <RouterLink :to="{ name: 'etc' }">기타</RouterLink>
             </button>
-            <ul :class="['dropdown-menu', { 'active': activeDropdown === 'etc' }]">
+            <ul :class="['dropdown-menu', { active: activeDropdown === 'etc' }]">
               <li><a href="#" class="dropdown-item">환율</a></li>
               <li><a href="#" class="dropdown-item">지도</a></li>
             </ul>
           </li>
         </ul>
-        
+
         <ul class="auth-links">
           <li class="nav-item">
-            <a href="#" class="nav-link">로그인</a>
+            <a href="#" class="nav-link">
+              <RouterLink :to="{ name: 'login' }">로그인</RouterLink>
+            </a>
           </li>
           <li class="nav-item">
-            <a href="#" class="nav-link sign-up-btn">회원가입</a>
+            <a href="#" class="nav-link sign-up-btn">
+              <RouterLink :to="{ name: 'signup' }">회원가입</RouterLink>
+            </a>
           </li>
         </ul>
       </div>
@@ -66,50 +69,50 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onBeforeUnmount } from 'vue';
+import { ref, onMounted, onBeforeUnmount } from 'vue'
 
-const isMenuOpen = ref(false);
-const activeDropdown = ref(null);
-const isDesktop = ref(window.innerWidth > 768);
+const isMenuOpen = ref(false)
+const activeDropdown = ref(null)
+const isDesktop = ref(window.innerWidth > 768)
 
 const toggleMenu = () => {
-  isMenuOpen.value = !isMenuOpen.value;
+  isMenuOpen.value = !isMenuOpen.value
   if (!isMenuOpen.value) {
-    activeDropdown.value = null;
+    activeDropdown.value = null
   }
-};
+}
 const openDropdown = (menu) => {
   if (isDesktop.value) {
-    activeDropdown.value = menu;
+    activeDropdown.value = menu
   }
-};
+}
 
 const closeDropdown = () => {
   if (isDesktop.value) {
-    activeDropdown.value = null;
+    activeDropdown.value = null
   }
-};
+}
 
 const toggleDropdown = (menu) => {
   if (!isDesktop.value) {
-    activeDropdown.value = activeDropdown.value === menu ? null : menu;
+    activeDropdown.value = activeDropdown.value === menu ? null : menu
   }
-};
+}
 const checkViewport = () => {
-  isDesktop.value = window.innerWidth > 768;
-  
+  isDesktop.value = window.innerWidth > 768
+
   if (isDesktop.value) {
-    isMenuOpen.value = false;
+    isMenuOpen.value = false
   }
-};
+}
 
 onMounted(() => {
-  window.addEventListener('resize', checkViewport);
-});
+  window.addEventListener('resize', checkViewport)
+})
 
 onBeforeUnmount(() => {
-  window.removeEventListener('resize', checkViewport);
-});
+  window.removeEventListener('resize', checkViewport)
+})
 </script>
 
 <style scoped>
@@ -212,7 +215,9 @@ onBeforeUnmount(() => {
 .sign-up-btn:hover {
   background-color: #2574e6;
   color: white;
-  transition: background .2s ease, color .1s ease;
+  transition:
+    background 0.2s ease,
+    color 0.1s ease;
 }
 
 .dropdown {
@@ -251,7 +256,9 @@ onBeforeUnmount(() => {
   z-index: 1100;
   opacity: 0;
   visibility: hidden;
-  transition: opacity 0.2s ease, visibility 0.2s ease;
+  transition:
+    opacity 0.2s ease,
+    visibility 0.2s ease;
 }
 
 .dropdown-menu.active {
@@ -276,11 +283,11 @@ onBeforeUnmount(() => {
   .container {
     flex-wrap: wrap;
   }
-  
+
   .menu-toggle {
     display: block;
   }
-  
+
   .nav-menu {
     display: none;
     flex-direction: column;
@@ -291,12 +298,12 @@ onBeforeUnmount(() => {
     max-height: 0;
     transition: max-height 0.3s ease;
   }
-  
+
   .nav-menu-active {
     display: flex;
     max-height: 500px;
   }
-  
+
   .nav-list,
   .auth-links {
     flex-direction: column;
@@ -304,28 +311,28 @@ onBeforeUnmount(() => {
     margin: 0;
     gap: 0;
   }
-  
+
   .auth-links {
     margin-top: 1rem;
     padding-top: 1rem;
     border-top: 1px solid #e5e7eb;
   }
-  
+
   .nav-link {
     padding: 0.75rem 0;
   }
-  
+
   .sign-up-btn {
     display: inline-block;
     margin-top: 0.5rem;
   }
-  
+
   .dropdown-toggle {
     width: 100%;
     justify-content: space-between;
     padding: 0.75rem 0;
   }
-  
+
   .dropdown-menu {
     position: static;
     width: 100%;
@@ -338,16 +345,22 @@ onBeforeUnmount(() => {
     visibility: hidden;
     max-height: 0;
     overflow: hidden;
-    transition: max-height 0.3s ease, opacity 0.3s ease, visibility 0s linear 0.3s;
+    transition:
+      max-height 0.3s ease,
+      opacity 0.3s ease,
+      visibility 0s linear 0.3s;
   }
-  
+
   .dropdown-menu.active {
     opacity: 1;
     visibility: visible;
     max-height: 200px;
-    transition: max-height 0.3s ease, opacity 0.3s ease, visibility 0s linear 0s;
+    transition:
+      max-height 0.3s ease,
+      opacity 0.3s ease,
+      visibility 0s linear 0s;
   }
-  
+
   .dropdown-item {
     padding: 0.75rem 1rem;
   }
