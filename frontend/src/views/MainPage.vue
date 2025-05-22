@@ -1,88 +1,61 @@
 <template>
   <div>
-    <Carousel />
+    <CarouselComponent />
     <BannerComponent />
-    <div class="app">
-    <RouterView />
-    </div>  
+    <div>
+      <div class="app">
+        <RouterView />
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
-import axios from 'axios';
+import axios from 'axios'
 import { RouterView, RouterLink } from 'vue-router'
-import Carousel from '@/components/Carousel.vue'
+import CarouselComponent from '@/components/CarouselComponent.vue'
 import BannerComponent from '@/components/BannerComponent.vue'
 export default {
   name: 'App',
   components: {
-    Carousel,
+    CarouselComponent,
     BannerComponent,
   },
   data() {
     return {
-      isLoggedIn: false
-    };
+      isLoggedIn: false,
+    }
   },
   created() {
-    this.checkLoginStatus();
+    this.checkLoginStatus()
   },
   methods: {
     checkLoginStatus() {
-      const token = localStorage.getItem('token');
-      this.isLoggedIn = !!token;
+      const token = localStorage.getItem('token')
+      this.isLoggedIn = !!token
     },
     async logout() {
       try {
-        await axios.post('/api/dj-rest-auth/logout/');
-        localStorage.removeItem('token');
-        this.isLoggedIn = false;
-        
-        this.$router.push('/login');
+        await axios.post('/api/dj-rest-auth/logout/')
+        localStorage.removeItem('token')
+        this.isLoggedIn = false
+
+        this.$router.push('/login')
       } catch (error) {
-        console.error('로그아웃 실패:', error);
-        
-        localStorage.removeItem('token');
-        this.isLoggedIn = false;
-        this.$router.push('/login');
+        console.error('로그아웃 실패:', error)
+
+        localStorage.removeItem('token')
+        this.isLoggedIn = false
+        this.$router.push('/login')
       }
-    }
+    },
   },
   watch: {
     $route() {
-      this.checkLoginStatus();
-    }
-  }
-};
+      this.checkLoginStatus()
+    },
+  },
+}
 </script>
 
-<style>
-#app {
-  /* margin: 0 auto; */
-}
-
-header {
-  padding: 20px 0;
-  border-bottom: 1px solid #eee;
-  margin-bottom: 20px;
-}
-
-nav {
-  display: flex;
-  gap: 20px;
-}
-
-nav a {
-  color: #2c3e50;
-  text-decoration: none;
-  font-weight: bold;
-}
-
-nav a.router-link-exact-active {
-  color: #42b983;
-}
-
-main {
-  min-height: 70vh;
-}
-</style>
+<style scoped></style>

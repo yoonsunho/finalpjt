@@ -1,6 +1,6 @@
 <template>
-  <swiper 
-    class="mySwiper" 
+  <swiper
+    class="mySwiper"
     :modules="modules"
     :pagination="{ clickable: true }"
     :navigation="true"
@@ -11,7 +11,7 @@
       <div class="slide-container">
         <img :src="slide.src" :alt="slide.text.replace(/<br\s*\/?>/g, ' ')" />
         <div class="overlay"></div>
-        
+
         <div class="content-wrapper">
           <div class="slide-text">
             <div class="text" v-html="slide.text"></div>
@@ -29,41 +29,41 @@
 <script setup>
 import { Swiper, SwiperSlide } from 'swiper/vue'
 import 'swiper/css'
-import { Navigation, Pagination, Autoplay } from 'swiper/modules'
-import 'swiper/css/navigation'
-import 'swiper/css/pagination'
+import { Autoplay } from 'swiper/modules'
 
 // Swiper 모듈들을 등록
-const modules = [Navigation, Pagination, Autoplay]
+const modules = [Autoplay]
 
 const slides = [
   {
     src: new URL('@/assets/images/image1.jpg', import.meta.url).href,
     text: '당신에게 딱 맞는<br>점심 메뉴를<br>추천해드립니다..바로!',
-    subtext: '부가설명을 넣는 서브텍스트입니다.'
+    subtext: '부가설명을 넣는 서브텍스트입니다.',
   },
   {
     src: new URL('@/assets/images/image2.jpg', import.meta.url).href,
     text: '집가고싶은사람 손',
-    subtext: '부가설명을 넣는 서브<br>텍스트입니다.부가설명을 넣는 서브텍스트입니다.'
+    subtext: '부가설명을 넣는 서브<br>텍스트입니다.부가설명을 넣는 서브텍스트입니다.',
   },
   {
     src: new URL('@/assets/images/image3.jpg', import.meta.url).href,
     text: '덥고배고프고졸립니다..',
-    subtext: '부가설명을 넣는 서브텍스트입니다.부가설<br>명을 넣는 서브텍스트입니다.부'
+    subtext: '부가설명을 넣는 서브텍스트입니다.부가설<br>명을 넣는 서브텍스트입니다.부',
   },
   {
     src: new URL('@/assets/images/image4.jpg', import.meta.url).href,
     text: '당신에게 딱 맞는 금융상품을 추천해 드립니다. 저축을 열심히 해보세염. 지금 당장 시작해볼까요? 아자아자!',
-    subtext: '부가설명을 넣는 서브부가설명을 넣는 서브텍스트입니다.부가설명을 넣는 서브텍스트입니다.부.'
+    subtext:
+      '부가설명을 넣는 서브부가설명을 넣는 서브텍스트입니다.부가설명을 넣는 서브텍스트입니다.부.',
   },
 ]
 </script>
 
-
 <style scoped>
 .mySwiper {
   width: 100%;
+  padding: 0 !important;
+  margin: 0 !important;
 }
 
 .swiper-slide {
@@ -191,5 +191,4 @@ const slides = [
     font-size: 1.5rem;
   }
 }
-
 </style>

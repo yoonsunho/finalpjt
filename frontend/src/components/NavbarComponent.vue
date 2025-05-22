@@ -32,9 +32,9 @@
               <RouterLink :to="{ name: 'CommunityPage' }">커뮤니티</RouterLink>
             </a>
           </li>
-          <li class="nav-item">
+          <!-- <li class="nav-item">
             <a href="#" class="nav-link">저축</a>
-          </li>
+          </li> -->
 
           <li
             class="nav-item dropdown"
@@ -53,14 +53,12 @@
 
         <ul class="auth-links">
           <li class="nav-item">
-            
-              <RouterLink :to="{ name: 'LoginView' }" class="nav-link">로그인</RouterLink>
-            
+            <RouterLink :to="{ name: 'LoginView' }" class="nav-link">로그인</RouterLink>
           </li>
           <li class="nav-item">
-            
-              <RouterLink :to="{ name: 'SignUpView' }" class="nav-link sign-up-btn">회원가입</RouterLink>
-            
+            <RouterLink :to="{ name: 'SignUpView' }" class="nav-link sign-up-btn"
+              >회원가입</RouterLink
+            >
           </li>
         </ul>
 
@@ -201,7 +199,7 @@ onBeforeUnmount(() => {
 
 .nav-link {
   padding: 0.5rem 0.75rem;
-  color: #4b5563;
+  color: #000;
   text-decoration: none;
   font-size: 1rem;
   font-weight: 500;
@@ -242,7 +240,7 @@ onBeforeUnmount(() => {
   align-items: center;
   gap: 0.25rem;
   padding: 0.5rem 0.75rem;
-  color: #4b5563;
+  color: #000;
   font-weight: 500;
 }
 
@@ -277,7 +275,7 @@ onBeforeUnmount(() => {
 
 .dropdown-item {
   padding: 0.5rem 1rem;
-  color: #4b5563;
+  color: #000;
   text-decoration: none;
   display: block;
   transition: background-color 0.2s ease;
@@ -332,8 +330,10 @@ onBeforeUnmount(() => {
   }
 
   .sign-up-btn {
-    display: inline-block;
-    margin-top: 0.5rem;
+    background-color: transparent !important;
+    color: #000000 !important;
+    border: none; /* 혹시 둥글게 처리된 테두리도 제거하고 싶다면 */
+    /* padding: 0.5rem 1rem; 여백은 유지 */
   }
 
   .dropdown-toggle {
@@ -350,9 +350,9 @@ onBeforeUnmount(() => {
     padding-left: 1rem;
     background-color: #f9fafb;
     margin-bottom: 0.5rem;
+    max-height: 0;
     opacity: 0;
     visibility: hidden;
-    max-height: 0;
     overflow: hidden;
     transition:
       max-height 0.3s ease,
@@ -361,9 +361,9 @@ onBeforeUnmount(() => {
   }
 
   .dropdown-menu.active {
+    max-height: 200px; /* 원하는 최대 높이로 설정 */
     opacity: 1;
     visibility: visible;
-    max-height: 200px;
     transition:
       max-height 0.3s ease,
       opacity 0.3s ease,
