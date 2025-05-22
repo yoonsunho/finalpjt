@@ -34,67 +34,65 @@
           <option value="M">남성</option>
           <option value="F">여성</option>
         </select>
-        <!-- <div v-if="errors.gender" class="error">{{ errors.gender }}</div> -->
       </div>
 
+      <!-- 연봉 -->
       <div class="form-group">
         <label for="salary">연봉</label>
-        <select id="salary" v-model.number="salary" required>
+        <select id="salary" v-model="salary" required>
           <option value="">선택하세요</option>
-          <option value="1">3천만원 미만</option>
-          <option value="2">3천만원 - 5천만원</option>
-          <option value="3">5천만원 - 1억원</option>
-          <option value="4">1억원 초과</option>
+          <option value="under_30m">3천만원 미만</option>
+          <option value="30m_50m">3천만원~5천만원</option>
+          <option value="50m_100m">5천만원~1억원</option>
+          <option value="over_100m">1억원 이상</option>
         </select>
-        <!-- <div v-if="errors.salary" class="error">{{ errors.salary }}</div> -->
       </div>
 
+      <!-- 자산 범위 -->
       <div class="form-group">
         <label for="wealth">자산 범위</label>
-        <select id="wealth" v-model.number="wealth" required>
+        <select id="wealth" v-model="wealth" required>
           <option value="">선택하세요</option>
-          <option value="1">1천만원 미만</option>
-          <option value="2">1천만원 이상 3천만원 미만</option>
-          <option value="3">3천만원 이상 5천만원 미만</option>
-          <option value="4">5천만원 이상 1억 미만</option>
-          <option value="5">1억 이상</option>
+          <option value="under_10m">1천만원 미만</option>
+          <option value="10m_30m">1천~3천만원</option>
+          <option value="30m_50m">3천~5천만원</option>
+          <option value="50m_100m">5천~1억원</option>
+          <option value="over_100m">1억원 이상</option>
         </select>
-        <!-- <div v-if="errors.wealth" class="error">{{ errors.wealth }}</div> -->
       </div>
 
       <div class="form-group">
         <label for="tendency">투자 성향</label>
-        <select id="tendency" v-model.number="tendency" required>
+        <select id="tendency" v-model="tendency" required>
           <option value="">선택하세요</option>
-          <option value="1">안정형</option>
-          <option value="2">중립형</option>
-          <option value="3">공격형</option>
+          <option value="safe">안정형</option>
+          <option value="neutral">중립형</option>
+          <option value="aggressive">공격형</option>
         </select>
-        <!-- <div v-if="errors.tendency" class="error">{{ errors.tendency }}</div> -->
       </div>
 
+      <!-- 희망 저축 금액 -->
       <div class="form-group">
         <label for="deposit_amount">희망 저축 금액</label>
-        <select id="deposit_amount" v-model.number="deposit_amount" required>
+        <select id="deposit_amount" v-model="deposit_amount" required>
           <option value="">선택하세요</option>
-          <option value="1">10만원 미만</option>
-          <option value="2">10만원 이상 50만원 미만</option>
-          <option value="3">50만원 이상 100만원 미만</option>
-          <option value="4">100만원 이상</option>
+          <option value="under_100k">10만원 미만</option>
+          <option value="100k_500k">10~50만원</option>
+          <option value="500k_1m">50~100만원</option>
+          <option value="over_1m">100만원 이상</option>
         </select>
-        <!-- <div v-if="errors.deposit_amount" class="error">{{ errors.deposit_amount }}</div> -->
       </div>
 
+      <!-- 희망 저축 기간 -->
       <div class="form-group">
         <label for="deposit_period">희망 저축 기간</label>
-        <select id="deposit_period" v-model.number="deposit_period" required>
+        <select id="deposit_period" v-model="deposit_period" required>
           <option value="">선택하세요</option>
-          <option value="1">6개월 미만</option>
-          <option value="2">6개월 이상 1년 미만</option>
-          <option value="3">1년 이상 2년 미만</option>
-          <option value="4">2년 이상</option>
+          <option value="under_6m">6개월 미만</option>
+          <option value="6m_12m">6~12개월</option>
+          <option value="1y_2y">1~2년</option>
+          <option value="over_2y">2년 이상</option>
         </select>
-        <!-- <div v-if="errors.deposit_period" class="error">{{ errors.deposit_period }}</div> -->
       </div>
 
       <button type="submit" >회원가입</button>
