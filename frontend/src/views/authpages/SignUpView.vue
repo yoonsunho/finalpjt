@@ -6,25 +6,36 @@
       <div class="form-group">
         <label for="email">이메일</label>
         <input type="email" id="email" v-model="email" required>
-        <!-- <div v-if="errors.email" class="error">{{ errors.email }}</div> -->
+        <button type="button" @click="checkEmailDuplicate">중복확인</button>
+      <div v-if="emailCheckMessage" :class="{ error: !isEmailAvailable }">{{ emailCheckMessage }}</div>
+      <div v-if="errors.email" class="error">{{ errors.email }}</div>
       </div>
 
       <div class="form-group">
         <label for="nickname">닉네임</label>
         <input type="text" id="nickname" v-model="nickname" required>
-        <!-- <div v-if="errors.nickname" class="error">{{ errors.nickname }}</div> -->
+         <button type="button" @click="checkNicknameDuplicate">중복확인</button>
+        <div v-if="nicknameCheckMessage" :class="{ error: !isNicknameAvailable }">{{ nicknameCheckMessage }}</div>
+        <div v-if="errors.nickname" class="error">{{ errors.nickname }}</div>
       </div>
 
       <div class="form-group">
         <label for="password1">비밀번호</label>
         <input type="password" id="password1" v-model="password1" required>
-        <!-- <div v-if="errors.password1" class="error">{{ errors.password1 }}</div> -->
+        <div class="password-rules">
+          <ul>
+            <li>최소 8자 이상</li>
+            <li>숫자, 영문자, 특수문자 조합 권장</li>
+            <li>너무 쉬운 비밀번호(예: 123456, password 등) 불가</li>
+          </ul>
+        </div>
+        <div v-if="errors.password1" class="error">{{ errors.password1 }}</div>
       </div>
 
       <div class="form-group">
         <label for="password2">비밀번호 확인</label>
         <input type="password" id="password2" v-model="password2" required>
-        <!-- <div v-if="errors.password2" class="error">{{ errors.password2 }}</div> -->
+        <div v-if="errors.password2" class="error">{{ errors.password2 }}</div>
       </div>
 
       <div class="form-group">
@@ -112,6 +123,7 @@ import { useAccountStore } from '@/stores/user';
 import { RouterLink } from 'vue-router';
 
 const accountStore = useAccountStore()
+const { ACCOUNT_API_URL } = accountStore
 
 const email = ref('')
 const nickname = ref('')
@@ -124,7 +136,79 @@ const tendency = ref('')
 const deposit_amount = ref('')
 const deposit_period = ref('')
 
-const onSignUp = function (){
+const errors = ref({})
+
+const emailCheckMessage = ref('')
+const isEmailAvailable = ref(false)
+
+// 이메일 중복 확인
+const checkEmailDuplicate = async()=>{
+  try {
+    const res = await fetch(`${ACCOUNT_API_URL}/check-email/`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: email.value })
+    })
+    const data = await res.json()
+    if (data.available) {
+      emailCheckMessage.value = '사용 가능한 이메일입니다.'
+      isEmailAvailable.value = true
+    } else {
+      emailCheckMessage.value = '이미 사용 중인 이메일입니다.'
+      isEmailAvailable.value = false
+    }
+  } catch (err) {
+    emailCheckMessage.value = '중복 확인 중 오류가 발생했습니다.'
+    isEmailAvailable.value = false
+  }
+}
+
+  // 닉네임 중복 확인
+  const nicknameCheckMessage = ref('')
+  const isNicknameAvailable = ref(false)
+  const checkNicknameDuplicate = async () => {
+    try {
+      const res = await fetch(`${ACCOUNT_API_URL}/check-nickname/`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ nickname: nickname.value })
+      })
+      const data = await res.json()
+      if (data.available) {
+        nicknameCheckMessage.value = '사용 가능한 닉네임입니다.'
+        isNicknameAvailable.value = true
+      } else {
+        nicknameCheckMessage.value = '이미 사용 중인 닉네임입니다.'
+        isNicknameAvailable.value = false
+      }
+    } catch (err) {
+      nicknameCheckMessage.value = '중복 확인 중 오류가 발생했습니다.'
+      isNicknameAvailable.value = false
+    }
+  }
+
+  const onSignUp = async function (){   //비동기 처리 해주기
+
+  errors.value = {}
+
+  // 비밀번호 일치 검사
+  if (password1.value !== password2.value) {
+    errors.value.password2 = '비밀번호가 일치하지 않습니다.'
+    return
+  }
+
+  // 이메일,닉네임 중복 확인이 안 되었거나 사용 불가일 때
+  if (!isEmailAvailable.value) {
+    errors.value.email = '이메일 중복 확인을 해주세요.'
+    return
+  }
+
+  if (!isNicknameAvailable.value) {
+    errors.value.nickname = '닉네임 중복 확인을 해주세요.'
+    return
+  }
+
+  // ...중복 체크 등 추가 후 회원가입 진행
   const userInfo = {
     email : email.value,
     nickname : nickname.value,
@@ -137,8 +221,30 @@ const onSignUp = function (){
     deposit_amount : deposit_amount.value,
     deposit_period : deposit_period.value,
   }
-  accountStore.signUp(userInfo)
+  try {
+    await accountStore.signUp(userInfo)
+  } catch (err) {
+    // 비밀번호 규칙 위반 등 백엔드에서 온 에러 처리
+    if (err.response && err.response.data) {
+      const data = err.response.data
+      if (data.password1) {
+        // 여러 에러 메시지가 배열로 올 수 있으니 join으로 합침
+        errors.value.password1 = Array.isArray(data.password1) ? data.password1.join(' ') : data.password1
+      }
+      if (data.password2) {
+        errors.value.password2 = Array.isArray(data.password2) ? data.password2.join(' ') : data.password2
+      }
+      if (data.email) {
+        errors.value.email = Array.isArray(data.email) ? data.email.join(' ') : data.email
+      }
+      if (data.nickname) {
+        errors.value.nickname = Array.isArray(data.nickname) ? data.nickname.join(' ') : data.nickname
+      }
+      // 필요하면 다른 필드도 추가
+    }
+  }
 }
+
 </script>
 
 

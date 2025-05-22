@@ -19,40 +19,6 @@ export default {
     Carousel,
     BannerComponent,
   },
-  data() {
-    return {
-      isLoggedIn: false,
-    }
-  },
-  created() {
-    this.checkLoginStatus()
-  },
-  methods: {
-    checkLoginStatus() {
-      const token = localStorage.getItem('token')
-      this.isLoggedIn = !!token
-    },
-    async logout() {
-      try {
-        await axios.post('/api/dj-rest-auth/logout/')
-        localStorage.removeItem('token')
-        this.isLoggedIn = false
-
-        this.$router.push('/login')
-      } catch (error) {
-        console.error('로그아웃 실패:', error)
-
-        localStorage.removeItem('token')
-        this.isLoggedIn = false
-        this.$router.push('/login')
-      }
-    },
-  },
-  watch: {
-    $route() {
-      this.checkLoginStatus()
-    },
-  },
 }
 </script>
 

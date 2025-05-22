@@ -23,7 +23,9 @@
             </button>
             <ul :class="['dropdown-menu', { active: activeDropdown === 'deposit' }]">
               <li>
-                <RouterLink :to="{ name: 'DepositListView' }" class="dropdown-item">예금</RouterLink>
+                <RouterLink :to="{ name: 'DepositListView' }" class="dropdown-item"
+                  >예금</RouterLink
+                >
               </li>
               <li>
                 <RouterLink :to="{ name: 'SavingListView' }" class="dropdown-item">적금</RouterLink>
@@ -60,36 +62,27 @@
         </ul>
 
         <ul class="auth-links">
-          <div v-if="account.isLogin">
-            <button class="nav-link" @click="account.logOut">
-                로그아웃
-              </button>
+          <!-- 로그인 상태  -->
+          <template v-if="isLogin">
             <li class="nav-item">
-              <RouterLink :to="{ name: 'ProfilePage' }" class="nav-link">마이페이지</RouterLink>
+              <RouterLink :to="{ name: 'ProfilePage' }">마이 페이지</RouterLink>
             </li>
             <li class="nav-item">
-              
+              <button class="nav-link" @click="logOut">로그아웃</button>
             </li>
-          </div>
-          <div v-else>
+          </template>
+          <!-- 로그아웃 상태 -->
+          <template v-else>
             <li class="nav-item">
               <RouterLink :to="{ name: 'LoginView' }" class="nav-link">로그인</RouterLink>
             </li>
             <li class="nav-item">
-              <RouterLink :to="{ name: 'SignUpView' }" class="nav-link sign-up-btn">회원가입</RouterLink>
+              <RouterLink :to="{ name: 'SignUpView' }" class="nav-link sign-up-btn"
+                >회원가입</RouterLink
+              >
             </li>
-          </div>
-          
+          </template>
         </ul>
-
-        <!-- 로그인상태에는 프로필 노출 -->
-        <!-- <ul class="">
-          <li class="nav-item">
-            <a href="#" class="nav-link">
-              <RouterLink :to="{ name: 'profile' }">프로필</RouterLink>
-            </a>
-          </li>
-        </ul> -->
       </div>
     </div>
   </nav>
@@ -98,6 +91,12 @@
 <script setup>
 import { ref, onMounted, onBeforeUnmount } from 'vue'
 import { useAccountStore } from '@/stores/user'
+import { storeToRefs } from 'pinia'
+
+const accountStore = useAccountStore()
+const {isLogin} = storeToRefs(accountStore)
+const {logOut} = accountStore
+
 const isMenuOpen = ref(false)
 const activeDropdown = ref(null)
 const isDesktop = ref(window.innerWidth > 768)

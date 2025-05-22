@@ -48,46 +48,40 @@ export const useAccountStore = defineStore(
         .then((res) => {
           console.log('✅ 회원가입 성공:', res.data)
           router.push({ name: 'LoginView' })
-          // loginUser({ email, password: payload.password1 });
         })
         .catch((err) => {
           console.error('❌ 회원가입 실패:', err.response?.data || err)
-
-          throw err
         })
     }
 
-    // 로그인
-    const logIn = function ({ email, password }) {
+    const logIn = async function ({ email, password }) {
+      try {
+        const res = await axios({
+          method: 'POST',
+          url: `${ACCOUNT_API_URL}/login/`,
+          data: { email, password },
+        })
+        console.log(res.data)
+        token.value = res.data.key
+        router.push({ name: 'MainPage' })
+      } catch (err) {
+        console.error('❌ 로그인 실패:', err.response?.data || err)
+        throw err
+      }
+    }
+
+    const logOut = function () {
       axios({
         method: 'POST',
-        url: `${ACCOUNT_API_URL}/login/`,
-        data: {
-          email,
-          password,
-        },
+        url: `${ACCOUNT_API_URL}/logout/`,
       })
         .then((res) => {
-          console.log(res.data)
-          console.log('로그인 성공')
-          token.value = res.data.key
+          token.value = null
           router.push({ name: 'MainPage' })
         })
-        .catch((err) => {
-          console.error('❌ 로그인 실패:', err.response?.data || err)
-
-          throw err
-        })
+        .catch((err) => console.log(err))
     }
 
-    //  로그아웃
-    const logOut = function () {
-      token.value = ''
-      console.log('로그아웃 되었습니다.')
-      router.push({ name: 'MainPage' })
-    }
-
-    // 현재 유저 정보
     const userInfo = ref(null)
 
     const fetchUserInfo = function () {
@@ -113,6 +107,7 @@ export const useAccountStore = defineStore(
       logOut,
       token,
       isLogin,
+      ACCOUNT_API_URL,
       userInfo,
       fetchUserInfo,
     }
