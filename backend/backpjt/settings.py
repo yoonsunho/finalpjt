@@ -56,7 +56,7 @@ REST_FRAMEWORK = {
 # Application definition
 
 INSTALLED_APPS = [
-    'finlife'
+    'finlife',
     'accounts',
     'rest_framework',
     'rest_framework.authtoken',

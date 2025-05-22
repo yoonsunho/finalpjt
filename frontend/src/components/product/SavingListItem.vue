@@ -1,6 +1,6 @@
 <template>
     <div>
-        <RouterLink :to="{name:'SavingDetail', params:{id: product.id}}">
+        <RouterLink :to="{name:'SavingDetailView', params:{id: product.id}}">
         <p>{{ product.id }}</p>
         </RouterLink>
         <p>금융 회사명: {{ product.saving_product.kor_co_nm }}</p>

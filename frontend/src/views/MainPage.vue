@@ -22,6 +22,10 @@ import Carousel from '@/components/Carousel.vue'
 import BannerComponent from '@/components/BannerComponent.vue'
 export default {
   name: 'App',
+  components: {
+    Carousel,
+    BannerComponent
+  },
   data() {
     return {
       isLoggedIn: false

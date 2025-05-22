@@ -42,65 +42,61 @@ const router = createRouter({
     },
     {
       path : '/deposits',
-      name :'DepositList',
+      name :'DepositListView',
       component:DepositListView
     },
     {
       path:'/deposits/:id',
-      name:'DepositDetail',
+      name:'DepositDetailView',
       component:DepositDetailView
     },
     {
       path:'/savings',
-      name:'SavingList',
+      name:'SavingListView',
       component:SavingListView
     },
     {
       path:'/savings/:id',
-      name:'SavingDetail',
+      name:'SavingDetailView',
       component:SavingDetailView
 
     },
     {
       path: '/profile',
-      name: 'profile',
+      name: 'ProfilePage',
       component: ProfilePage,
     },
     {
       path: '/community',
-      name: 'communitypage',
+      name: 'CommunityPage',
       component: CommunityPage,
     },
     {
       path: '/community/articles/:id',
-      name: 'articledetail',
+      name: 'ArticleDetail',
       component: ArticleDetail,
     },
     {
       path: '/community/create',
-      name: 'createarticle',
+      name: 'CreateArticle',
       component: CreateArticle,
     },
     {
       path: '/etc',
-      name: 'etc',
+      name: 'EtcPage',
       component: EtcPage,
     },
     {
       path: '/exchange',
-      name: 'exchange',
+      name: 'ExchangePage',
       component: ExchangePage,
     },
     {
       path: '/map',
-      name: 'map',
+      name: 'MapPage',
       component: MapPage,
     },
-    {
-      path: '/deposits',
-      name: 'deposits',
-      component: DepositView,
-    },
+  
     // {
     //   path: '/deposits/detail/:id',
     //   name: 'depositdetail',

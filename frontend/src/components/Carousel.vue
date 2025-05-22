@@ -29,6 +29,12 @@
 <script setup>
 import { Swiper, SwiperSlide } from 'swiper/vue'
 import 'swiper/css'
+import { Navigation, Pagination, Autoplay } from 'swiper/modules'
+import 'swiper/css/navigation'
+import 'swiper/css/pagination'
+
+// Swiper 모듈들을 등록
+const modules = [Navigation, Pagination, Autoplay]
 
 const slides = [
   {

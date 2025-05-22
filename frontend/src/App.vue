@@ -4,8 +4,8 @@
       <nav>
         <RouterLink :to="{name: 'SignUpView'}">signup</RouterLink> |
         <RouterLink :to="{name: 'LogInView'}">login</RouterLink> |
-        <RouterLink :to="{name: 'DepositList'}">Deposits</RouterLink> | 
-        <RouterLink :to="{name: 'SavingList'}">Savings</RouterLink>
+        <RouterLink :to="{name: 'DepositListView'}">Deposits</RouterLink> | 
+        <RouterLink :to="{name: 'SavingListView'}">Savings</RouterLink>
       </nav>
   </header>
   <RouterView />

@@ -2,7 +2,7 @@
   <nav class="navbar">
     <div class="container">
       <div class="nav-brand">
-        <RouterLink :to="{ name: 'main' }"
+        <RouterLink :to="{ name: 'MainPage' }"
           ><img src="" alt="선호바보개_로고" class="nav-logo"
         /></RouterLink>
       </div>
@@ -19,7 +19,7 @@
             @mouseleave="closeDropdown"
           >
             <button class="nav-link dropdown-toggle" @click="toggleDropdown('deposit')">
-              <RouterLink :to="{ name: 'deposits' }">예적금추천</RouterLink>
+              <RouterLink :to="{ name: 'DepositListView' }">예적금추천</RouterLink>
             </button>
             <ul :class="['dropdown-menu', { active: activeDropdown === 'deposit' }]">
               <li><a href="#" class="dropdown-item">예금</a></li>
@@ -29,7 +29,7 @@
 
           <li class="nav-item">
             <a href="#" class="nav-link">
-              <RouterLink :to="{ name: 'communitypage' }">커뮤니티</RouterLink>
+              <RouterLink :to="{ name: 'CommunityPage' }">커뮤니티</RouterLink>
             </a>
           </li>
           <li class="nav-item">
@@ -42,7 +42,7 @@
             @mouseleave="closeDropdown"
           >
             <button class="nav-link dropdown-toggle" @click="toggleDropdown('etc')">
-              <RouterLink :to="{ name: 'etc' }">기타</RouterLink>
+              <RouterLink :to="{ name: 'EtcPage' }">기타</RouterLink>
             </button>
             <ul :class="['dropdown-menu', { active: activeDropdown === 'etc' }]">
               <li><a href="#" class="dropdown-item">환율</a></li>
@@ -54,12 +54,12 @@
         <ul class="auth-links">
           <li class="nav-item">
             <a href="#" class="nav-link">
-              <RouterLink :to="{ name: 'login' }">로그인</RouterLink>
+              <RouterLink :to="{ name: 'LogInView' }">로그인</RouterLink>
             </a>
           </li>
           <li class="nav-item">
             <a href="#" class="nav-link sign-up-btn">
-              <RouterLink :to="{ name: 'signup' }">회원가입</RouterLink>
+              <RouterLink :to="{ name: 'SignUpView' }">회원가입</RouterLink>
             </a>
           </li>
         </ul>
