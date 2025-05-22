@@ -30,6 +30,7 @@ export const useAccountStore = defineStore("account", () => {
       })
       .then((res) => {
         console.log("✅ 회원가입 성공:", res.data);
+        router.push({name:'LoginView'})
         // loginUser({ email, password: payload.password1 });
       })
       .catch((err) => {
@@ -52,7 +53,11 @@ export const useAccountStore = defineStore("account", () => {
       token.value = res.data.key
       router.push({name:'MainPage'})
     })
-    .catch(err => console.log(err))
+    .catch((err) => {
+      console.error("❌ 로그인 실패:", err.response?.data || err);
+        
+        throw err;
+   })
    }
 
     return {
