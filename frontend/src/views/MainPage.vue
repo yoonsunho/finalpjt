@@ -1,18 +1,8 @@
 <template>
   <div id="app">
-    <header>
-      <nav>
-        <router-link to="/">홈</router-link>
-        <router-link v-if="!isLoggedIn" to="/signup">회원가입</router-link>
-        <router-link v-if="!isLoggedIn" to="/login">로그인</router-link>
-        <a v-if="isLoggedIn" href="#" @click.prevent="logout">로그아웃</a>
-      </nav>
-    </header>
-    <main>
-      <Carousel />
-      <BannerComponent />
+        <!-- <Carousel />
+  <BannerComponent /> -->
       <router-view></router-view>
-    </main>
   </div>
 </template>
 
@@ -22,10 +12,6 @@ import Carousel from '@/components/Carousel.vue'
 import BannerComponent from '@/components/BannerComponent.vue'
 export default {
   name: 'App',
-  components: {
-    Carousel,
-    BannerComponent
-  },
   data() {
     return {
       isLoggedIn: false

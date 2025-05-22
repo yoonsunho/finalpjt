@@ -1,21 +1,26 @@
 <template>
-  <NavbarComponent />
-  <header class="layout">
+  <div class="layout">
+    <NavbarComponent />
+
+    <header>
       <nav>
         <RouterLink :to="{name: 'SignUpView'}">signup</RouterLink> |
         <RouterLink :to="{name: 'LoginView'}">login</RouterLink> |
         <RouterLink :to="{name: 'DepositListView'}">Deposits</RouterLink> | 
         <RouterLink :to="{name: 'SavingListView'}">Savings</RouterLink>
       </nav>
-  </header>
-  <RouterView />
-  <FooterComponent />
+    </header>
+
+    <RouterView />
+
+    <FooterComponent />
+  </div>
 </template>
 
 <script setup>
   import { RouterView, RouterLink } from 'vue-router'
   import NavbarComponent from '@/components/NavbarComponent.vue'
-  import FooterComponent from '@/components/FooterComponent.vue'
+import FooterComponent from '@/components/FooterComponent.vue'
 </script>
 
 <style scoped>

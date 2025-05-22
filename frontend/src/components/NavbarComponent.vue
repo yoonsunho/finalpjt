@@ -38,7 +38,7 @@
 
           <li
             class="nav-item dropdown"
-            @mouseenter="openDropdown('etc')"
+            @mouseenter="openDropdown('EtcPage')"
             @mouseleave="closeDropdown"
           >
             <button class="nav-link dropdown-toggle" @click="toggleDropdown('etc')">
@@ -53,14 +53,14 @@
 
         <ul class="auth-links">
           <li class="nav-item">
-            <a href="#" class="nav-link">
-              <RouterLink :to="{ name: 'LoginView' }">로그인</RouterLink>
-            </a>
+            
+              <RouterLink :to="{ name: 'LoginView' }" class="nav-link">로그인</RouterLink>
+            
           </li>
           <li class="nav-item">
-            <a href="#" class="nav-link sign-up-btn">
-              <RouterLink :to="{ name: 'SignUpView' }">회원가입</RouterLink>
-            </a>
+            
+              <RouterLink :to="{ name: 'SignUpView' }" class="nav-link sign-up-btn">회원가입</RouterLink>
+            
           </li>
         </ul>
 
