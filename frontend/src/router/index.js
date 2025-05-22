@@ -3,7 +3,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import MainPage from '@/views/MainPage.vue'
 
 import SignUpView from '@/views/authpages/SignUpView.vue'
-import LogInView from '@/views/authpages/LoginView.vue'
+import LoginView from '@/views/authpages/LoginView.vue'
 import ProfilePage from '@/views/authpages/ProfilePage.vue'
 
 // import { useAccountStore } from '@/stores/user'
@@ -32,8 +32,8 @@ const router = createRouter({
     },
     {
       path: '/login',
-      name: 'LogInView',
-      component: LogInView,
+      name: 'LoginView',
+      component: LoginView,
     },
     {
       path: '/signup',

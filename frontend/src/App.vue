@@ -3,7 +3,7 @@
   <header class="layout">
       <nav>
         <RouterLink :to="{name: 'SignUpView'}">signup</RouterLink> |
-        <RouterLink :to="{name: 'LogInView'}">login</RouterLink> |
+        <RouterLink :to="{name: 'LoginView'}">login</RouterLink> |
         <RouterLink :to="{name: 'DepositListView'}">Deposits</RouterLink> | 
         <RouterLink :to="{name: 'SavingListView'}">Savings</RouterLink>
       </nav>

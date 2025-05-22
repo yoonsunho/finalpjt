@@ -54,7 +54,7 @@
         <ul class="auth-links">
           <li class="nav-item">
             <a href="#" class="nav-link">
-              <RouterLink :to="{ name: 'LogInView' }">로그인</RouterLink>
+              <RouterLink :to="{ name: 'LoginView' }">로그인</RouterLink>
             </a>
           </li>
           <li class="nav-item">

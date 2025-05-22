@@ -103,7 +103,7 @@
       </div> -->
     </form>
     <div class="login-link">
-      이미 계정이 있으신가요? <RouterLink :to="{name:'LogInView'}"></RouterLink>
+      이미 계정이 있으신가요? <RouterLink :to="{name:'LoginView'}"></RouterLink>
     </div>
   </div>
 </template>
