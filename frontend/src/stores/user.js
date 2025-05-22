@@ -59,10 +59,23 @@ export const useAccountStore = defineStore("account", () => {
         throw err;
    })
    }
+   const logOut= function(){
+    axios({
+      method: 'POST',
+      url: `${ACCOUNT_API_URL}/logout/`,
+    })
+    .then((res)=>{
+      token.value = null
+      router.push({name:'MainPage'})
+    })
+    .catch((err)=> console.log(err))
+   }
+   
 
     return {
-      signUp, logIn,
-      token, isLogin
+      signUp, logIn,logOut,
+      token, isLogin,
+      ACCOUNT_API_URL
     };
   },
   { persist: true }
