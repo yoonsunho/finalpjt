@@ -19,11 +19,18 @@
             @mouseleave="closeDropdown"
           >
             <button class="nav-link dropdown-toggle" @click="toggleDropdown('deposit')">
-              <RouterLink :to="{ name: 'DepositListView' }">예적금추천</RouterLink>
+              <!-- <RouterLink :to="{ name: 'DepositListView' }">예적금추천</RouterLink> -->
+              <p>예적금추천</p>
             </button>
             <ul :class="['dropdown-menu', { active: activeDropdown === 'deposit' }]">
-              <li><a href="#" class="dropdown-item">예금</a></li>
-              <li><a href="#" class="dropdown-item">적금</a></li>
+              <li>
+                <RouterLink :to="{ name: 'DepositListView' }" class="dropdown-item"
+                  >예금</RouterLink
+                >
+              </li>
+              <li>
+                <RouterLink :to="{ name: 'SavingListView' }" class="dropdown-item">적금</RouterLink>
+              </li>
             </ul>
           </li>
 
@@ -32,93 +39,121 @@
               <RouterLink :to="{ name: 'CommunityPage' }">커뮤니티</RouterLink>
             </a>
           </li>
-          <!-- <li class="nav-item">
+          <li class="nav-item">
             <a href="#" class="nav-link">저축</a>
-          </li> -->
+          </li>
 
           <li
             class="nav-item dropdown"
             @mouseenter="openDropdown('EtcPage')"
             @mouseleave="closeDropdown"
           >
-            <button class="nav-link dropdown-toggle" @click="toggleDropdown('etc')">
-              <RouterLink :to="{ name: 'EtcPage' }">기타</RouterLink>
+            <button class="nav-link dropdown-toggle" @click="toggleDropdown('EtcPage')">
+              <!-- <RouterLink :to="{ name: 'EtcPage' }">기타</RouterLink> -->
+              <p>기타</p>
             </button>
-            <ul :class="['dropdown-menu', { active: activeDropdown === 'etc' }]">
-              <li><a href="#" class="dropdown-item">환율</a></li>
-              <li><a href="#" class="dropdown-item">지도</a></li>
+            <ul :class="['dropdown-menu', { active: activeDropdown === 'EtcPage' }]">
+              <li>
+                <RouterLink :to="{ name: 'ExchangePage' }" class="dropdown-item">환율</RouterLink>
+              </li>
+              <li>
+                <RouterLink :to="{ name: 'MapPage' }" class="dropdown-item">지도</RouterLink>
+              </li>
             </ul>
           </li>
         </ul>
 
         <ul class="auth-links">
-          <li class="nav-item">
-            <RouterLink :to="{ name: 'LoginView' }" class="nav-link">로그인</RouterLink>
-          </li>
-          <li class="nav-item">
-            <RouterLink :to="{ name: 'SignUpView' }" class="nav-link sign-up-btn"
-              >회원가입</RouterLink
-            >
-          </li>
+          <!-- 로그인 상태  -->
+          <template v-if="isLogin">
+            <li class="nav-item">
+              <RouterLink :to="{ name: 'ProfilePage' }" class="nav-link">마이 페이지</RouterLink>
+            </li>
+            <li class="nav-item">
+              <button class="nav-link" @click="logOut">로그아웃</button>
+            </li>
+          </template>
+          <!-- 로그아웃 상태 -->
+          <template v-else>
+            <li class="nav-item">
+              <RouterLink :to="{ name: 'LoginView' }" class="nav-link">로그인</RouterLink>
+            </li>
+            <li class="nav-item">
+              <RouterLink :to="{ name: 'SignUpView' }" class="nav-link sign-up-btn"
+                >회원가입</RouterLink
+              >
+            </li>
+          </template>
         </ul>
-
-        <!-- 로그인상태에는 프로필 노출 -->
-        <!-- <ul class="">
-          <li class="nav-item">
-            <a href="#" class="nav-link">
-              <RouterLink :to="{ name: 'profile' }">프로필</RouterLink>
-            </a>
-          </li>
-        </ul> -->
       </div>
     </div>
   </nav>
 </template>
-
 <script setup>
 import { ref, onMounted, onBeforeUnmount } from 'vue'
+import { useRouter } from 'vue-router'
+import { useAccountStore } from '@/stores/user'
+import { storeToRefs } from 'pinia'
+
+const accountStore = useAccountStore()
+const { isLogin } = storeToRefs(accountStore)
+const { logOut } = accountStore
 
 const isMenuOpen = ref(false)
 const activeDropdown = ref(null)
 const isDesktop = ref(window.innerWidth > 768)
 
+const router = useRouter()
+
+// 메뉴 열렸는지 초기화하기
+const resetMenuState = () => {
+  isMenuOpen.value = false
+  activeDropdown.value = null
+}
+
+// 메뉴 토글
 const toggleMenu = () => {
   isMenuOpen.value = !isMenuOpen.value
   if (!isMenuOpen.value) {
     activeDropdown.value = null
   }
 }
+
+// 드롭다운 열기
 const openDropdown = (menu) => {
   if (isDesktop.value) {
     activeDropdown.value = menu
   }
 }
 
+// 드롭다운 닫기
 const closeDropdown = () => {
   if (isDesktop.value) {
     activeDropdown.value = null
   }
 }
 
+// 모바일 드롭다운
 const toggleDropdown = (menu) => {
   if (!isDesktop.value) {
     activeDropdown.value = activeDropdown.value === menu ? null : menu
   }
 }
+
+// 반응형상태인지 체크
 const checkViewport = () => {
   isDesktop.value = window.innerWidth > 768
-
   if (isDesktop.value) {
-    isMenuOpen.value = false
+    resetMenuState()
   }
 }
 
 onMounted(() => {
   window.addEventListener('resize', checkViewport)
-})
-
-onBeforeUnmount(() => {
-  window.removeEventListener('resize', checkViewport)
+  // 라우터가 바뀔때마다 메뉴상태 초기화
+  router.afterEach(() => {
+    resetMenuState()
+  })
 })
 </script>
 
@@ -220,11 +255,8 @@ onBeforeUnmount(() => {
 }
 
 .sign-up-btn:hover {
-  background-color: #2574e6;
   color: white;
-  transition:
-    background 0.2s ease,
-    color 0.1s ease;
+  background-color: #2574e6;
 }
 
 .dropdown {
@@ -244,11 +276,6 @@ onBeforeUnmount(() => {
   font-weight: 500;
 }
 
-.dropdown-arrow {
-  font-size: 0.75rem;
-  transition: transform 0.2s ease;
-}
-
 .dropdown-menu {
   position: absolute;
   top: 100%;
@@ -258,19 +285,22 @@ onBeforeUnmount(() => {
   border-radius: 0.25rem;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   list-style: none;
-  padding: 0.5rem 0;
+  padding: 0;
   margin: 0;
   z-index: 1100;
   opacity: 0;
   visibility: hidden;
-  transition:
-    opacity 0.2s ease,
-    visibility 0.2s ease;
+  transform: translateY(-10px);
+  pointer-events: none;
+  transition: all 0.2s ease;
 }
 
 .dropdown-menu.active {
   opacity: 1;
   visibility: visible;
+  transform: translateY(0);
+  pointer-events: auto;
+  padding: 0.5rem 0;
 }
 
 .dropdown-item {
@@ -282,7 +312,7 @@ onBeforeUnmount(() => {
 }
 
 .dropdown-item:hover {
-  background-color: #f3f4f6;
+  /* background-color: #f3f4f6; */
   color: #2574e6;
 }
 
@@ -303,7 +333,7 @@ onBeforeUnmount(() => {
     padding-top: 1rem;
     overflow: hidden;
     max-height: 0;
-    transition: max-height 0.3s ease;
+    transition: max-height 0.2s ease;
   }
 
   .nav-menu-active {
@@ -328,12 +358,17 @@ onBeforeUnmount(() => {
   .nav-link {
     padding: 0.75rem 0;
   }
-
   .sign-up-btn {
-    background-color: transparent !important;
-    color: #000000 !important;
-    border: none; /* 혹시 둥글게 처리된 테두리도 제거하고 싶다면 */
-    /* padding: 0.5rem 1rem; 여백은 유지 */
+    display: inline-block;
+    margin-top: 0.5rem;
+    border-radius: 0;
+    font-weight: normal;
+    background-color: transparent;
+    color: black;
+  }
+  .sign-up-btn:hover {
+    color: #2574e6;
+    background-color: transparent;
   }
 
   .dropdown-toggle {
@@ -347,27 +382,23 @@ onBeforeUnmount(() => {
     width: 100%;
     box-shadow: none;
     border-radius: 0;
-    padding-left: 1rem;
     background-color: #f9fafb;
-    margin-bottom: 0.5rem;
+    margin: 0;
+    padding: 0;
     max-height: 0;
+    overflow: hidden;
     opacity: 0;
     visibility: hidden;
-    overflow: hidden;
-    transition:
-      max-height 0.3s ease,
-      opacity 0.3s ease,
-      visibility 0s linear 0.3s;
+    transform: none;
+    transition: all 0.2s ease;
   }
 
   .dropdown-menu.active {
-    max-height: 200px; /* 원하는 최대 높이로 설정 */
+    max-height: 200px;
     opacity: 1;
     visibility: visible;
-    transition:
-      max-height 0.3s ease,
-      opacity 0.3s ease,
-      visibility 0s linear 0s;
+    margin-bottom: 0.5rem;
+    padding-left: 1rem;
   }
 
   .dropdown-item {

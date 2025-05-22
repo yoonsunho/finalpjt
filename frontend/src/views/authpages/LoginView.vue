@@ -15,15 +15,17 @@
         <div class="form-group">
           <label for="password">비밀번호</label>
           <input type="password" id="password" v-model="password" required>
-          <!-- <div v-if="errors.password" class="error">{{ errors.password }}</div> -->
         </div>
 
         <button type="submit">로그인</button>
-        <!-- <div v-if="errors.non_field_errors" class="error general-error">
-          {{ errors.non_field_errors }}
-        </div> -->
+        
       </form>
-      
+      <div v-if="showLoginErrorModal" class="modal">
+        <div class="modal-content">
+          <p>올바른 로그인 정보를 입력하세요!</p>
+          <button @click="showLoginErrorModal = false">닫기</button>
+        </div>
+      </div>
       <!-- <div class="signup-link">
         계정이 없으신가요? <router-link :to="{name:'SignUpView'}">회원가입</router-link>
       </div>
@@ -44,79 +46,20 @@
 
   const email = ref('')
   const password = ref('')
-  const onLogIn = function(){
-    const userInfo ={
-      email: email.value,
-      password  : password.value
-    }
-    accountStore.logIn(userInfo)
+  const showLoginErrorModal = ref(false);
+
+  const onLogIn = async function() {
+  const userInfo = {
+    email: email.value,
+    password: password.value
+  };
+  try {
+    await accountStore.logIn(userInfo);
+    showLoginErrorModal.value = false;
+  } catch (error) {
+    showLoginErrorModal.value = true;
   }
-
-// import axios from 'axios';
-
-// export default {
-//   name: 'Login',
-//   data() {
-//     return {
-//       formData: {
-//         email: '',
-//         password: ''
-//       },
-//       errors: {},
-//       isSubmitting: false,
-//       tokenInfo: null,
-//       successMessage: ''
-//     };
-//   },
-//   created() {
-//     const params = new URLSearchParams(window.location.search);
-//     this.successMessage = params.get('message') || '';
-//   },
-//   methods: {
-//     async submitForm() {
-//       this.isSubmitting = true;
-//       this.errors = {};
-//       this.tokenInfo = null;
-      
-//       try {
-//         const response = await axios.post('/api/dj-rest-auth/login/', {
-//           email: this.formData.email,
-//           password: this.formData.password
-//         });
-        
-//         console.log('로그인 성공:', response.data);
-//         localStorage.setItem('token', response.data.key);
-        
-//         this.tokenInfo = {
-//           token: response.data.key,
-//           timestamp: new Date().toLocaleString()
-//         };
-//         axios.defaults.headers.common['Authorization'] = `Token ${response.data.key}`;
-//         this.getUserInfo();
-        
-//         this.successMessage = '로그인에 성공했습니다.';
-//       } catch (error) {
-//         console.error('로그인 실패:', error);
-        
-//         if (error.response && error.response.data) {
-//           this.errors = error.response.data;
-//         } else {
-//           this.errors = { non_field_errors: ['로그인 중 오류가 발생했습니다. 다시 시도해주세요.'] };
-//         }
-//       } finally {
-//         this.isSubmitting = false;
-//       }
-//     },
-//     async getUserInfo() {
-//       try {
-//         const response = await axios.get('/api/dj-rest-auth/user/');
-//         console.log('사용자 정보:', response.data);
-//       } catch (error) {
-//         console.error('사용자 정보 가져오기 실패:', error);
-//       }
-//     }
-//   }
-// };
+};
 </script>
 
 <style scoped>
@@ -239,5 +182,23 @@ a:hover {
   white-space: pre-wrap;
   word-break: break-word;
 }
+
+.modal {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.4); /* 반투명 검정 배경 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+.modal-content {
+  background: white;
+  padding: 24px 32px;
+  border-radius: 8px;
+  text-align: center;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+}
+
 
 </style>

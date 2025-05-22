@@ -1,64 +1,116 @@
-import { defineStore } from "pinia";
-import { ref, computed } from "vue";
-import { useRouter } from "vue-router";
-import axios from "axios";
+import { defineStore } from 'pinia'
+import { ref, computed } from 'vue'
+import { useRouter } from 'vue-router'
+import axios from 'axios'
 
-export const useAccountStore = defineStore("account", () => {
-    const ACCOUNT_API_URL = "http://127.0.0.1:8000/accounts";
-    const router = useRouter();
-    const token = ref('');
+export const useAccountStore = defineStore(
+  'account',
+  () => {
+    const ACCOUNT_API_URL = 'http://127.0.0.1:8000/accounts'
+    const router = useRouter()
+    const token = ref('')
 
-    const isLogin = computed(()=>{
+    const isLogin = computed(() => {
       return token.value ? true : false
     })
 
+    // 회원가입
     const signUp = function (payload) {
       console.log(payload)
       const {
-        email, nickname, password1, password2,
-        gender, salary, wealth, tendency,
-        deposit_amount, deposit_period
+        email,
+        nickname,
+        password1,
+        password2,
+        gender,
+        salary,
+        wealth,
+        tendency,
+        deposit_amount,
+        deposit_period,
       } = payload
       axios({
-        method: "POST",
+        method: 'POST',
         url: `${ACCOUNT_API_URL}/signup/`,
         data: {
-          email, nickname, password1, password2,
-          gender, salary, wealth, tendency,
-          deposit_amount, deposit_period,
-        }
+          email,
+          nickname,
+          password1,
+          password2,
+          gender,
+          salary,
+          wealth,
+          tendency,
+          deposit_amount,
+          deposit_period,
+        },
       })
-      .then((res) => {
-        console.log("✅ 회원가입 성공:", res.data);
-        // loginUser({ email, password: payload.password1 });
-      })
-      .catch((err) => {
-        console.error("❌ 회원가입 실패:", err.response?.data || err);
-        
-        throw err;
-      });
-    };
+        .then((res) => {
+          console.log('✅ 회원가입 성공:', res.data)
+          router.push({ name: 'LoginView' })
+        })
+        .catch((err) => {
+          console.error('❌ 회원가입 실패:', err.response?.data || err)
+        })
+    }
 
-   const logIn = function ({email,password}){
-    axios({
-      method: 'POST',
-      url: `${ACCOUNT_API_URL}/login/`,
-      data:{
-        email, password
+    const logIn = async function ({ email, password }) {
+      try {
+        const res = await axios({
+          method: 'POST',
+          url: `${ACCOUNT_API_URL}/login/`,
+          data: { email, password },
+        })
+        console.log(res.data)
+        token.value = res.data.key
+        router.push({ name: 'MainPage' })
+      } catch (err) {
+        console.error('❌ 로그인 실패:', err.response?.data || err)
+        throw err
       }
-    })
-    .then(res=>{
-      console.log(res.data)
-      token.value = res.data.key
-      router.push({name:'MainPage'})
-    })
-    .catch(err => console.log(err))
-   }
+    }
+
+    const logOut = function () {
+      axios({
+        method: 'POST',
+        url: `${ACCOUNT_API_URL}/logout/`,
+      })
+        .then((res) => {
+          token.value = null
+          router.push({ name: 'MainPage' })
+        })
+        .catch((err) => console.log(err))
+    }
+
+    const userInfo = ref(null)
+
+    const fetchUserInfo = function () {
+      axios({
+        method: 'GET',
+        url: `${ACCOUNT_API_URL}/user/`,
+        headers: {
+          Authorization: `Token ${token.value}`,
+        },
+      })
+        .then((res) => {
+          userInfo.value = res.data
+          console.log('✅ 유저 정보:', res.data)
+        })
+        .catch((err) => {
+          console.error('유저 정보를 불러오지 못했습니다', err)
+        })
+    }
 
     return {
-      signUp, logIn,
-      token, isLogin
-    };
+      signUp,
+      logIn,
+      logOut,
+      token,
+      isLogin,
+      ACCOUNT_API_URL,
+      userInfo,
+      fetchUserInfo,
+    }
   },
-  { persist: true }
-);
+  { persist: true },
+)

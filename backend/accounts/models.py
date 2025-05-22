@@ -26,18 +26,43 @@ class CustomUser(AbstractUser):
     nickname = models.CharField(max_length=20, unique=True)
 
     GENDER_CHOICES = [('M', '남성'), ('F', '여성')]
-    SALARY_CHOICES = [(1, '3천만원 미만'), (2, '3~5천'), (3, '5천~1억'), (4, '1억 이상')]
-    WEALTH_CHOICES = [(1, '1천 미만'), (2, '1천~3천'), (3, '3천~5천'), (4, '5천~1억'), (5, '1억 이상')]
-    TENDENCY_CHOICES = [(1, '안정형'), (2, '중립형'), (3, '공격형')]
-    DEPOSIT_AMOUNT_CHOICES = [(1, '10만원 미만'), (2, '10~50'), (3, '50~100'), (4, '100 이상')]
-    DEPOSIT_PERIOD_CHOICES = [(1, '6개월 미만'), (2, '6~12개월'), (3, '1~2년'), (4, '2년 이상')]
+    SALARY_CHOICES = [
+        ('under_30m', '3천만원 미만'),
+        ('30m_50m', '3천만원~5천만원'),
+        ('50m_100m', '5천만원~1억원'),
+        ('over_100m', '1억원 이상'),
+    ]
+    WEALTH_CHOICES = [
+        ('under_10m', '1천만원 미만'),
+        ('10m_30m', '1천~3천만원'),
+        ('30m_50m', '3천~5천만원'),
+        ('50m_100m', '5천~1억원'),
+        ('over_100m', '1억원 이상'),
+    ]
+    TENDENCY_CHOICES = [
+        ('safe', '안정형'),
+        ('neutral', '중립형'),
+        ('aggressive', '공격형'),
+    ]
+    DEPOSIT_AMOUNT_CHOICES = [
+        ('under_100k', '10만원 미만'),
+        ('100k_500k', '10~50만원'),
+        ('500k_1m', '50~100만원'),
+        ('over_1m', '100만원 이상'),
+    ]
+    DEPOSIT_PERIOD_CHOICES = [
+        ('under_6m', '6개월 미만'),
+        ('6m_12m', '6~12개월'),
+        ('1y_2y', '1~2년'),
+        ('over_2y', '2년 이상'),
+    ]
 
-    gender = models.CharField(max_length=1, choices=GENDER_CHOICES, null=True)
-    salary = models.IntegerField(choices=SALARY_CHOICES, null=True)
-    wealth = models.IntegerField(choices=WEALTH_CHOICES, null=True)
-    tendency = models.IntegerField(choices=TENDENCY_CHOICES, null=True)
-    deposit_amount = models.IntegerField(choices=DEPOSIT_AMOUNT_CHOICES, null=True)
-    deposit_period = models.IntegerField(choices=DEPOSIT_PERIOD_CHOICES, null=True)
+    gender = models.CharField(max_length=1, choices=GENDER_CHOICES)
+    salary = models.CharField(max_length=20, choices=SALARY_CHOICES)
+    wealth = models.CharField(max_length=20, choices=WEALTH_CHOICES)
+    tendency = models.CharField(max_length=20, choices=TENDENCY_CHOICES)
+    deposit_amount = models.CharField(max_length=20, choices=DEPOSIT_AMOUNT_CHOICES)
+    deposit_period = models.CharField(max_length=20, choices=DEPOSIT_PERIOD_CHOICES)
 
     USERNAME_FIELD = 'email'    # username 필드  email로 변경
     REQUIRED_FIELDS = ['nickname']  # createsuperuser 시 필수

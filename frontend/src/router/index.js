@@ -5,13 +5,13 @@ import MainPage from '@/views/MainPage.vue'
 import SignUpView from '@/views/authpages/SignUpView.vue'
 import LoginView from '@/views/authpages/LoginView.vue'
 import ProfilePage from '@/views/authpages/ProfilePage.vue'
+import ProfileEdit from '@/views/authpages/ProfileEdit.vue'
 
 // import { useAccountStore } from '@/stores/user'
 import DepositListView from '@/views/deposit/DepositListView.vue'
 import DepositDetailView from '@/views/deposit/DepositDetailView.vue'
 import SavingListView from '@/views/deposit/SavingListView.vue'
 import SavingDetailView from '@/views/deposit/SavingDetailView.vue'
-
 
 import CommunityPage from '@/views/community/CommunityPage.vue'
 import ArticleDetail from '@/views/community/ArticleDetail.vue'
@@ -21,14 +21,13 @@ import EtcPage from '@/views/etcpages/EtcPage.vue'
 import ExchangePage from '@/views/etcpages/ExchangePage.vue'
 import MapPage from '@/views/etcpages/MapPage.vue'
 
-
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
-      path:'/',
+      path: '/',
       name: 'MainPage',
-      component: MainPage
+      component: MainPage,
     },
     {
       path: '/login',
@@ -38,33 +37,37 @@ const router = createRouter({
     {
       path: '/signup',
       name: 'SignUpView',
-      component: SignUpView
+      component: SignUpView,
     },
     {
-      path : '/deposits',
-      name :'DepositListView',
-      component:DepositListView
+      path: '/deposits',
+      name: 'DepositListView',
+      component: DepositListView,
     },
     {
-      path:'/deposits/:id',
-      name:'DepositDetailView',
-      component:DepositDetailView
+      path: '/deposits/:id',
+      name: 'DepositDetailView',
+      component: DepositDetailView,
     },
     {
-      path:'/savings',
-      name:'SavingListView',
-      component:SavingListView
+      path: '/savings',
+      name: 'SavingListView',
+      component: SavingListView,
     },
     {
-      path:'/savings/:id',
-      name:'SavingDetailView',
-      component:SavingDetailView
-
+      path: '/savings/:id',
+      name: 'SavingDetailView',
+      component: SavingDetailView,
     },
     {
       path: '/profile',
       name: 'ProfilePage',
       component: ProfilePage,
+    },
+    {
+      path: '/profile/edit',
+      name: 'ProfileEdit',
+      component: ProfileEdit,
     },
     {
       path: '/community',
@@ -96,7 +99,7 @@ const router = createRouter({
       name: 'MapPage',
       component: MapPage,
     },
-  
+
     // {
     //   path: '/deposits/detail/:id',
     //   name: 'depositdetail',
