@@ -1,25 +1,24 @@
 <template>
-  <div class="layout">
+  <div class="wrapper">
     <NavbarComponent />
-
-    <header>
+    <div class="layout">
       <nav>
-        <RouterLink :to="{name: 'SignUpView'}">signup</RouterLink> |
+        <!-- <RouterLink :to="{name: 'SignUpView'}">signup</RouterLink> |
         <RouterLink :to="{name: 'LoginView'}">login</RouterLink> |
         <RouterLink :to="{name: 'DepositListView'}">Deposits</RouterLink> | 
-        <RouterLink :to="{name: 'SavingListView'}">Savings</RouterLink>
+        <RouterLink :to="{name: 'SavingListView'}">Savings</RouterLink> -->
       </nav>
-    </header>
-
-    <RouterView />
-
-    <FooterComponent />
+      <RouterView />
+      
+    </div>
+    
   </div>
+  <FooterComponent />
 </template>
 
 <script setup>
-  import { RouterView, RouterLink } from 'vue-router'
-  import NavbarComponent from '@/components/NavbarComponent.vue'
+import { RouterView, RouterLink } from 'vue-router'
+import NavbarComponent from '@/components/NavbarComponent.vue'
 import FooterComponent from '@/components/FooterComponent.vue'
 </script>
 
@@ -31,9 +30,10 @@ import FooterComponent from '@/components/FooterComponent.vue'
   display: flex;
   flex-direction: column;
   min-height: 100vh; /* 화면 전체 높이 */
+  padding: 5rem;
 }
 
-.layout > *:last-child {
+.wrapper :last-child {
   margin-top: auto; /* 푸터 바닥에 고정 */
 }
 </style>

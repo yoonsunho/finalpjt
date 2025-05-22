@@ -1,17 +1,24 @@
 <template>
-  <div id="app">
-        <!-- <Carousel />
-  <BannerComponent /> -->
-      <router-view></router-view>
+  <div>
+    <Carousel />
+    <BannerComponent />
+    <div class="app">
+    <RouterView />
+    </div>  
   </div>
 </template>
 
 <script>
 import axios from 'axios';
+import { RouterView, RouterLink } from 'vue-router'
 import Carousel from '@/components/Carousel.vue'
 import BannerComponent from '@/components/BannerComponent.vue'
 export default {
   name: 'App',
+  components: {
+    Carousel,
+    BannerComponent,
+  },
   data() {
     return {
       isLoggedIn: false
@@ -51,12 +58,7 @@ export default {
 
 <style>
 #app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 20px;
+  /* margin: 0 auto; */
 }
 
 header {

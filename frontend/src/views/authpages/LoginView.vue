@@ -1,36 +1,38 @@
 <template>
-  <div class="login-container">
-    <h2>로그인</h2>
-    <!-- <div v-if="successMessage" class="success-message">
-      {{ successMessage }}
-    </div> -->
-    <form @submit.prevent="onLogIn">
-      <div class="form-group">
-        <label for="email">이메일</label>
-        <input type="email" id="email" v-model="email" required>
-        <!-- <div v-if="errors.email" class="error">{{ errors.email }}</div> -->
-      </div>
-
-      <div class="form-group">
-        <label for="password">비밀번호</label>
-        <input type="password" id="password" v-model="password" required>
-        <!-- <div v-if="errors.password" class="error">{{ errors.password }}</div> -->
-      </div>
-
-      <button type="submit">로그인</button>
-      <!-- <div v-if="errors.non_field_errors" class="error general-error">
-        {{ errors.non_field_errors }}
+  <div class="login-wrapper">
+    <div class="login-container">
+      <h2>로그인</h2>
+      <!-- <div v-if="successMessage" class="success-message">
+        {{ successMessage }}
       </div> -->
-    </form>
-    
-    <!-- <div class="signup-link">
-      계정이 없으신가요? <router-link :to="{name:'SignUpView'}">회원가입</router-link>
+      <form @submit.prevent="onLogIn">
+        <div class="form-group">
+          <label for="email">이메일</label>
+          <input type="email" id="email" v-model="email" required>
+          <!-- <div v-if="errors.email" class="error">{{ errors.email }}</div> -->
+        </div>
+
+        <div class="form-group">
+          <label for="password">비밀번호</label>
+          <input type="password" id="password" v-model="password" required>
+          <!-- <div v-if="errors.password" class="error">{{ errors.password }}</div> -->
+        </div>
+
+        <button type="submit">로그인</button>
+        <!-- <div v-if="errors.non_field_errors" class="error general-error">
+          {{ errors.non_field_errors }}
+        </div> -->
+      </form>
+      
+      <!-- <div class="signup-link">
+        계정이 없으신가요? <router-link :to="{name:'SignUpView'}">회원가입</router-link>
+      </div>
+      -->
+      <!-- <div v-if="tokenInfo" class="token-info">
+        <h3>토큰 정보</h3>
+        <pre>{{ tokenInfo }}</pre>
+      </div> -->
     </div>
-     -->
-    <!-- <div v-if="tokenInfo" class="token-info">
-      <h3>토큰 정보</h3>
-      <pre>{{ tokenInfo }}</pre>
-    </div> -->
   </div>
 </template>
 
@@ -118,48 +120,68 @@
 </script>
 
 <style scoped>
+.login-wrapper {
+
+}
+
 .login-container {
   max-width: 400px;
   margin: 0 auto;
-  padding: 20px;
+  padding: 40px;
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
 }
 
 h2 {
   text-align: center;
-  margin-bottom: 20px;
+  margin-bottom: 30px;
+  font-size: 24px;
+  font-weight: 600;
 }
 
 .form-group {
-  margin-bottom: 15px;
+  margin-bottom: 20px;
 }
 
 label {
   display: block;
-  margin-bottom: 5px;
-  font-weight: bold;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: #333;
 }
 
 input {
   width: 100%;
-  padding: 8px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
+  padding: 12px 14px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+  transition: border 0.2s;
+}
+
+input:focus {
+  outline: none;
+  border-color: #2196F3;
+  box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.2);
 }
 
 button {
   width: 100%;
-  padding: 10px;
+  padding: 12px;
   background-color: #2196F3;
   color: white;
   border: none;
-  border-radius: 4px;
-  cursor: pointer;
+  border-radius: 6px;
   font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
   margin-top: 10px;
 }
 
 button:hover {
-  background-color: #0b7dda;
+  background-color: #1976D2;
 }
 
 button:disabled {
@@ -168,33 +190,36 @@ button:disabled {
 }
 
 .error {
-  color: red;
-  font-size: 12px;
-  margin-top: 5px;
+  color: #d32f2f;
+  font-size: 13px;
+  margin-top: 6px;
 }
 
 .general-error {
-  margin: 10px 0;
+  margin: 16px 0;
   text-align: center;
 }
 
 .success-message {
-  background-color: #dff2bf;
-  color: #4F8A10;
-  padding: 10px;
-  margin-bottom: 20px;
-  border-radius: 4px;
+  background-color: #e0f7e9;
+  color: #2e7d32;
+  padding: 12px;
+  margin-bottom: 24px;
+  border-radius: 6px;
   text-align: center;
+  font-weight: 500;
 }
 
 .signup-link {
   text-align: center;
-  margin-top: 20px;
+  margin-top: 24px;
+  font-size: 14px;
 }
 
 a {
   color: #2196F3;
   text-decoration: none;
+  font-weight: 500;
 }
 
 a:hover {
@@ -204,12 +229,15 @@ a:hover {
 .token-info {
   margin-top: 30px;
   padding: 15px;
-  background-color: #f5f5f5;
-  border-radius: 4px;
+  background-color: #f9f9f9;
+  border-radius: 6px;
+  font-size: 13px;
+  color: #555;
 }
 
 .token-info pre {
   white-space: pre-wrap;
-  word-break: break-all;
+  word-break: break-word;
 }
+
 </style>

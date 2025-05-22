@@ -1,6 +1,6 @@
 <template>
     <div v-if="product">
-        <h1>Deposit Detail</h1>
+        <h1 class="deposit_product_name">{{ product.deposit_product.fin_prdt_nm }}</h1>
         <h5>{{ product.id }}</h5>
         <h3>{{ product.deposit_product.fin_prdt_nm }}({{ product.deposit_product.fin_prdt_cd }})</h3>
         <strong>
@@ -53,5 +53,7 @@
 </script>
     
 <style scoped>
-
+.deposit_product_name {
+  text-align: center;
+}
 </style>

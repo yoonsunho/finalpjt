@@ -176,7 +176,7 @@ input, select {
 button {
   width: 100%;
   padding: 10px;
-  background-color: #4CAF50;
+  background-color: #2196F3;
   color: white;
   border: none;
   border-radius: 4px;
@@ -186,7 +186,7 @@ button {
 }
 
 button:hover {
-  background-color: #45a049;
+  background-color: #2574e6;
 }
 
 button:disabled {
