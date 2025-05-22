@@ -12,6 +12,7 @@ export const useAccountStore = defineStore("account", () => {
       return token.value ? true : false
     })
 
+    // 회원가입
     const signUp = function (payload) {
       console.log(payload)
       const {
@@ -40,6 +41,7 @@ export const useAccountStore = defineStore("account", () => {
       });
     };
 
+    // 로그인
    const logIn = function ({email,password}){
     axios({
       method: 'POST',
@@ -50,6 +52,7 @@ export const useAccountStore = defineStore("account", () => {
     })
     .then(res=>{
       console.log(res.data)
+      console.log("로그인 성공")
       token.value = res.data.key
       router.push({name:'MainPage'})
     })
@@ -60,9 +63,35 @@ export const useAccountStore = defineStore("account", () => {
    })
    }
 
+  //  로그아웃
+   const logOut = function(){
+    token.value = ''
+    console.log("로그아웃 되었습니다.")
+    router.push({name:'MainPage'})
+   }
+
+   // 현재 유저 정보
+   const userInfo = ref(null)
+
+   const fetchUserInfo = function(){
+    axios({
+      method: 'GET',
+      url: `${ACCOUNT_API_URL}/profile`,
+      headers: {
+        Authorization: `Token ${token.value}`
+      }
+    })
+    .then(res => {
+      userInfo.value = res.data
+    })
+    .catch(err => {
+      console.error("유저 정보를 불러오지 못했습니다", err)
+    })
+   }
+
     return {
-      signUp, logIn,
-      token, isLogin
+      signUp, logIn, logOut,
+      token, isLogin, userInfo, fetchUserInfo
     };
   },
   { persist: true }

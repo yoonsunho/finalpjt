@@ -22,8 +22,12 @@
               <RouterLink :to="{ name: 'DepositListView' }">예적금추천</RouterLink>
             </button>
             <ul :class="['dropdown-menu', { active: activeDropdown === 'deposit' }]">
-              <li><a href="#" class="dropdown-item">예금</a></li>
-              <li><a href="#" class="dropdown-item">적금</a></li>
+              <li>
+                <RouterLink :to="{ name: 'DepositListView' }" class="dropdown-item">예금</RouterLink>
+              </li>
+              <li>
+                <RouterLink :to="{ name: 'SavingListView' }" class="dropdown-item">적금</RouterLink>
+              </li>
             </ul>
           </li>
 
@@ -44,24 +48,38 @@
             <button class="nav-link dropdown-toggle" @click="toggleDropdown('etc')">
               <RouterLink :to="{ name: 'EtcPage' }">기타</RouterLink>
             </button>
-            <ul :class="['dropdown-menu', { active: activeDropdown === 'etc' }]">
-              <li><a href="#" class="dropdown-item">환율</a></li>
-              <li><a href="#" class="dropdown-item">지도</a></li>
+            <ul :class="['dropdown-menu', { active: activeDropdown === 'EtcPage' }]">
+              <li>
+                <RouterLink :to="{ name: 'ExchangePage' }" class="dropdown-item">환율</RouterLink>
+              </li>
+              <li>
+                <RouterLink :to="{ name: 'MapPage' }" class="dropdown-item">지도</RouterLink>
+              </li>
             </ul>
           </li>
         </ul>
 
         <ul class="auth-links">
-          <li class="nav-item">
-            
+          <div v-if="account.isLogin">
+            <button class="nav-link" @click="account.logOut">
+                로그아웃
+              </button>
+            <li class="nav-item">
+              <RouterLink :to="{ name: 'ProfilePage' }" class="nav-link">마이페이지</RouterLink>
+            </li>
+            <li class="nav-item">
+              
+            </li>
+          </div>
+          <div v-else>
+            <li class="nav-item">
               <RouterLink :to="{ name: 'LoginView' }" class="nav-link">로그인</RouterLink>
-            
-          </li>
-          <li class="nav-item">
-            
+            </li>
+            <li class="nav-item">
               <RouterLink :to="{ name: 'SignUpView' }" class="nav-link sign-up-btn">회원가입</RouterLink>
-            
-          </li>
+            </li>
+          </div>
+          
         </ul>
 
         <!-- 로그인상태에는 프로필 노출 -->
@@ -79,10 +97,12 @@
 
 <script setup>
 import { ref, onMounted, onBeforeUnmount } from 'vue'
-
+import { useAccountStore } from '@/stores/user'
 const isMenuOpen = ref(false)
 const activeDropdown = ref(null)
 const isDesktop = ref(window.innerWidth > 768)
+
+const account = useAccountStore()
 
 const toggleMenu = () => {
   isMenuOpen.value = !isMenuOpen.value
