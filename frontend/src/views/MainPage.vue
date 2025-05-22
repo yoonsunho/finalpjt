@@ -9,6 +9,8 @@
       </nav>
     </header>
     <main>
+      <Carousel />
+      <BannerComponent />
       <router-view></router-view>
     </main>
   </div>
@@ -16,7 +18,8 @@
 
 <script>
 import axios from 'axios';
-
+import Carousel from '@/components/Carousel.vue'
+import BannerComponent from '@/components/BannerComponent.vue'
 export default {
   name: 'App',
   data() {
