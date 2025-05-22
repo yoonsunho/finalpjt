@@ -40,25 +40,22 @@ export const useAccountStore = defineStore("account", () => {
       });
     };
 
-   const logIn = function ({email,password}){
-    axios({
-      method: 'POST',
-      url: `${ACCOUNT_API_URL}/login/`,
-      data:{
-        email, password
+    const logIn = async function ({ email, password }) {
+      try {
+        const res = await axios({
+          method: 'POST',
+          url: `${ACCOUNT_API_URL}/login/`,
+          data: { email, password }
+        });
+        console.log(res.data);
+        token.value = res.data.key;
+        router.push({ name: 'MainPage' });
+      } catch (err) {
+        console.error("❌ 로그인 실패:", err.response?.data || err);
+        throw err;  // 반드시 throw!
       }
-    })
-    .then(res=>{
-      console.log(res.data)
-      token.value = res.data.key
-      router.push({name:'MainPage'})
-    })
-    .catch((err) => {
-      console.error("❌ 로그인 실패:", err.response?.data || err);
-        
-        throw err;
-   })
-   }
+    }
+
    const logOut= function(){
     axios({
       method: 'POST',
