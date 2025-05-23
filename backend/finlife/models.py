@@ -4,8 +4,16 @@ from django.conf import settings
 # Create your models here.
 # 예금
 class DepositProducts(models.Model):
-    interest_users = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='interest_deposit',blank=True)       # 찜하기 누른 사용자
-    joined_users = models.ManyToManyField(settings.AUTH_USER_MODEL,blank=True)
+    interest_users = models.ManyToManyField(
+        settings.AUTH_USER_MODEL,
+        through='DepositInterest',  # 추가
+        related_name='interest_deposits',
+        blank=True)       # 찜하기 누른 사용자
+    joined_users = models.ManyToManyField(
+        settings.AUTH_USER_MODEL,
+        through='DepositJoin',
+        related_name='joined_deposits',
+        blank=True)
     dcls_month = models.TextField() # 공시 제출월 [YYYYMM]
     
     fin_co_no = models.TextField()  # 금융회사 코드
@@ -35,11 +43,14 @@ class DepositOptions(models.Model):
 class SavingProducts(models.Model):
     interest_users = models.ManyToManyField(
         settings.AUTH_USER_MODEL,
-        related_name='interest_saving',blank=True
+        through='SavingInterest',
+        related_name='interest_savings',
+        blank=True
     )    # 적금 상품 찜한 user
     joined_users = models.ManyToManyField(
         settings.AUTH_USER_MODEL,
-        related_name='joined_saving',
+        through='SavingJoin',
+        related_name='joined_savings',
         blank=True
     )   # 실제 가입자
 
@@ -67,4 +78,42 @@ class SavingOptions(models.Model):
     intr_rate2 = models.FloatField(null=True)   # 최고 우대금리 [소수점 2자리]
     
 
+# 찜하기 기능
+class DepositInterest(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    product = models.ForeignKey(DepositProducts, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        unique_together = ('user', 'product')  # 중복 찜하기 방지
+        db_table = 'deposit_interest'
 
+class SavingInterest(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    product = models.ForeignKey(SavingProducts, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        unique_together = ('user', 'product')
+        db_table = 'saving_interest'
+        
+# 가입 기능
+class DepositJoin(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    product = models.ForeignKey(DepositProducts, on_delete=models.CASCADE)
+    joined_at = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        unique_together = ('user', 'product')  # 중복 찜하기 방지
+        db_table = 'deposit_join'
+        
+class SavingJoin(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    product = models.ForeignKey(SavingProducts, on_delete=models.CASCADE)
+    joined_at = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        unique_together = ('user', 'product')
+        db_table = 'saving_join'
+        
+        

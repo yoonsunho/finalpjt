@@ -3,13 +3,18 @@ from django.views.decorators.http import require_http_methods,require_POST
 from django.http import JsonResponse
 from django.conf import settings
 from django.shortcuts import get_object_or_404
+from django.db.models import Count
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework import status
 import requests
 
-from .models import DepositProducts, DepositOptions, SavingProducts, SavingOptions
-from .serializers import DepositProductsSerializer, DepositOptionsSerializer, DepositListSerializer ,DepositDetailSerializer, SavingProductsSerializer, SavingOptionsSerializer, SavingListSerializer, SavingDetailSerializer
+from .models import DepositProducts, DepositOptions, SavingProducts, SavingOptions, DepositInterest, DepositJoin, SavingInterest, SavingJoin
+from .serializers import DepositProductsSerializer, DepositOptionsSerializer, DepositListSerializer ,DepositDetailSerializer, SavingProductsSerializer, SavingOptionsSerializer, SavingListSerializer, SavingDetailSerializer, DepositJoinSerializer, DepositInterestSerializer, SavingJoinSerializer, SavingInterestSerializer
+
+# Permissions
+from rest_framework.decorators import permission_classes
+from rest_framework.permissions import IsAuthenticated
 
 # Create your views here.
 
@@ -124,11 +129,21 @@ def get_saving_products(request):
     return Response('데이터 가져오기 성공!')
 
 # 예금 리스트 조회
-@api_view(['GET',])    
+@api_view(['GET'])
 def deposit_product_list(request):
-    deposit_products = DepositProducts.objects.prefetch_related('depositoptions_set').all()    
-    
-    serializer = DepositListSerializer(deposit_products, many = True)
+    deposit_products = (
+        DepositProducts.objects
+        .prefetch_related('depositoptions_set')
+        .annotate(
+            joined_count=Count('joined_users', distinct=True),
+            interest_count=Count('interest_users', distinct=True)
+        )
+    )
+    serializer = DepositListSerializer(
+        deposit_products,
+        many=True,
+        context={'request': request}
+    )
     return Response(serializer.data)
 
 @api_view(['GET'])
@@ -147,9 +162,19 @@ def deposit_detail(request,product_id):
 # 적금 리스트 조회
 @api_view(['GET'])
 def saving_product_list(request):
-    saving_products = SavingProducts.objects.prefetch_related('savingoptions_set').all()    
-
-    serializer = SavingListSerializer(saving_products, many = True)
+    saving_products = (
+        SavingProducts.objects
+        .prefetch_related('savingoptions_set')
+        .annotate(
+            joined_count=Count('joined_users', distinct=True),
+            interest_count=Count('interest_users', distinct=True)
+        )
+    )
+    serializer = SavingListSerializer(
+        saving_products,
+        many=True,
+        context={'request': request}
+    )
     return Response(serializer.data)
 
 @api_view(['GET'])
@@ -160,3 +185,139 @@ def saving_detail(request, product_id):
     )
     serializer = SavingDetailSerializer(product)
     return Response(serializer.data, status=status.HTTP_200_OK)
+
+# 찜하기, 가입하기
+# 예금 찜하기 토글
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def deposit_interest(request, product_id):
+    product = get_object_or_404(DepositProducts, id=product_id)
+    interest, created = DepositInterest.objects.get_or_create(user=request.user, product=product)
+    
+    if created:
+        # 찜하기 추가
+        serializer = DepositInterestSerializer(interest)
+        return Response({'action': 'added', 'data': serializer.data}, status=201)
+    else:
+        # 찜하기 삭제
+        interest.delete()
+        return Response({'action': 'removed'}, status=200)
+
+# 적금 찜하기 토글
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def saving_interest(request, product_id):
+    product = get_object_or_404(SavingProducts, id=product_id)
+    interest, created = SavingInterest.objects.get_or_create(user=request.user, product=product)
+    
+    if created:
+        serializer = SavingInterestSerializer(interest)
+        return Response({'action': 'added', 'data': serializer.data}, status=201)
+    else:
+        interest.delete()
+        return Response({'action': 'removed'}, status=200)
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def deposit_join(request, product_id):
+    """
+    예금 상품 가입 토글 (가입/가입 취소)
+    """
+    product = get_object_or_404(DepositProducts, id=product_id)
+    join, created = DepositJoin.objects.get_or_create(
+        user=request.user,
+        product=product
+    )
+    if created:
+        # 가입 완료
+        serializer = DepositJoinSerializer(join)
+        join_count = DepositJoin.objects.filter(product=product).count()
+        return Response({
+            'message': '가입 완료',
+            'action': 'joined',
+            'join_count': join_count,
+            'data': serializer.data
+        }, status=status.HTTP_201_CREATED)
+    else:
+        # 이미 가입되어 있으면 취소(삭제)
+        join.delete()
+        join_count = DepositJoin.objects.filter(product=product).count()
+        return Response({
+            'message': '가입 취소',
+            'action': 'canceled',
+            'join_count': join_count
+        }, status=status.HTTP_200_OK)
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def saving_join(request, product_id):
+    """
+    적금 상품 가입 토글 (가입/가입 취소)
+    """
+    product = get_object_or_404(SavingProducts, id=product_id)
+    join, created = SavingJoin.objects.get_or_create(
+        user=request.user,
+        product=product
+    )
+    if created:
+        # 가입 완료
+        serializer = SavingJoinSerializer(join)
+        join_count = SavingJoin.objects.filter(product=product).count()
+        return Response({
+            'message': '가입 완료',
+            'action': 'joined',
+            'join_count': join_count,
+            'data': serializer.data
+        }, status=status.HTTP_201_CREATED)
+    else:
+        # 이미 가입되어 있으면 취소(삭제)
+        join.delete()
+        join_count = SavingJoin.objects.filter(product=product).count()
+        return Response({
+            'message': '가입 취소',
+            'action': 'canceled',
+            'join_count': join_count
+        }, status=status.HTTP_200_OK)
+
+        
+# 내 목록 조회
+# 찜 상품 목록
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def my_interests(request):
+    deposit_interests = DepositInterest.objects.filter(
+        user=request.user
+    ).select_related('product')
+    
+    saving_interests = SavingInterest.objects.filter(
+        user=request.user
+    ).select_related('product')
+    
+    deposit_serializer = DepositInterestSerializer(deposit_interests, many=True)
+    saving_serializer = SavingInterestSerializer(saving_interests, many=True)
+    
+    return Response({
+        'deposits': deposit_serializer.data,
+        'savings': saving_serializer.data
+    })
+    
+# 가입 상품 목록
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def my_joins(request):
+    deposit_joins = DepositJoin.objects.filter(
+        user=request.user
+    ).select_related('product')
+    
+    saving_joins = SavingJoin.objects.filter(
+        user=request.user
+    ).select_related('product')
+    
+    deposit_serializer = DepositJoinSerializer(deposit_joins, many=True)
+    saving_serializer = SavingJoinSerializer(saving_joins, many=True)
+    
+    return Response({
+        'deposits': deposit_serializer.data,
+        'savings': saving_serializer.data
+    })
+    
