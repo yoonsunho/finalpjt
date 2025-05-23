@@ -71,10 +71,27 @@ class DepositDetailSerializer(serializers.ModelSerializer):
         many=True,
         read_only=True
     )
+    
+    is_interested = serializers.SerializerMethodField()
+    is_joined = serializers.SerializerMethodField()
+    joined_count = serializers.IntegerField(read_only=True)
+    interest_count = serializers.IntegerField(read_only=True)
         
     class Meta:
         model = DepositProducts
         fields = '__all__'          # # 모든 필드 + options + max_intr_rate2
+        
+    def get_is_interested(self, obj):
+        request = self.context.get('request')
+        if request and request.user.is_authenticated:
+            return DepositInterest.objects.filter(user=request.user, product=obj).exists()
+        return False
+
+    def get_is_joined(self, obj):
+        request = self.context.get('request')
+        if request and request.user.is_authenticated:
+            return DepositJoin.objects.filter(user=request.user, product=obj).exists()
+        return False
         
         
 # saving
@@ -137,6 +154,7 @@ class SavingListSerializer(serializers.ModelSerializer):
         if request and request.user.is_authenticated:
             return SavingJoin.objects.filter(user=request.user, product=obj).exists()
         return False
+    
 
 
 class SavingDetailSerializer(serializers.ModelSerializer):
@@ -146,10 +164,27 @@ class SavingDetailSerializer(serializers.ModelSerializer):
         many=True,
         read_only=True
     )
+    
+    is_interested = serializers.SerializerMethodField()
+    is_joined = serializers.SerializerMethodField()
+    joined_count = serializers.IntegerField(read_only=True)
+    interest_count = serializers.IntegerField(read_only=True)
 
     class Meta:
         model = SavingProducts
         fields = '__all__'  # 모든 상품 필드 + options
+        
+    def get_is_interested(self, obj):
+        request = self.context.get('request')
+        if request and request.user.is_authenticated:
+            return SavingInterest.objects.filter(user=request.user, product=obj).exists()
+        return False
+
+    def get_is_joined(self, obj):
+        request = self.context.get('request')
+        if request and request.user.is_authenticated:
+            return SavingJoin.objects.filter(user=request.user, product=obj).exists()
+        return False
         
         
 # 찜하기 serializer
