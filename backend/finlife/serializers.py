@@ -19,27 +19,43 @@ class DepositOptionsSerializer(serializers.ModelSerializer):
 # 전체 리스트에 띄울애들
 class DepositListSerializer(serializers.ModelSerializer):
     
-    # 인라인 방식으로 변경(option에서 읽어올 product정보)
-    deposit_product = serializers.SerializerMethodField()
+    # 옵션 중 최대 우대 금리
+    max_intr_rate2 = serializers.SerializerMethodField()
+    intr_rate_type_nm = serializers.SerializerMethodField()  
+
     
     class Meta:
-        model = DepositOptions
-        fields =('id','save_trm','intr_rate2','deposit_product',)
+        model = DepositProducts
+        fields = (
+            'id',
+            'kor_co_nm',
+            'fin_prdt_nm',
+            'max_intr_rate2',
+            'intr_rate_type_nm',
+        )
+        
+    def get_max_intr_rate2(self,obj):
+        
+        option = obj.depositoptions_set.order_by('-intr_rate2').first()
+        return option.intr_rate2 if option else None
     
-    def get_deposit_product(self, obj):
-        return {
-            "kor_co_nm": obj.deposit_product.kor_co_nm,
-            "fin_prdt_nm": obj.deposit_product.fin_prdt_nm
-        }
+    def get_intr_rate_type_nm(self, obj):
+        option = obj.depositoptions_set.order_by('-intr_rate2').first()
+        return option.intr_rate_type_nm if option else None
+    
     
 
 class DepositDetailSerializer(serializers.ModelSerializer):
-
-    deposit_product = DepositProductsSerializer(read_only=True)
+    
+    options = DepositOptionsSerializer(
+        source='depositoptions_set',  # ✅ 모델 관계명 (기본값: depositoptions_set)
+        many=True,
+        read_only=True
+    )
         
     class Meta:
-        model = DepositOptions
-        fields = '__all__'
+        model = DepositProducts
+        fields = '__all__'          # # 모든 필드 + options + max_intr_rate2
         
         
 # saving
@@ -59,24 +75,38 @@ class SavingOptionsSerializer(serializers.ModelSerializer):
 # 전체 리스트에 띄울애들
 class SavingListSerializer(serializers.ModelSerializer):
     
-    # 인라인 방식으로 변경(option에서 읽어올 product정보)
-    saving_product = serializers.SerializerMethodField()
+    max_intr_rate2 = serializers.SerializerMethodField()
+    intr_rate_type_nm = serializers.SerializerMethodField()  
     
     class Meta:
-        model = SavingOptions
-        fields =('id','rsrv_type_nm','save_trm','intr_rate2','saving_product',)
-    
-    def get_saving_product(self, obj):
-        return {
-            "kor_co_nm": obj.saving_product.kor_co_nm,
-            "fin_prdt_nm": obj.saving_product.fin_prdt_nm
-        }
+        model = SavingProducts
+        fields = (
+            'id',
+            'kor_co_nm',
+            'fin_prdt_nm',
+            'max_intr_rate2',
+            'intr_rate_type_nm',
+        )
+        
+    def get_max_intr_rate2(self, obj):
+        option = obj.savingoptions_set.order_by('-intr_rate2').first()
+        return option.intr_rate2 if option else None
+
+    def get_intr_rate_type_nm(self, obj):
+        option = obj.savingoptions_set.order_by('-intr_rate2').first()
+        return option.intr_rate_type_nm if option else None
+
+        
     
 
 class SavingDetailSerializer(serializers.ModelSerializer):
 
-    saving_product = SavingProductsSerializer(read_only=True)
-        
+    options = SavingOptionsSerializer(
+        source='savingoptions_set',  # 기본 related_name
+        many=True,
+        read_only=True
+    )
+
     class Meta:
-        model = SavingOptions
-        fields = '__all__'
+        model = SavingProducts
+        fields = '__all__'  # 모든 상품 필드 + options
