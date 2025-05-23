@@ -89,7 +89,7 @@ label {
   display: block;
   margin-bottom: 8px;
   font-weight: 500;
-  color: #333;
+  color: #191f28;
 }
 
 input {
@@ -173,7 +173,7 @@ a:hover {
   background-color: #f9f9f9;
   border-radius: 6px;
   font-size: 13px;
-  color: #555;
+  color: #191f28;
 }
 
 .token-info pre {

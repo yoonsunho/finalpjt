@@ -2,9 +2,10 @@
   <nav class="navbar">
     <div class="container">
       <div class="nav-brand">
-        <RouterLink :to="{ name: 'MainPage' }"
-          ><img src="" alt="선호바보개_로고" class="nav-logo"
-        /></RouterLink>
+        <RouterLink :to="{ name: 'MainPage' }">
+          <!-- <img src="" alt="선호바보개_로고" class="nav-logo"/> -->
+          <p class="logo-title">sunho.</p>
+        </RouterLink>
       </div>
 
       <button class="menu-toggle" @click="toggleMenu" aria-label="메뉴 열기">
@@ -188,6 +189,11 @@ onMounted(() => {
   object-fit: contain;
 }
 
+.logo-title {
+  font-weight: 900;
+  /* 800 ? */
+  font-size: 1.5rem;
+}
 .brand-text {
   font-size: 1.25rem;
   font-weight: 600;
@@ -234,7 +240,7 @@ onMounted(() => {
 
 .nav-link {
   padding: 0.5rem 0.75rem;
-  color: #000;
+  color: #191f28;
   text-decoration: none;
   font-size: 1rem;
   font-weight: 500;
@@ -272,7 +278,7 @@ onMounted(() => {
   align-items: center;
   gap: 0.25rem;
   padding: 0.5rem 0.75rem;
-  color: #000;
+  color: #191f28;
   font-weight: 500;
 }
 
@@ -305,7 +311,7 @@ onMounted(() => {
 
 .dropdown-item {
   padding: 0.5rem 1rem;
-  color: #000;
+  color: #191f28;
   text-decoration: none;
   display: block;
   transition: background-color 0.2s ease;
@@ -364,7 +370,7 @@ onMounted(() => {
     border-radius: 0;
     font-weight: normal;
     background-color: transparent;
-    color: black;
+    color: #191f28;
   }
   .sign-up-btn:hover {
     color: #2574e6;

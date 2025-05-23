@@ -109,7 +109,7 @@ onMounted(() => {
 .article-title {
   font-size: 2rem;
   font-weight: 700;
-  color: #111827;
+  color: #191f28;
   margin-bottom: 0.25rem;
 }
 

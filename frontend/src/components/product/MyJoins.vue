@@ -1,22 +1,22 @@
 <template>
   <div class="my-joins">
     <h1>내 가입 목록</h1>
-      <!-- 예금 가입 목록 -->
-      <div class="section" v-if="depositJoins.length > 0">
-        <h2>예금 상품</h2>
-        <div class="products-list">
-          <div v-for="item in depositJoins" :key="item.id" class="product-item">
-            <div class="product-info">
-              <h3>{{ item.product.fin_prdt_nm }}</h3>
-              <p>{{ item.product.kor_co_nm }}</p>
-              <small>가입일: {{ formatDate(item.joined_at) }}</small>
-            </div>
-            <button @click="cancelJoin('deposit', item.product.id)" class="btn-cancel">
-              가입 취소
-            </button>
+    <!-- 예금 가입 목록 -->
+    <div class="section" v-if="depositJoins.length > 0">
+      <h2>예금 상품</h2>
+      <div class="products-list">
+        <div v-for="item in depositJoins" :key="item.id" class="product-item">
+          <div class="product-info">
+            <h3>{{ item.product.fin_prdt_nm }}</h3>
+            <p>{{ item.product.kor_co_nm }}</p>
+            <small>가입일: {{ formatDate(item.joined_at) }}</small>
           </div>
+          <button @click="cancelJoin('deposit', item.product.id)" class="btn-cancel">
+            가입 취소
+          </button>
         </div>
-      
+      </div>
+
       <!-- 적금 가입 목록 -->
       <div class="section" v-if="savingJoins.length > 0">
         <h2>적금 상품</h2>
@@ -33,7 +33,7 @@
           </div>
         </div>
       </div>
-      
+
       <!-- 가입한 상품이 없을 때 -->
       <div v-if="depositJoins.length === 0 && savingJoins.length === 0" class="no-data">
         <p>가입한 상품이 없습니다.</p>
@@ -59,10 +59,10 @@ const getMyJoins = async () => {
   try {
     const response = await axios.get(`${API_URL}/finlife/my-joins/`, {
       headers: {
-        Authorization: `Token ${accountStore.token}`
-      }
+        Authorization: `Token ${accountStore.token}`,
+      },
     })
-    
+
     depositJoins.value = response.data.deposits || []
     savingJoins.value = response.data.savings || []
   } catch (error) {
@@ -77,23 +77,28 @@ const cancelJoin = async (type, productId) => {
   if (!confirm('정말 가입을 취소하시겠습니까?')) {
     return
   }
-  
+
   try {
-    const url = type === 'deposit' 
-      ? `${API_URL}/finlife/deposit/${productId}/join/`
-      : `${API_URL}/finlife/saving/${productId}/join/`
-    
-    await axios.post(url, {}, {
-      headers: {
-        Authorization: `Token ${accountStore.token}`
-      }
-    })
-    
+    const url =
+      type === 'deposit'
+        ? `${API_URL}/finlife/deposit/${productId}/join/`
+        : `${API_URL}/finlife/saving/${productId}/join/`
+
+    await axios.post(
+      url,
+      {},
+      {
+        headers: {
+          Authorization: `Token ${accountStore.token}`,
+        },
+      },
+    )
+
     // 목록에서 제거
     if (type === 'deposit') {
-      depositJoins.value = depositJoins.value.filter(item => item.product.id !== productId)
+      depositJoins.value = depositJoins.value.filter((item) => item.product.id !== productId)
     } else {
-      savingJoins.value = savingJoins.value.filter(item => item.product.id !== productId)
+      savingJoins.value = savingJoins.value.filter((item) => item.product.id !== productId)
     }
   } catch (error) {
     console.error('가입 취소 실패:', error)
@@ -104,12 +109,12 @@ const cancelJoin = async (type, productId) => {
 // 날짜 포맷팅
 const formatDate = (dateString) => {
   if (!dateString) return '정보 없음'
-  
+
   const date = new Date(dateString)
   return date.toLocaleDateString('ko-KR', {
     year: 'numeric',
     month: 'long',
-    day: 'numeric'
+    day: 'numeric',
   })
 }
 
@@ -135,7 +140,7 @@ h1 {
   text-align: center;
   padding: 50px;
   font-size: 1.1rem;
-  color: #666;
+  color: #191f28;
 }
 
 .section {
@@ -160,7 +165,7 @@ h1 {
   border-radius: 8px;
   padding: 20px;
   background: white;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -173,12 +178,12 @@ h1 {
 }
 
 .product-info p {
-  color: #666;
+  color: #191f28;
   margin: 5px 0;
 }
 
 .product-info small {
-  color: #999;
+  color: #191f28;
   font-size: 0.85rem;
 }
 
@@ -199,7 +204,7 @@ h1 {
 .no-data {
   text-align: center;
   padding: 50px;
-  color: #666;
+  color: #191f28;
 }
 
 .no-data p {

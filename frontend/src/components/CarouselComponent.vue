@@ -147,7 +147,7 @@ const slides = [
 
 .cta-button {
   background-color: white;
-  color: black;
+  color: #191F28;
   padding: 0.5rem 1.4rem;
   border: none;
   border-radius: 9999px;

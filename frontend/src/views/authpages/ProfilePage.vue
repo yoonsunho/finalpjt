@@ -19,7 +19,7 @@
         <ProfileInfo />
       </div>
       <div v-if="activeTab === '찜한 상품'">
-       <MyInterests />
+        <MyInterests />
       </div>
       <div v-if="activeTab === '가입한 상품'">
         <MyJoins />
@@ -64,7 +64,7 @@ const activeTab = ref('회원정보') // 초기메뉴
   display: flex;
   /* box-shadow: inset 0 0 3px orange; */
   padding: 20px 0 0 0;
-  border-top: 1px solid #666;
+  border-top: 1px solid #191f28;
 }
 
 .profile-tab-category {
@@ -72,7 +72,7 @@ const activeTab = ref('회원정보') // 초기메뉴
   gap: 10px;
   padding-right: 20px;
   /* box-shadow: inset 0 0 3px dodgerblue; */
-  border-right: 1px solid #666;
+  border-right: 1px solid #191f28;
   gap: 16px;
 }
 .profile-category-detail {
@@ -86,11 +86,11 @@ const activeTab = ref('회원정보') // 초기메뉴
   margin-top: 20px;
   padding: 10px;
 
-  background-color: #999;
+  background-color: #191f28;
 }
 
 button.active {
   font-weight: bold;
-  border-bottom: 2px solid black;
+  border-bottom: 2px solid #191f28;
 }
 </style>

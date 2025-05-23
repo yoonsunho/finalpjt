@@ -1,18 +1,18 @@
 <template>
   <div class="my-interests">
     <h1>내 찜 목록</h1>
-      <div class="section" v-if="depositInterests.length > 0">
-        <h2>예금 상품</h2>
-        <div class="products-list">
-          <div v-for="item in depositInterests" :key="item.id" class="product-item">
-            <h3>{{ item.product.fin_prdt_nm }}</h3>
-            <p>{{ item.product.kor_co_nm }}</p>
-            <button @click="removeLike('deposit', item.product.id)" class="btn-remove">
-              찜 해제
-            </button>
-          </div>
+    <div class="section" v-if="depositInterests.length > 0">
+      <h2>예금 상품</h2>
+      <div class="products-list">
+        <div v-for="item in depositInterests" :key="item.id" class="product-item">
+          <h3>{{ item.product.fin_prdt_nm }}</h3>
+          <p>{{ item.product.kor_co_nm }}</p>
+          <button @click="removeLike('deposit', item.product.id)" class="btn-remove">
+            찜 해제
+          </button>
         </div>
-      
+      </div>
+
       <!-- 적금 찜 목록 -->
       <div class="section" v-if="savingInterests.length > 0">
         <h2>적금 상품</h2>
@@ -26,7 +26,7 @@
           </div>
         </div>
       </div>
-      
+
       <!-- 찜한 상품이 없을 때 -->
       <div v-if="depositInterests.length === 0 && savingInterests.length === 0" class="no-data">
         <p>찜한 상품이 없습니다.</p>
@@ -52,10 +52,10 @@ const getMyInterests = async () => {
   try {
     const response = await axios.get(`${API_URL}/finlife/my-interests/`, {
       headers: {
-        Authorization: `Token ${accountStore.token}`
-      }
+        Authorization: `Token ${accountStore.token}`,
+      },
     })
-    
+
     depositInterests.value = response.data.deposits || []
     savingInterests.value = response.data.savings || []
   } catch (error) {
@@ -68,21 +68,28 @@ const getMyInterests = async () => {
 // 찜 해제
 const removeLike = async (type, productId) => {
   try {
-    const url = type === 'deposit' 
-      ? `${API_URL}/finlife/deposit/${productId}/interest/`
-      : `${API_URL}/finlife/saving/${productId}/interest/`
-    
-    await axios.post(url, {}, {
-      headers: {
-        Authorization: `Token ${accountStore.token}`
-      }
-    })
-    
+    const url =
+      type === 'deposit'
+        ? `${API_URL}/finlife/deposit/${productId}/interest/`
+        : `${API_URL}/finlife/saving/${productId}/interest/`
+
+    await axios.post(
+      url,
+      {},
+      {
+        headers: {
+          Authorization: `Token ${accountStore.token}`,
+        },
+      },
+    )
+
     // 목록에서 제거
     if (type === 'deposit') {
-      depositInterests.value = depositInterests.value.filter(item => item.product.id !== productId)
+      depositInterests.value = depositInterests.value.filter(
+        (item) => item.product.id !== productId,
+      )
     } else {
-      savingInterests.value = savingInterests.value.filter(item => item.product.id !== productId)
+      savingInterests.value = savingInterests.value.filter((item) => item.product.id !== productId)
     }
   } catch (error) {
     console.error('찜 해제 실패:', error)
@@ -112,7 +119,7 @@ h1 {
   text-align: center;
   padding: 50px;
   font-size: 1.1rem;
-  color: #666;
+  color: #191f28;
 }
 
 .section {
@@ -137,7 +144,7 @@ h1 {
   border-radius: 8px;
   padding: 20px;
   background: white;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -150,7 +157,7 @@ h1 {
 }
 
 .product-item p {
-  color: #666;
+  color: #191f28;
   margin: 0;
 }
 
@@ -171,7 +178,7 @@ h1 {
 .no-data {
   text-align: center;
   padding: 50px;
-  color: #666;
+  color: #191f28;
 }
 
 .no-data p {

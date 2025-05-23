@@ -137,8 +137,8 @@ watch(
 
 .like,
 .liked {
-  color: black;
-  border: 2px solid black;
+  color: #191f28;
+  border: 2px solid #191f28;
   padding: 5px;
   border-radius: 20px;
 }
@@ -150,5 +150,4 @@ watch(
   padding: 5px;
   color: white;
 }
-
 </style>

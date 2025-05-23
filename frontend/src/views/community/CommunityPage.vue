@@ -62,14 +62,14 @@ onMounted(() => {
   border-collapse: collapse;
   font-family: 'Segoe UI', sans-serif;
   font-size: 15px;
-  color: #333;
+  color: #191f28;
 }
 
 .custom-table thead {
   background-color: #f1f5f9;
   text-transform: uppercase;
   font-size: 13px;
-  color: #555;
+  color: #191f28;
 }
 
 .custom-table th,

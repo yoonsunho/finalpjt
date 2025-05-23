@@ -127,9 +127,9 @@ const save = async () => {
   background-color: dodgerblue;
 }
 .button-save {
-  background-color: #666;
+  background-color: #191f28;
 }
 input {
-  border: 1px solid black;
+  border: 1px solid #191f28;
 }
 </style>
