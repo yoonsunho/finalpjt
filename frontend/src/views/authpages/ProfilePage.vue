@@ -19,10 +19,10 @@
         <ProfileInfo />
       </div>
       <div v-if="activeTab === '찜한 상품'">
-        <ProfileInfo />
+       <MyInterests />
       </div>
       <div v-if="activeTab === '가입한 상품'">
-        <ProfileInfo />
+        <MyJoins />
       </div>
     </div>
   </div>
@@ -32,6 +32,8 @@
 import ProfileInfo from '@/views/authpages/ProfileInfo.vue'
 import { ref, computed } from 'vue'
 import { useAccountStore } from '@/stores/user'
+import MyInterests from '@/components/product/MyInterests.vue'
+import MyJoins from '@/components/product/MyJoins.vue'
 const accountStore = useAccountStore()
 const user = computed(() => accountStore.userInfo)
 const activeTab = ref('회원정보') // 초기메뉴

@@ -131,48 +131,71 @@ def get_saving_products(request):
 # 예금 리스트 조회
 @api_view(['GET'])
 def deposit_product_list(request):
-    deposit_products = (
+    queryset = DepositProducts.objects.all().annotate(
+        interest_count=Count('interest_users', distinct=True),
+        joined_count=Count('joined_users', distinct=True)
+    )
+
+    # 필터링
+    intr_rate_type_nm = request.query_params.get('intr_rate_type_nm')
+    kor_co_nm = request.query_params.get('kor_co_nm')
+    if intr_rate_type_nm:
+        queryset = queryset.filter(depositoptions__intr_rate_type_nm=intr_rate_type_nm)
+    if kor_co_nm:
+        queryset = queryset.filter(kor_co_nm__icontains=kor_co_nm)
+
+    # 정렬
+    ordering = request.query_params.get('ordering')
+    allowed_ordering = ['interest_count', '-interest_count', 'joined_count', '-joined_count']
+    if ordering in allowed_ordering:
+        queryset = queryset.order_by(ordering)
+    else:
+        queryset = queryset.order_by('id')  # 기본 정렬
+
+    serializer = DepositListSerializer(queryset, many=True)
+    return Response(serializer.data)
+
+@api_view(['GET'])
+def deposit_detail(request, product_id):
+    product = get_object_or_404(
         DepositProducts.objects
         .prefetch_related('depositoptions_set')
         .annotate(
             joined_count=Count('joined_users', distinct=True),
             interest_count=Count('interest_users', distinct=True)
-        )
-    )
-    serializer = DepositListSerializer(
-        deposit_products,
-        many=True,
-        context={'request': request}
-    )
-    return Response(serializer.data)
-
-@api_view(['GET'])
-def deposit_detail(request,product_id):
-    # 상품 조회 (옵션 함께 가져오기)
-    product = get_object_or_404(
-        DepositProducts.objects.prefetch_related('depositoptions_set'), 
+        ),
         id=product_id
     )
-    
-    # 시리얼라이저로 데이터 변환
-    serializer = DepositDetailSerializer(product)
-    
+    serializer = DepositDetailSerializer(product, context={'request': request})
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 # 적금 리스트 조회
 @api_view(['GET'])
 def saving_product_list(request):
-    saving_products = (
-        SavingProducts.objects
-        .prefetch_related('savingoptions_set')
-        .annotate(
-            joined_count=Count('joined_users', distinct=True),
-            interest_count=Count('interest_users', distinct=True)
-        )
+    queryset = SavingProducts.objects.annotate(
+        interest_count=Count('interest_users', distinct=True),
+        joined_count=Count('joined_users', distinct=True)
     )
+
+    # 필터링 처리
+    intr_rate_type_nm = request.query_params.get('intr_rate_type_nm')
+    kor_co_nm = request.query_params.get('kor_co_nm')
+    if intr_rate_type_nm:
+        queryset = queryset.filter(savingoptions__intr_rate_type_nm=intr_rate_type_nm)
+    if kor_co_nm:
+        queryset = queryset.filter(kor_co_nm__icontains=kor_co_nm)
+
+    # 정렬 처리
+    ordering = request.query_params.get('ordering')
+    allowed_ordering = ['interest_count', '-interest_count', 'joined_count', '-joined_count']
+    if ordering in allowed_ordering:
+        queryset = queryset.order_by(ordering)
+    else:
+        queryset = queryset.order_by('id')  # 기본 정렬
+
     serializer = SavingListSerializer(
-        saving_products,
-        many=True,
+        queryset.prefetch_related('savingoptions_set'), 
+        many=True, 
         context={'request': request}
     )
     return Response(serializer.data)
@@ -180,10 +203,15 @@ def saving_product_list(request):
 @api_view(['GET'])
 def saving_detail(request, product_id):
     product = get_object_or_404(
-        SavingProducts.objects.prefetch_related('savingoptions_set'),
+        SavingProducts.objects
+        .prefetch_related('savingoptions_set')
+        .annotate(
+            joined_count=Count('joined_users', distinct=True),
+            interest_count=Count('interest_users', distinct=True)
+        ),
         id=product_id
     )
-    serializer = SavingDetailSerializer(product)
+    serializer = SavingDetailSerializer(product, context={'request': request})
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 # 찜하기, 가입하기

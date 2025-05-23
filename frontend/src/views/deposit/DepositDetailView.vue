@@ -150,4 +150,5 @@ watch(
   padding: 5px;
   color: white;
 }
+
 </style>
