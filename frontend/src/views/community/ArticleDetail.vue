@@ -1,33 +1,39 @@
 <template>
-  <div class="article-container">
+  <div class="article-container" v-if="store.articleDetail">
     <div class="article-header">
-      <p class="article-category"># 적금가입후기</p>
-      <h1 class="article-title">제목입니다제목입니다제목입닏</h1>
-      <p class="username">이다예바보</p>
-      <p class="created_at">2025-10-20</p>
+      <p class="article-category"># {{ store.articleDetail.category }}</p>
+      <h1 class="article-title">{{ store.articleDetail.title }}</h1>
+      <p class="username">{{ store.articleDetail.user }}</p>
+      <p class="created_at">{{ store.articleDetail.created_at }}</p>
     </div>
     <div class="article-content">
-      <p>
-        Lorem, ipsum dolor sit amet consectetur adipisicing elit. Nostrum, aliquid odit, nulla non
-        vero ipsam rem aspernatur molestias illum eos accusantium porro amet ratione sit in quasi
-        consequatur voluptate. Atque.Lorem, ipsum dolor sit amet consectetur adipisicing elit.
-        Nostrum, aliquid odit, nulla non vero ipsam rem aspernatur molestias illum eos accusantium
-        porro amet ratione sit in quasi consequatur voluptate. Atque.Lorem, ipsum dolor sit amet
-        consectetur adipisicing elit. Nostrum, aliquid odit, nulla non vero ipsam rem aspernatur
-        molestias illum eos accusantium porro amet ratione sit in quasi consequatur voluptate.
-        Atque.
-      </p>
+      <p>{{ store.articleDetail.content }}</p>
     </div>
-    <div class="article-footer"></div>
+    <div class="article-footer">
+      <button type="button" class="like-article" @click="toggleLike">
+        좋아요 {{ store.articleDetail.likes_count }}
+      </button>
+    </div>
     <hr />
     <CommentComponent />
-    <div></div>
   </div>
 </template>
 
 <script setup>
 import CommentComponent from '@/components/CommentComponent.vue'
 // import { ref } from 'vue'
+import { onMounted } from 'vue'
+import { useRoute } from 'vue-router'
+import { useArticleStore } from '@/stores/article'
+
+const route = useRoute()
+const store = useArticleStore()
+
+const articleId = route.params.id
+
+onMounted(() => {
+  store.getArticleDetail(articleId)
+})
 </script>
 
 <style scoped>
@@ -49,5 +55,9 @@ h1 {
 .created_at {
   color: #888;
   font-size: 0.8rem;
+}
+.like-article {
+  background-color: dodgerblue;
+  color: white;
 }
 </style>

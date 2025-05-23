@@ -62,14 +62,14 @@ const router = createRouter({
       component: SavingDetailView,
     },
     {
-    path: '/finlife/my-interests',
-    name: 'MyInterests',  
-    component: MyInterests,
+      path: '/finlife/my-interests',
+      name: 'MyInterests',
+      component: MyInterests,
     },
     {
-    path: '/finlife/my-joins',
-    name: 'MyJoins',  
-    component: MyJoins,
+      path: '/finlife/my-joins',
+      name: 'MyJoins',
+      component: MyJoins,
     },
     {
       path: '/profile',
@@ -87,7 +87,7 @@ const router = createRouter({
       component: CommunityPage,
     },
     {
-      path: '/community/articles/:id',
+      path: '/community/:id',
       name: 'ArticleDetail',
       component: ArticleDetail,
     },
@@ -111,7 +111,6 @@ const router = createRouter({
       name: 'MapPage',
       component: MapPage,
     },
-
   ],
 })
 
