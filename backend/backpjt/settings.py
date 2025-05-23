@@ -43,6 +43,7 @@ REST_FRAMEWORK = {
 INSTALLED_APPS = [
     'finlife',
     'accounts',
+    'community',
     'rest_framework',
     'rest_framework.authtoken',
     'dj_rest_auth', # 추가
