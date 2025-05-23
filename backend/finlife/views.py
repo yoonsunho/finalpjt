@@ -147,16 +147,17 @@ def deposit_product_list(request):
     return Response(serializer.data)
 
 @api_view(['GET'])
-def deposit_detail(request,product_id):
-    # 상품 조회 (옵션 함께 가져오기)
+def deposit_detail(request, product_id):
     product = get_object_or_404(
-        DepositProducts.objects.prefetch_related('depositoptions_set'), 
+        DepositProducts.objects
+        .prefetch_related('depositoptions_set')
+        .annotate(
+            joined_count=Count('joined_users', distinct=True),
+            interest_count=Count('interest_users', distinct=True)
+        ),
         id=product_id
     )
-    
-    # 시리얼라이저로 데이터 변환
-    serializer = DepositDetailSerializer(product)
-    
+    serializer = DepositDetailSerializer(product, context={'request': request})
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 # 적금 리스트 조회
@@ -180,10 +181,15 @@ def saving_product_list(request):
 @api_view(['GET'])
 def saving_detail(request, product_id):
     product = get_object_or_404(
-        SavingProducts.objects.prefetch_related('savingoptions_set'),
+        SavingProducts.objects
+        .prefetch_related('savingoptions_set')
+        .annotate(
+            joined_count=Count('joined_users', distinct=True),
+            interest_count=Count('interest_users', distinct=True)
+        ),
         id=product_id
     )
-    serializer = SavingDetailSerializer(product)
+    serializer = SavingDetailSerializer(product, context={'request': request})
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 # 찜하기, 가입하기
