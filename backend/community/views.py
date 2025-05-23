@@ -5,7 +5,7 @@ from rest_framework import status
 # Permissions
 from rest_framework.decorators import permission_classes
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
-from django.db.models import Count
+from django.db.models import Count,Exists, OuterRef,Value
 
 from django.shortcuts import get_object_or_404
 
@@ -20,9 +20,20 @@ from .serializers import ArticleSerializer, CommentSerializer, LikeSerializer
 def article_list_create(request):
     # 게시글 조회
     if request.method == 'GET':
+        # 현재 사용자 (로그인 여부 확인)
+        user = request.user if request.user.is_authenticated else None
+
+        # annotate로 likes_count와 is_liked 추가
         queryset = Article.objects.annotate(
-            likes_count=Count('likes')
+            likes_count=Count('likes'),
+            is_liked=Exists(
+                Like.objects.filter(
+                    article=OuterRef('pk'),  # ⚠️ Like 모델의 FK가 article인지 확인!
+                    user=user
+                )
+            ) if user else Value(False)  # 비회원은 무조건 False
         ).select_related('user')
+
         serializer = ArticleSerializer(queryset, many=True)
         return Response(serializer.data)
     
@@ -37,7 +48,24 @@ def article_list_create(request):
 @api_view(['GET', 'PUT', 'DELETE',])
 @permission_classes([IsAuthenticatedOrReadOnly])
 def article_detail(request, article_id):
-    article = get_object_or_404(Article, id=article_id)
+    # article = get_object_or_404(Article, id=article_id)
+
+    # 현재 사용자 (로그인 여부 확인)
+    user = request.user if request.user.is_authenticated else None
+
+    # annotate로 likes_count와 is_liked 추가
+    article = get_object_or_404(
+        Article.objects.annotate(
+            likes_count=Count('likes'),
+            is_liked=Exists(
+                Like.objects.filter(
+                    article=OuterRef('pk'),  # ⚠️ Like 모델의 FK가 article인지 확인!
+                    user=user
+                )
+            ) if user else Value(False)  # 비회원은 무조건 False
+        ),
+        id=article_id
+    )
 
     if request.method == 'GET':
         article.likes_count = article.likes.count()

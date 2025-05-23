@@ -4,6 +4,7 @@ from .models import Article, Comment, Like
 class ArticleSerializer(serializers.ModelSerializer):
     
     likes_count = serializers.IntegerField(read_only=True)  # annotate 결과 사용
+    is_liked = serializers.BooleanField(read_only=True)
     user = serializers.ReadOnlyField(source = 'user.nickname')
     
     class Meta:
