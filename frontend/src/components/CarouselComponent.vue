@@ -9,7 +9,11 @@
   >
     <swiper-slide v-for="(slide, index) in slides" :key="index">
       <div class="slide-container">
-        <img :src="slide.src" :alt="slide.text.replace(/<br\s*\/?>/g, ' ')" />
+        <img
+          :src="slide.src"
+          :alt="slide.text.replace(/<br\s*\/?>/g, ' ')"
+          :style="slide.positionStyle"
+        />
         <div class="overlay"></div>
 
         <div class="content-wrapper">
@@ -36,25 +40,34 @@ const modules = [Autoplay]
 
 const slides = [
   {
-    src: new URL('@/assets/images/image1.jpg', import.meta.url).href,
-    text: '당신에게 딱 맞는<br>점심 메뉴를<br>추천해드립니다..바로!',
-    subtext: '부가설명을 넣는 서브텍스트입니다.',
+    src: new URL('@/assets/images/image1.png', import.meta.url).href,
+    text: '여러 가지 예금 상품을 한눈에 비교해요!',
+    subtext: '금리, 조건 비교하고 가입까지 한 번에',
+    positionStyle: 'object-position: 10% center;',
   },
   {
-    src: new URL('@/assets/images/image2.jpg', import.meta.url).href,
-    text: '집가고싶은사람 손',
-    subtext: '부가설명을 넣는 서브<br>텍스트입니다.부가설명을 넣는 서브텍스트입니다.',
+    src: new URL('@/assets/images/image2.png', import.meta.url).href,
+    text: '내게 맞는 적금 상품 찾아봐요!',
+    subtext: '맞춤 금융상품 추천으로 쉬운 상품 선택',
+    positionStyle: 'object-position: 21% center;',
   },
   {
-    src: new URL('@/assets/images/image3.jpg', import.meta.url).href,
-    text: '덥고배고프고졸립니다..',
-    subtext: '부가설명을 넣는 서브텍스트입니다.부가설<br>명을 넣는 서브텍스트입니다.부',
+    src: new URL('@/assets/images/image3.png', import.meta.url).href,
+    text: '실시간으로 현물 시세를 확인해요.',
+    subtext: '금, 은 시세의 변동을 확인할 수 있어요',
+    positionStyle: 'object-position: top center;',
   },
   {
-    src: new URL('@/assets/images/image4.jpg', import.meta.url).href,
-    text: '당신에게 딱 맞는 금융상품을 추천해 드립니다. 저축을 열심히 해보세염. 지금 당장 시작해볼까요? 아자아자!',
-    subtext:
-      '부가설명을 넣는 서브부가설명을 넣는 서브텍스트입니다.부가설명을 넣는 서브텍스트입니다.부.',
+    src: new URL('@/assets/images/image4.png', import.meta.url).href,
+    text: '혼자보다 함께 더 똑똑한 금융 생활',
+    subtext: '다른 사람들과 금융 팁을 나누고 함께 성장해요',
+    positionStyle: 'object-position: 44% center;',
+  },
+  {
+    src: new URL('@/assets/images/image5.png', import.meta.url).href,
+    text: '내 근처 은행을 검색해요',
+    subtext: '지금 나와 가까운 은행 검색으로 편리한 금융생활',
+    positionStyle: 'object-position: 1% center;',
   },
 ]
 </script>
@@ -75,7 +88,7 @@ const slides = [
 .slide-container {
   position: relative;
   width: 100%;
-  height: 500px;
+  height: 580px;
   overflow: hidden;
 }
 
@@ -95,6 +108,7 @@ const slides = [
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: top center;
 }
 
 .overlay {
@@ -103,7 +117,7 @@ const slides = [
   left: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.95));
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.45));
   z-index: 1;
 }
 
@@ -112,11 +126,11 @@ const slides = [
   bottom: 0;
   left: 0;
   width: 100%;
-  padding: 2rem 10% 3rem;
+  padding: 0rem 8% 6rem;
   z-index: 2;
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 0.8rem;
 }
 
 @media (max-width: 768px) {

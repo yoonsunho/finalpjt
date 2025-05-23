@@ -1,13 +1,21 @@
 <template>
   <div class="profile-wrapper">
-    <h1 class="profile-name">{{ user?.email }} 님의 프로필</h1>
-    <div class="profile-container">
-      <div class="profile-category">
-        <p>회원정보</p>
-        <RouterLink :to="{ name: 'MyInterests' }">찜한 상품</RouterLink>
-        <RouterLink :to="{ name: 'MyJoins' }">가입한 상품</RouterLink>
+    <h1 class="profile-name"><strong>선호바보개</strong>님의 프로필</h1>
+    <div class="profile-container"></div>
+    <div class="profile-tab-category">
+      <button @click="activeTab = '회원정보'" :class="{ active: activeTab === '회원정보' }">회원정보</button>
+      <button @click="activeTab = '찜한 상품'" :class="{ active: activeTab === '찜한 상품' }">찜한 상품</button>
+      <button @click="activeTab = '가입한 상품'" :class="{ active: activeTab === '가입한 상품' }">가입한 상품</button>
+    </div>
+
+    <div class="profile-tab-content">
+      <div v-if="activeTab === '회원정보'">
+        <ProfileInfo />
       </div>
-      <div class="profile-category-detail">
+      <div v-if="activeTab === '찜한 상품'">
+       <ProfileInfo />
+      </div>
+      <div v-if="activeTab === '가입한 상품'">
         <ProfileInfo />
       </div>
     </div>
@@ -16,27 +24,67 @@
 
 <script setup>
 import ProfileInfo from '@/views/authpages/ProfileInfo.vue'
-import { computed } from 'vue'
+import { ref, computed } from 'vue'
 import { useAccountStore } from '@/stores/user'
 const accountStore = useAccountStore()
 const user = computed(() => accountStore.userInfo)
+const activeTab = ref('회원정보')  // 초기메뉴
 </script>
 
 <style scoped>
 .profile-wrapper {
+  display: flex;
+  flex-direction: column;
+  /* margin: auto; */
+  min-width: 300px;
+  /* margin: auto; */
+
+  /* 수정해야함.임의설정 */
+  margin: 100px;     
+
+  padding: 40px;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  gap: 20px;
 }
 
+.profile-name {
+  font-size: 1.7rem;
+  /* font-weight: bold; */
+}
 .profile-container {
   display: flex;
+  /* box-shadow: inset 0 0 3px orange; */
+  padding:20px 0 0 0;
+  border-top: 1px solid #666;
+  
 }
 
-.profile-category {
-  box-shadow: inset 0 0 3px dodgerblue;
+.profile-tab-category {
+  display: flex;
+  gap: 10px;
+  padding-right: 20px;
+  /* box-shadow: inset 0 0 3px dodgerblue; */
+  border-right: 1px solid #666;
+  gap: 16px;
 }
 .profile-category-detail {
-  box-shadow: inset 0 0 3px pink;
+  /* box-shadow: inset 0 0 3px pink; */
   flex-grow: 1;
   display: flex;
   flex-direction: column;
 }
+
+.profile-tab-content {
+  margin-top: 20px;
+  padding: 10px;
+  
+  background-color: #999;
+}
+
+button.active {
+  font-weight: bold;
+  border-bottom: 2px solid black;
+}
+
 </style>
