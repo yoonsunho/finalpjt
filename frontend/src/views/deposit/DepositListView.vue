@@ -3,24 +3,24 @@
     <fwb-table hoverable>
       <fwb-table-head>
         <fwb-table-head-cell>id</fwb-table-head-cell>
-        <fwb-table-head-cell>예금이름</fwb-table-head-cell>
+        <fwb-table-head-cell>금융 상품명</fwb-table-head-cell>
         <fwb-table-head-cell>은행</fwb-table-head-cell>
-        <fwb-table-head-cell>금리</fwb-table-head-cell>
+        <fwb-table-head-cell>최고 우대 금리</fwb-table-head-cell>
+        <fwb-table-head-cell>금리 유형</fwb-table-head-cell>
       </fwb-table-head>
       <fwb-table-body>
         <fwb-table-row
-            v-for="(option, index) in store.depositProducts"
+            v-for="(product, index) in store.depositProducts"
             :key="index"
             class="hover:cursor-pointer hover:bg-blue-100"
-            @click="$router.push({ name: 'DepositDetailView', params: { id: option.id } })"
+            @click="$router.push({ name: 'DepositDetailView', params: { id: product.id } })"
             >
-            <fwb-table-cell>{{ option.id }}</fwb-table-cell>
-            <fwb-table-cell>{{ option.deposit_product.fin_prdt_nm }}</fwb-table-cell>
-            <fwb-table-cell>{{ option.deposit_product.kor_co_nm }}</fwb-table-cell>
-            <fwb-table-cell>{{ option.deposit_product.mtrt_int }}</fwb-table-cell>
-            </fwb-table-row>
-
-
+          <fwb-table-cell>{{ product.id }}</fwb-table-cell>
+          <fwb-table-cell>{{ product.fin_prdt_nm }}</fwb-table-cell>
+          <fwb-table-cell>{{ product.kor_co_nm }}</fwb-table-cell>
+          <fwb-table-cell>{{ product.max_intr_rate2 }}</fwb-table-cell>
+          <fwb-table-cell>{{ product.intr_rate_type_nm }}</fwb-table-cell>
+        </fwb-table-row>
       </fwb-table-body>
     </fwb-table>
   </div>

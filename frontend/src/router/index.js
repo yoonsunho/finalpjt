@@ -12,6 +12,8 @@ import DepositListView from '@/views/deposit/DepositListView.vue'
 import DepositDetailView from '@/views/deposit/DepositDetailView.vue'
 import SavingListView from '@/views/deposit/SavingListView.vue'
 import SavingDetailView from '@/views/deposit/SavingDetailView.vue'
+import MyInterests from '@/components/product/MyInterests.vue'
+import MyJoins from '@/components/product/MyJoins.vue'
 
 import CommunityPage from '@/views/community/CommunityPage.vue'
 import ArticleDetail from '@/views/community/ArticleDetail.vue'
@@ -60,6 +62,16 @@ const router = createRouter({
       component: SavingDetailView,
     },
     {
+    path: '/finlife/my-interests',
+    name: 'MyInterests',  
+    component: MyInterests,
+    },
+    {
+    path: '/finlife/my-joins',
+    name: 'MyJoins',  
+    component: MyJoins,
+    },
+    {
       path: '/profile',
       name: 'ProfilePage',
       component: ProfilePage,
@@ -100,11 +112,6 @@ const router = createRouter({
       component: MapPage,
     },
 
-    // {
-    //   path: '/deposits/detail/:id',
-    //   name: 'depositdetail',
-    //   component: DepositDetail,
-    // },
   ],
 })
 

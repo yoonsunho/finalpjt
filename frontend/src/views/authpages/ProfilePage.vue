@@ -4,6 +4,8 @@
     <div class="profile-container">
       <div class="profile-category">
         <p>회원정보</p>
+        <RouterLink :to="{ name: 'MyInterests' }">찜한 상품</RouterLink>
+        <RouterLink :to="{ name: 'MyJoins' }">가입한 상품</RouterLink>
       </div>
       <div class="profile-category-detail">
         <ProfileInfo />
