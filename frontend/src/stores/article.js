@@ -1,60 +1,155 @@
-import { ref } from 'vue'
-import { defineStore } from 'pinia'
-import axios from 'axios'
+  import { ref } from 'vue'
+  import { defineStore } from 'pinia'
+  import axios from 'axios'
+  import { useAccountStore } from './user'
 
-export const useArticleStore = defineStore('article', () => {
-  const API_URL = 'http://127.0.0.1:8000'
-  const articles = ref([])
-  const articleDetail = ref(null)
-  // const isLiked = '유저가 좋아요를했는가..?'
+  export const useArticleStore = defineStore('article', () => {
+    const API_URL = 'http://127.0.0.1:8000'
+    const articles = ref([])
+    const articleDetail = ref(null)
+    // const isLiked = '유저가 좋아요를했는가..?'
+    const accountStore = useAccountStore()
+    // article 가져오기
+    const getArticles = function () {
+      axios({
+        method: 'GET',
+        url: `${API_URL}/community/`,
+      })
+        .then((res) => {
+          console.log(res.data)
+          articles.value = res.data
+        })
+        .catch((err) => {
+          console.log(err)
+        })
+    }
 
-  // article 가져오기
-  const getArticles = function () {
-    axios({
-      method: 'GET',
-      url: `${API_URL}/community/`,
-    })
-      .then((res) => {
-        console.log(res.data)
-        articles.value = res.data
+    const getArticleDetail = function (id) {
+      articleDetail.value = null
+      axios({
+        method: 'GET',
+        url: `${API_URL}/community/${id}`,
       })
-      .catch((err) => {
-        console.log(err)
-      })
-  }
+        .then((res) => {
+          console.log(res.data)
+          articleDetail.value = res.data
+        })
+        .catch((err) => {
+          console.error(err)
+        })
+    }
 
-  const getArticleDetail = function (id) {
-    axios({
-      method: 'GET',
-      url: `${API_URL}/community/${id}`,
-    })
-      .then((res) => {
-        console.log(res.data)
-        articleDetail.value = res.data
+    const toggleLike = function (articleId) {
+      if (!accountStore.isLogin) return
+      axios({
+        method: 'POST',
+        url: `${API_URL}/community/${articleId}/like/`,
+        headers: {
+          Authorization: `Token ${accountStore.token}`,
+        },
       })
-      .catch((err) => {
-        console.error(err)
-      })
-  }
+        .then((res) => {
+          console.log(res.data)
+          console.log('좋아요 토글 o')
+          getArticleDetail(articleId)
+        })
+        .catch((err) => console.error('좋아요 토글 x', err))
+    }
+    const comments = ref([])
 
-  const toggleLike = function (articleId) {
-    axios({
-      method: 'POST',
-      url: `${API_URL}/community/${articleId}/like`,
-    })
-      .then((res) => {
-        console.log(res.data)
+    const getComments = function (articleId) {
+      axios({
+        method: 'GET',
+        url: `${API_URL}/community/${articleId}/comments/`,
       })
-      .catch((err) => console.error(err))
-  }
+        .then((res) => {
+          comments.value = res.data
+        })
+        .catch((err) => console.log(err))
+    }
+    const newComment = ref('')
 
-  return {
-    API_URL,
-    articles,
-    getArticles,
-    articleDetail,
-    getArticleDetail,
-    toggleLike,
-    // isLiked,
-  }
-})
+    const createComment = function () {
+      if (!articleDetail.value) return
+
+      axios({
+        method: 'POST',
+        url: `${API_URL}/community/${articleDetail.value.id}/comments/`,
+        headers: {
+          Authorization: `Token ${accountStore.token}`,
+        },
+        data: {
+          content: newComment.value,
+        },
+      })
+        .then((res) => {
+          console.log(res.data)
+          getComments(articleDetail.value.id)
+          newComment.value = ''
+          console.log('댓글 작성 성공')
+        })
+        .catch((err) => console.error('댓글 작성 실패:', err.response?.data || err))
+    }
+
+    const editCommentId = ref(null)
+    const editContent = ref('')
+
+    const startEdit = (comment) => {
+      editCommentId.value = comment.id
+      editContent.value = comment.content
+    }
+
+    const updateComment = (commentId) => {
+      axios({
+        method: 'PUT',
+        url: `${API_URL}/community/comments/${commentId}/`,
+        headers: {
+          Authorization: `Token ${accountStore.token}`,
+        },
+        data: {
+          content: editContent.value,
+        },
+      })
+        .then((res) => {
+          const idx = comments.value.findIndex((c) => c.id === commentId)
+          if (idx !== -1) comments.value[idx] = res.data
+          editCommentId.value = null
+          console.log('댓글 수정 성공')
+        })
+        .catch((err) => console.error('댓글 수정 실패:', err.response?.data || err))
+    }
+
+    const deleteComment = (commentId) => {
+      axios({
+        method: 'DELETE',
+        url: `${API_URL}/community/comments/${commentId}/`,
+        headers: {
+          Authorization: `Token ${accountStore.token}`,
+        },
+      })
+        .then(() => {
+          comments.value = comments.value.filter((c) => c.id !== commentId)
+          console.log('댓글 삭제 성공')
+        })
+        .catch((err) => console.error('댓글 삭제 실패:', err.response?.data || err))
+    }
+
+    return {
+      API_URL,
+      articles,
+      getArticles,
+      articleDetail,
+      getArticleDetail,
+      toggleLike,
+      comments,
+      // isLiked,
+      newComment,
+      getComments,
+      createComment,
+      editCommentId,
+      editContent,
+      startEdit,
+      updateComment,
+      deleteComment,
+    }
+  })

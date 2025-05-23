@@ -3,9 +3,15 @@
     <h1 class="profile-name"><strong>선호바보개</strong>님의 프로필</h1>
     <div class="profile-container"></div>
     <div class="profile-tab-category">
-      <button @click="activeTab = '회원정보'" :class="{ active: activeTab === '회원정보' }">회원정보</button>
-      <button @click="activeTab = '찜한 상품'" :class="{ active: activeTab === '찜한 상품' }">찜한 상품</button>
-      <button @click="activeTab = '가입한 상품'" :class="{ active: activeTab === '가입한 상품' }">가입한 상품</button>
+      <button @click="activeTab = '회원정보'" :class="{ active: activeTab === '회원정보' }">
+        회원정보
+      </button>
+      <button @click="activeTab = '찜한 상품'" :class="{ active: activeTab === '찜한 상품' }">
+        찜한 상품
+      </button>
+      <button @click="activeTab = '가입한 상품'" :class="{ active: activeTab === '가입한 상품' }">
+        가입한 상품
+      </button>
     </div>
 
     <div class="profile-tab-content">
@@ -13,7 +19,7 @@
         <ProfileInfo />
       </div>
       <div v-if="activeTab === '찜한 상품'">
-       <ProfileInfo />
+        <ProfileInfo />
       </div>
       <div v-if="activeTab === '가입한 상품'">
         <ProfileInfo />
@@ -28,7 +34,7 @@ import { ref, computed } from 'vue'
 import { useAccountStore } from '@/stores/user'
 const accountStore = useAccountStore()
 const user = computed(() => accountStore.userInfo)
-const activeTab = ref('회원정보')  // 초기메뉴
+const activeTab = ref('회원정보') // 초기메뉴
 </script>
 
 <style scoped>
@@ -40,11 +46,11 @@ const activeTab = ref('회원정보')  // 초기메뉴
   /* margin: auto; */
 
   /* 수정해야함.임의설정 */
-  margin: 100px;     
+  margin: 100px;
 
   padding: 40px;
   border-radius: 12px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
   gap: 20px;
 }
 
@@ -55,9 +61,8 @@ const activeTab = ref('회원정보')  // 초기메뉴
 .profile-container {
   display: flex;
   /* box-shadow: inset 0 0 3px orange; */
-  padding:20px 0 0 0;
+  padding: 20px 0 0 0;
   border-top: 1px solid #666;
-  
 }
 
 .profile-tab-category {
@@ -78,7 +83,7 @@ const activeTab = ref('회원정보')  // 초기메뉴
 .profile-tab-content {
   margin-top: 20px;
   padding: 10px;
-  
+
   background-color: #999;
 }
 
@@ -86,5 +91,4 @@ button.active {
   font-weight: bold;
   border-bottom: 2px solid black;
 }
-
 </style>

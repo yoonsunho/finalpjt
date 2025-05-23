@@ -1,8 +1,8 @@
 <template>
   <div>
-    <form>
+    <form @submit.prevent="store.createComment">
       <fwb-textarea
-        v-model="message"
+        v-model="store.newComment"
         :rows="3"
         custom
         label="댓글"
@@ -10,9 +10,7 @@
       >
         <template #footer>
           <div class="flex items-center justify-between">
-            <fwb-button type="submit">
-              댓글 작성
-            </fwb-button>
+            <fwb-button type="submit"> 댓글 작성 </fwb-button>
           </div>
         </template>
       </fwb-textarea>
@@ -23,6 +21,7 @@
 <script setup>
 import { ref } from 'vue'
 import { FwbA, FwbButton, FwbTextarea } from 'flowbite-vue'
+import { useArticleStore } from '@/stores/article'
 
-const message = ref('')
+const store = useArticleStore()
 </script>

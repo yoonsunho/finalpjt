@@ -8,17 +8,16 @@
       <form @submit.prevent="onLogIn">
         <div class="form-group">
           <label for="email">이메일</label>
-          <input type="email" id="email" v-model="email" required>
+          <input type="email" id="email" v-model="email" required />
           <!-- <div v-if="errors.email" class="error">{{ errors.email }}</div> -->
         </div>
 
         <div class="form-group">
           <label for="password">비밀번호</label>
-          <input type="password" id="password" v-model="password" required>
+          <input type="password" id="password" v-model="password" required />
         </div>
 
         <button type="submit">로그인</button>
-        
       </form>
       <div v-if="showLoginErrorModal" class="modal">
         <div class="modal-content">
@@ -39,32 +38,31 @@
 </template>
 
 <script setup>
-  import { ref } from 'vue';
-  import { useAccountStore } from '@/stores/user';
+import { ref } from 'vue'
+import { useAccountStore } from '@/stores/user'
 
-  const accountStore = useAccountStore()
+const accountStore = useAccountStore()
 
-  const email = ref('')
-  const password = ref('')
-  const showLoginErrorModal = ref(false);
+const email = ref('')
+const password = ref('')
+const showLoginErrorModal = ref(false)
 
-  const onLogIn = async function() {
+const onLogIn = async function () {
   const userInfo = {
     email: email.value,
-    password: password.value
-  };
-  try {
-    await accountStore.logIn(userInfo);
-    showLoginErrorModal.value = false;
-  } catch (error) {
-    showLoginErrorModal.value = true;
+    password: password.value,
   }
-};
+  try {
+    await accountStore.logIn(userInfo)
+    showLoginErrorModal.value = false
+  } catch (error) {
+    showLoginErrorModal.value = true
+  }
+}
 </script>
 
 <style scoped>
 .login-wrapper {
-
 }
 
 .login-container {
@@ -73,7 +71,7 @@
   padding: 40px;
   background-color: #ffffff;
   border-radius: 12px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
 }
 
 h2 {
@@ -105,14 +103,14 @@ input {
 
 input:focus {
   outline: none;
-  border-color: #2196F3;
+  border-color: #2196f3;
   box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.2);
 }
 
 button {
   width: 100%;
   padding: 12px;
-  background-color: #2196F3;
+  background-color: #2196f3;
   color: white;
   border: none;
   border-radius: 6px;
@@ -124,7 +122,7 @@ button {
 }
 
 button:hover {
-  background-color: #1976D2;
+  background-color: #1976d2;
 }
 
 button:disabled {
@@ -160,7 +158,7 @@ button:disabled {
 }
 
 a {
-  color: #2196F3;
+  color: #2196f3;
   text-decoration: none;
   font-weight: 500;
 }
@@ -185,8 +183,11 @@ a:hover {
 
 .modal {
   position: fixed;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(0,0,0,0.4); /* 반투명 검정 배경 */
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.4); /* 반투명 검정 배경 */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -197,8 +198,6 @@ a:hover {
   padding: 24px 32px;
   border-radius: 8px;
   text-align: center;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
 }
-
-
 </style>

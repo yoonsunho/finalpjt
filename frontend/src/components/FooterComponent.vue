@@ -8,7 +8,8 @@
 
 <style scoped>
 .footer-container {
-  background-color: dodgerblue;
-  height: 60px;
+  background-color: #ededed;
+  height: 150px;
+  margin-top: 50px;
 }
 </style>
