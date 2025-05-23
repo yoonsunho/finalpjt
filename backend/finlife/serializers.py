@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from .models import DepositProducts,DepositOptions, SavingProducts, SavingOptions, DepositJoin, DepositInterest, SavingInterest, SavingJoin
-
+from django.db.models import Max
 # deposit
 # deposit 데이터 불러오기
 class DepositProductsSerializer(serializers.ModelSerializer):
@@ -20,8 +20,9 @@ class DepositOptionsSerializer(serializers.ModelSerializer):
 class DepositListSerializer(serializers.ModelSerializer):
     
     # 옵션 중 최대 우대 금리
-    max_intr_rate2 = serializers.SerializerMethodField()
-    intr_rate_type_nm = serializers.SerializerMethodField()  
+    # 정렬 필드 최적화
+    max_intr_rate2 = serializers.SerializerMethodField(method_name='get_max_rate')
+    intr_rate_type_nm = serializers.SerializerMethodField(method_name='get_rate_type')  
     is_interested = serializers.SerializerMethodField()  # 찜하기 상태
     is_joined = serializers.SerializerMethodField()     # 가입 상태
     joined_count = serializers.IntegerField(read_only=True)       # annotate로 전달된 필드
@@ -42,14 +43,12 @@ class DepositListSerializer(serializers.ModelSerializer):
             'joined_count',
         )
         
-    def get_max_intr_rate2(self,obj):
-        
-        option = obj.depositoptions_set.order_by('-intr_rate2').first()
-        return option.intr_rate2 if option else None
-    
-    def get_intr_rate_type_nm(self, obj):
-        option = obj.depositoptions_set.order_by('-intr_rate2').first()
-        return option.intr_rate_type_nm if option else None
+    def get_max_rate(self, obj):
+        return obj.depositoptions_set.aggregate(Max('intr_rate2'))['intr_rate2__max']
+
+    def get_rate_type(self, obj):
+        options = obj.depositoptions_set.all()
+        return options[0].intr_rate_type_nm if options else None
     
     def get_is_interested(self, obj):
         request = self.context.get('request')
