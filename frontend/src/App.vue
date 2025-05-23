@@ -22,11 +22,14 @@ import FooterComponent from '@/components/FooterComponent.vue'
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  /* box-shadow: inset 0 0 13px dodgerblue; */
 }
 
 .inner-wrapper {
   flex: 1;
   display: flex;
   flex-direction: column;
+  /* box-shadow: inset 0 0 13px rebeccapurple; */
+
 }
 </style>
