@@ -2,26 +2,49 @@
   <div class="signup-container">
     <h2>회원가입</h2>
     <form @submit.prevent="onSignUp">
-
       <div class="form-group">
         <label for="email">이메일</label>
-        <input type="email" id="email" v-model="email" required>
+        <input
+          type="email"
+          id="email"
+          v-model="email"
+          @input="
+            () => {
+              errors.email = ''
+            }
+          "
+          required
+        />
         <button type="button" @click="checkEmailDuplicate">중복확인</button>
-      <div v-if="emailCheckMessage" :class="{ error: !isEmailAvailable }">{{ emailCheckMessage }}</div>
-      <div v-if="errors.email" class="error">{{ errors.email }}</div>
+        <div v-if="emailCheckMessage" :class="{ error: !isEmailAvailable }">
+          {{ emailCheckMessage }}
+        </div>
+        <div v-if="errors.email" class="error">{{ errors.email }}</div>
       </div>
 
       <div class="form-group">
         <label for="nickname">닉네임</label>
-        <input type="text" id="nickname" v-model="nickname" required>
-         <button type="button" @click="checkNicknameDuplicate">중복확인</button>
-        <div v-if="nicknameCheckMessage" :class="{ error: !isNicknameAvailable }">{{ nicknameCheckMessage }}</div>
+        <input
+          type="text"
+          id="nickname"
+          v-model="nickname"
+          @input="
+            () => {
+              errors.nickname = ''
+            }
+          "
+          required
+        />
+        <button type="button" @click="checkNicknameDuplicate">중복확인</button>
+        <div v-if="nicknameCheckMessage" :class="{ error: !isNicknameAvailable }">
+          {{ nicknameCheckMessage }}
+        </div>
         <div v-if="errors.nickname" class="error">{{ errors.nickname }}</div>
       </div>
 
       <div class="form-group">
         <label for="password1">비밀번호</label>
-        <input type="password" id="password1" v-model="password1" required>
+        <input type="password" id="password1" v-model="password1" required />
         <div class="password-rules">
           <ul>
             <li>최소 8자 이상</li>
@@ -34,7 +57,7 @@
 
       <div class="form-group">
         <label for="password2">비밀번호 확인</label>
-        <input type="password" id="password2" v-model="password2" required>
+        <input type="password" id="password2" v-model="password2" required />
         <div v-if="errors.password2" class="error">{{ errors.password2 }}</div>
       </div>
 
@@ -106,22 +129,23 @@
         </select>
       </div>
 
-      <button type="submit" >회원가입</button>
+      <button type="submit">회원가입</button>
       <!-- <div v-if="errors.non_field_errors" class="error general-error">
         {{ errors.non_field_errors }}
       </div> -->
     </form>
     <div class="login-link">
-      이미 계정이 있으신가요? <RouterLink :to="{name:'LoginView'}"></RouterLink>
+      이미 계정이 있으신가요?
+      <RouterLink :to="{ name: 'LoginView' }" class="login-link-text">로그인</RouterLink>
     </div>
   </div>
 </template>
 
 <script setup>
 import { ref } from 'vue'
-import { useAccountStore } from '@/stores/user';
-import { RouterLink } from 'vue-router';
-
+import { useAccountStore } from '@/stores/user'
+import { useRouter, RouterLink } from 'vue-router'
+const router = useRouter()
 const accountStore = useAccountStore()
 const { ACCOUNT_API_URL } = accountStore
 
@@ -142,17 +166,32 @@ const emailCheckMessage = ref('')
 const isEmailAvailable = ref(false)
 
 // 이메일 중복 확인
-const checkEmailDuplicate = async()=>{
+const checkEmailDuplicate = async () => {
+  const isValidEmail = (email) => {
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    return regex.test(email)
+  }
+  // 먼저 형식 검사
+  if (!isValidEmail(email.value)) {
+    errors.value.email = '이메일 형식이 올바르지 않습니다.'
+    emailCheckMessage.value = ''
+    isEmailAvailable.value = false
+    return
+  }
+  // 이메일 형식이 맞는 경우 에러 초기화
+  errors.value.email = ''
+  // 형식 맞으면 서버에 요청해서 중복검사
   try {
     const res = await fetch(`${ACCOUNT_API_URL}/check-email/`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email: email.value })
+      body: JSON.stringify({ email: email.value }),
     })
     const data = await res.json()
     if (data.available) {
       emailCheckMessage.value = '사용 가능한 이메일입니다.'
       isEmailAvailable.value = true
+      errors.value.email = ''
     } else {
       emailCheckMessage.value = '이미 사용 중인 이메일입니다.'
       isEmailAvailable.value = false
@@ -163,31 +202,33 @@ const checkEmailDuplicate = async()=>{
   }
 }
 
-  // 닉네임 중복 확인
-  const nicknameCheckMessage = ref('')
-  const isNicknameAvailable = ref(false)
-  const checkNicknameDuplicate = async () => {
-    try {
-      const res = await fetch(`${ACCOUNT_API_URL}/check-nickname/`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ nickname: nickname.value })
-      })
-      const data = await res.json()
-      if (data.available) {
-        nicknameCheckMessage.value = '사용 가능한 닉네임입니다.'
-        isNicknameAvailable.value = true
-      } else {
-        nicknameCheckMessage.value = '이미 사용 중인 닉네임입니다.'
-        isNicknameAvailable.value = false
-      }
-    } catch (err) {
-      nicknameCheckMessage.value = '중복 확인 중 오류가 발생했습니다.'
+// 닉네임 중복 확인
+const nicknameCheckMessage = ref('')
+const isNicknameAvailable = ref(false)
+const checkNicknameDuplicate = async () => {
+  try {
+    const res = await fetch(`${ACCOUNT_API_URL}/check-nickname/`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ nickname: nickname.value }),
+    })
+    const data = await res.json()
+    if (data.available) {
+      nicknameCheckMessage.value = '사용 가능한 닉네임입니다.'
+      isNicknameAvailable.value = true
+      errors.value.nickname = ''
+    } else {
+      nicknameCheckMessage.value = '이미 사용 중인 닉네임입니다.'
       isNicknameAvailable.value = false
     }
+  } catch (err) {
+    nicknameCheckMessage.value = '중복 확인 중 오류가 발생했습니다.'
+    isNicknameAvailable.value = false
   }
+}
 
-  const onSignUp = async function (){   //비동기 처리 해주기
+const onSignUp = async function () {
+  //비동기 처리 해주기
 
   errors.value = {}
 
@@ -210,43 +251,47 @@ const checkEmailDuplicate = async()=>{
 
   // ...중복 체크 등 추가 후 회원가입 진행
   const userInfo = {
-    email : email.value,
-    nickname : nickname.value,
-    password1 : password1.value,
-    password2 : password2.value,
-    gender : gender.value,
-    salary : salary.value,
-    wealth : wealth.value,
-    tendency : tendency.value,
-    deposit_amount : deposit_amount.value,
-    deposit_period : deposit_period.value,
+    email: email.value,
+    nickname: nickname.value,
+    password1: password1.value,
+    password2: password2.value,
+    gender: gender.value,
+    salary: salary.value,
+    wealth: wealth.value,
+    tendency: tendency.value,
+    deposit_amount: deposit_amount.value,
+    deposit_period: deposit_period.value,
   }
   try {
     await accountStore.signUp(userInfo)
+    router.push({ name: 'SignUpSuccessView' })
   } catch (err) {
     // 비밀번호 규칙 위반 등 백엔드에서 온 에러 처리
     if (err.response && err.response.data) {
       const data = err.response.data
       if (data.password1) {
         // 여러 에러 메시지가 배열로 올 수 있으니 join으로 합침
-        errors.value.password1 = Array.isArray(data.password1) ? data.password1.join(' ') : data.password1
+        errors.value.password1 = Array.isArray(data.password1)
+          ? data.password1.join(' ')
+          : data.password1
       }
       if (data.password2) {
-        errors.value.password2 = Array.isArray(data.password2) ? data.password2.join(' ') : data.password2
+        errors.value.password2 = Array.isArray(data.password2)
+          ? data.password2.join(' ')
+          : data.password2
       }
       if (data.email) {
         errors.value.email = Array.isArray(data.email) ? data.email.join(' ') : data.email
       }
       if (data.nickname) {
-        errors.value.nickname = Array.isArray(data.nickname) ? data.nickname.join(' ') : data.nickname
+        errors.value.nickname = Array.isArray(data.nickname)
+          ? data.nickname.join(' ')
+          : data.nickname
       }
-      // 필요하면 다른 필드도 추가
     }
   }
 }
-
 </script>
-
 
 <style scoped>
 .signup-container {
@@ -270,7 +315,8 @@ label {
   font-weight: bold;
 }
 
-input, select {
+input,
+select {
   width: 100%;
   padding: 8px;
   border: 1px solid #ddd;
@@ -280,7 +326,7 @@ input, select {
 button {
   width: 100%;
   padding: 10px;
-  background-color: #2196F3;
+  background-color: #2196f3;
   color: white;
   border: none;
   border-radius: 4px;
@@ -314,8 +360,12 @@ button:disabled {
   margin-top: 20px;
 }
 
+.login-link-text {
+  color: red;
+}
+
 a {
-  color: #2196F3;
+  color: #2196f3;
   text-decoration: none;
 }
 
