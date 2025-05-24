@@ -82,9 +82,9 @@ const router = createRouter({
       component: ProfileEdit,
     },
     {
-      path: '/community',
-      name: 'CommunityPage',
-      component: CommunityPage,
+      path: '/community/create',
+      name: 'CreateArticle',
+      component: CreateArticle,
     },
     {
       path: '/community/:id',
@@ -92,10 +92,11 @@ const router = createRouter({
       component: ArticleDetail,
     },
     {
-      path: '/community/create',
-      name: 'CreateArticle',
-      component: CreateArticle,
+      path: '/community',
+      name: 'CommunityPage',
+      component: CommunityPage,
     },
+
     {
       path: '/etc',
       name: 'EtcPage',

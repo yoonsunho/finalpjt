@@ -10,11 +10,11 @@
       </fwb-table-head>
       <fwb-table-body>
         <fwb-table-row
-            v-for="(product, index) in store.depositProducts"
-            :key="index"
-            class="hover:cursor-pointer hover:bg-blue-100"
-            @click="$router.push({ name: 'DepositDetailView', params: { id: product.id } })"
-            >
+          v-for="(product, index) in store.depositProducts"
+          :key="index"
+          class="hover:cursor-pointer hover:bg-blue-100"
+          @click="$router.push({ name: 'DepositDetailView', params: { id: product.id } })"
+        >
           <fwb-table-cell>{{ product.id }}</fwb-table-cell>
           <fwb-table-cell>{{ product.fin_prdt_nm }}</fwb-table-cell>
           <fwb-table-cell>{{ product.kor_co_nm }}</fwb-table-cell>
@@ -55,7 +55,7 @@ onMounted(() => {
   border: 2px solid dodgerblue;
 }
 .deposit_product_name {
-    font-weight: bold;
-    width: 300px;
+  font-weight: bold;
+  width: 300px;
 }
 </style>

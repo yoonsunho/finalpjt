@@ -17,6 +17,10 @@
           {{ store.articleDetail.is_liked ? '💔 좋아요 취소' : '❤️ 좋아요' }}
           {{ store.articleDetail.likes_count }}
         </button>
+        <div v-if="accountStore.token && accountStore.user_id === store.articleDetail.user_id">
+          <button @click="editArticle">수정</button>
+          <button @click="deleteArticle">삭제</button>
+        </div>
       </div>
       <hr class="divider" />
       <div class="comment">
@@ -61,16 +65,33 @@
 import CommentComponent from '@/components/CommentComponent.vue'
 // import { ref } from 'vue'
 import { onMounted } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import { useArticleStore } from '@/stores/article'
 import { useAccountStore } from '@/stores/user'
 
 const route = useRoute()
+const router = useRouter()
 const store = useArticleStore()
 const accountStore = useAccountStore()
 
 const articleId = route.params.id
-
+const editArticle = () => {
+  router.push({ name: 'CreateArticle', query: { mode: 'edit', id: articleId } })
+}
+const deleteArticle = () => {
+  if (confirm('정말 삭제할까요?')) {
+    store
+      .deleteArticle(articleId)
+      .then(() => {
+        alert('삭제 완료!')
+        router.push('/community')
+      })
+      .catch((err) => {
+        console.error('삭제 실패:', err)
+        alert('삭제 실패 ㅠㅠ')
+      })
+  }
+}
 onMounted(() => {
   store.getArticleDetail(articleId)
   store.getComments(articleId)
