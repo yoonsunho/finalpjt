@@ -97,24 +97,87 @@ onMounted(() => {
   filterDeposits()
 })
 </script>
-
 <style scoped>
+/* 전체 레이아웃 정리 */
 .table-wrapper {
-  max-width: 800px;
+  max-width: 900px;
   width: 100%;
-  overflow-x: auto;
   margin: 0 auto;
-  /* box-shadow: inset 0 0 3px dodgerblue; */
-  border: 2px solid dodgerblue;
+  overflow-x: auto;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  background-color: #ffffff;
 }
+
+/* 필터 바 */
 .filter-bar {
   display: flex;
+  flex-wrap: wrap;
+  align-items: center;
   gap: 1rem;
-  margin-bottom: 1.5rem;
+  margin: 2rem auto;
+  padding: 1rem;
+  max-width: 900px;
+  background-color: #ffffff;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.03);
 }
+
+/* 인풋과 셀렉트 요소 스타일 */
 input,
 select {
-  padding: 0.5rem;
+  padding: 0.6rem 1rem;
   font-size: 0.9rem;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  background-color: #f9fafb;
+  color: #111827;
+  transition:
+    border 0.2s ease,
+    background-color 0.2s ease;
+}
+
+input:focus,
+select:focus {
+  outline: none;
+  border-color: #60a5fa;
+  background-color: #fff;
+}
+
+/* 버튼 스타일 */
+button[type='submit'] {
+  padding: 0.6rem 1.2rem;
+  background-color: #2563eb;
+  color: white;
+  font-weight: 500;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+button[type='submit']:hover {
+  background-color: #1d4ed8;
+}
+
+/* 테이블 hover 효과 */
+.hover\:bg-blue-100:hover {
+  background-color: #f0f9ff !important;
+}
+
+/* 테이블 내부 폰트 및 간격 */
+fwb-table-cell,
+fwb-table-head-cell {
+  font-size: 0.9rem;
+  padding: 1rem;
+  color: #111827;
+}
+
+fwb-table-head-cell {
+  font-weight: 600;
+  background-color: #f3f4f6;
+  border-bottom: 1px solid #e5e7eb;
 }
 </style>

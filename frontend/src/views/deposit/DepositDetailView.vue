@@ -3,14 +3,14 @@
     <h1 class="deposit_product_name">{{ product.fin_prdt_nm }}</h1>
     <h5>id: {{ product.id }}</h5>
     <p>금융회사 명: {{ product.kor_co_nm }}</p>
-    <!-- <p>공시 제출월[YYYYMM]: {{ product.dcls_month }}</p> -->
     <p>가입 방법: {{ product.join_way }}</p>
     <p>만기 후 이자율: {{ product.mtrt_int }}</p>
     <p>우대 조건: {{ product.spcl_cnd }}</p>
     <p>가입 제한: {{ product.join_deny }}</p>
     <p>기타 유의 사항: {{ product.etc_note }}</p>
     <p>최고한도: {{ product.max_limit }}</p>
-    <div v-if="product && product.options">
+
+    <div v-if="product.options">
       <h2>옵션 목록</h2>
       <div v-for="(option, index) in product.options" :key="option.id" class="option-box">
         <h3>옵션 {{ index + 1 }}</h3>
@@ -22,50 +22,69 @@
     </div>
   </div>
 
-  <div class="button">
+  <div class="button" v-if="isLogin">
     <div class="likebutton">
       <button class="like" v-if="!isLiked" @click="toggleLike">찜하기</button>
       <button class="liked" v-else @click="toggleLike">찜 완료</button>
     </div>
     <div class="signupbutton">
-      <button class="join" v-if="!isJoined" @click="toggleJoin">가입하기</button>
-      <button class="joined" v-else @click="toggleJoin">가입 완료</button>
+      <button class="join" v-if="!isJoined" @click="confirmJoin">가입하기</button>
+      <button class="joined" v-else @click="confirmCancelJoin">가입 완료</button>
     </div>
   </div>
+  <ConfirmModal
+    :show="showJoinModal"
+    title="가입하시겠습니까?"
+    @confirm="doJoin"
+    @close="showJoinModal = false"
+  />
+  <ConfirmModal
+    :show="showCancelModal"
+    title="가입을 취소하시겠습니까?"
+    @confirm="doCancel"
+    @close="showCancelModal = false"
+  />
 </template>
 
 <script setup>
 import axios from 'axios'
-// 2. 게시글 상세 조회 요청 경로: 출처가 이미 스토어에 이씅ㅁ
 import { useDepositStore } from '@/stores/deposit.js'
-// 3. 조회 하고자 하는 게시글 id: route
+import { useAccountStore } from '@/stores/user.js'
 import { useRoute } from 'vue-router'
-// 4. 응답 받은 게시글을 저장할 위치
-import { ref, onMounted, computed, watch } from 'vue'
+import { watch, ref, onMounted, computed } from 'vue'
+import ConfirmModal from '@/components/ConfirmModal.vue'
 
 const product = ref(null)
 const store = useDepositStore()
+const accountStore = useAccountStore()
 const route = useRoute()
-const productId = route.params.id // 현재상품id
+const productId = route.params.id
 
 const isLiked = computed(() => store.isLiked(productId))
 const isJoined = computed(() => store.isJoined(productId))
+const isLogin = computed(() => !!accountStore.token)
+
+const showJoinModal = ref(false)
+const showCancelModal = ref(false)
 
 const toggleLike = () => store.toggleLike(productId)
-const toggleJoin = () => store.toggleJoin(productId)
+const confirmJoin = () => (showJoinModal.value = true)
+const confirmCancelJoin = () => (showCancelModal.value = true)
 
-const getDepositDetail = function () {
-  // console.log('요청 URL:', `${store.API_URL}/finlife/deposit/${route.params.id}/`)
+const doJoin = () => {
+  store.toggleJoin(productId)
+  showJoinModal.value = false
+}
+const doCancel = () => {
+  store.toggleJoin(productId)
+  showCancelModal.value = false
+}
 
-  axios({
-    method: 'GET',
-    url: `${store.API_URL}/finlife/deposit/${route.params.id}/`,
-  })
+const getDepositDetail = () => {
+  axios
+    .get(`${store.API_URL}/finlife/deposit/${productId}/`)
     .then((res) => {
-      // console.log(res)
-      console.log(res.data)
       product.value = res.data
-      console.log('product.value 설정 후:', product.value)
     })
     .catch((err) => {
       console.error('API 오류:', err)
@@ -73,7 +92,6 @@ const getDepositDetail = function () {
 }
 
 onMounted(() => {
-  console.log('route.params.id:', route.params.id)
   getDepositDetail()
 })
 
@@ -96,58 +114,113 @@ watch(
 <style scoped>
 .product-detail {
   max-width: 720px;
-  margin: 2rem auto;
-  padding: 1.5rem;
-  border: 1px solid #ddd;
-  border-radius: 10px;
-  background-color: #fafafa;
-  font-family: 'Pretendard', sans-serif;
+  margin: 3rem auto;
+  padding: 2rem;
+  border: none;
+  border-radius: 16px;
+  background-color: #ffffff;
+  font-family: 'Pretendard', 'Apple SD Gothic Neo', sans-serif;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
 }
 
-.product-name {
+.deposit_product_name {
   text-align: center;
-  font-size: 1.75rem;
-  margin-bottom: 1rem;
+  font-size: 2rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  color: #1e1e1e;
 }
 
-.section {
-  margin-top: 1.5rem;
+p {
+  font-size: 1rem;
+  color: #444;
+  margin: 0.4rem 0;
+  line-height: 1.6;
 }
 
-.section-title {
+h2 {
+  margin-top: 2rem;
   margin-bottom: 1rem;
-  font-size: 1.25rem;
-  border-bottom: 1px solid #ccc;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #222;
+  border-bottom: 1px solid #e5e5e5;
   padding-bottom: 0.5rem;
 }
 
 .option-box {
   margin-bottom: 1rem;
-  padding: 1rem;
-  border: 1px solid #eee;
-  border-radius: 6px;
-  background-color: #fff;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  padding: 1.2rem;
+  border-radius: 12px;
+  background-color: #f9fafb;
+  border: 1px solid #eaeaea;
+  transition: box-shadow 0.2s ease;
+}
+.option-box:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
 .button {
   display: flex;
-  flex-direction: row;
+  gap: 12px;
+  justify-content: center;
+  margin-top: 2rem;
+}
+
+.likebutton,
+.signupbutton {
+  flex: 1;
+  display: flex;
+  justify-content: center;
 }
 
 .like,
-.liked {
-  color: #191f28;
-  border: 2px solid #191f28;
-  padding: 5px;
-  border-radius: 20px;
-}
-
+.liked,
 .join,
 .joined {
-  background-color: dodgerblue;
-  border-radius: 20px;
-  padding: 5px;
+  width: 100%;
+  max-width: 160px;
+  padding: 0.75rem 1rem;
+  font-size: 0.95rem;
+  font-weight: 500;
+  border-radius: 9999px;
+  border: 1.5px solid #d1d5db;
+  background-color: white;
+  color: #1f2937;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.like:hover,
+.liked:hover,
+.join:hover,
+.joined:hover {
+  background-color: #f3f4f6;
+}
+
+.liked {
+  background-color: #f0f0f0;
+  border-color: #999;
+  color: #111;
+}
+
+.join {
+  background-color: #2563eb;
   color: white;
+  border: none;
+}
+
+.join:hover {
+  background-color: #1d4ed8;
+}
+
+.joined {
+  background-color: #e0f2fe;
+  color: #0369a1;
+  border: 1.5px solid #38bdf8;
+}
+
+.joined:hover {
+  background-color: #bae6fd;
 }
 </style>

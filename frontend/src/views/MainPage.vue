@@ -14,7 +14,7 @@
         <p>예적금 상품을 모아 볼 수 있어요.</p>
       </div>
 
-      <div class="cards">
+      <div class="cards products">
         <div class="card">신한은행 3.2%</div>
         <div class="card">카카오뱅크 3.0%</div>
       </div>
@@ -158,7 +158,7 @@ body {
   text-align: center;
 }
 
-.cards {
+.cards products {
   display: flex;
   flex-wrap: wrap;
   gap: 2rem;
@@ -175,9 +175,6 @@ body {
   max-width: 420px;
   text-align: center;
   transition: transform 0.3s ease;
-}
-.card:hover {
-  transform: translateY(-10px);
 }
 
 .cta,
