@@ -1,149 +1,128 @@
 <template>
-  <div class="create-article">
-    <h2 class="form-title">{{ isEditMode ? '글 수정' : '새 글 작성' }}</h2>
-
-    <form @submit.prevent="handleSubmit">
-      <input v-model="title" class="input" placeholder="제목" required />
-      <select v-model="category" class="input" required>
-        <option disabled value="">카테고리 선택</option>
-        <option value="REVIEW">예적금 후기</option>
-        <option value="TIP">절약 꿀팁</option>
-        <option value="FREE">자유게시판</option>
-      </select>
-      <textarea v-model="content" class="textarea" placeholder="내용" rows="10" required></textarea>
-
-      <button class="submit-btn" type="submit">
-        {{ isEditMode ? '수정 완료' : '작성 완료' }}
-      </button>
-
-      <button v-if="isEditMode" class="delete-btn" type="button" @click="handleDelete">
-        삭제하기
-      </button>
-    </form>
+  <div class="table-wrapper">
+    <div class="category-filter">
+      
+      <button @click="filterByCategory('REVIEW')">예적금 후기</button>
+      <button @click="filterByCategory('TIP')">절약 꿀팁</button>
+      <button @click="filterByCategory('FREE')">자유게시판</button>
+    </div>
+    <table class="custom-table">
+      <thead>
+        <tr>
+          <th>번호</th>
+          <th>제목</th>
+          <th>작성자</th>
+          <th>작성일</th>
+          <th>좋아요</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr
+          v-for="(article, index) in store.articles"
+          :key="article.id"
+          @click="$router.push({ name: 'ArticleDetail', params: { id: article.id } })"
+        >
+          <td>{{ index + 1 }}</td>
+          <td class="highlight">
+            <RouterLink :to="{ name: 'ArticleDetail', params: { id: article.id } }">
+              {{ article.title }}
+            </RouterLink>
+          </td>
+          <td>{{ article.user }}</td>
+          <!-- <td>{{ article.category }}</td> -->
+          <td>{{ article.created_at }}</td>
+          <td>{{ article.likes_count }}</td>
+        </tr>
+      </tbody>
+    </table>
+    <div>
+      <RouterLink :to="{ name: 'CreateArticle' }"><button>글 작성하기</button></RouterLink>
+    </div>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+// import { ref } from 'vue'
+import { RouterLink } from 'vue-router'
+import { ref, onMounted } from 'vue'
 import { useArticleStore } from '@/stores/article'
 
-const route = useRoute()
-const router = useRouter()
 const store = useArticleStore()
+const selectedCategory = ref('REVIEW')
 
-const title = ref('')
-const content = ref('')
-const category = ref('')
-const isEditMode = computed(() => !!route.params.id)
-
+const filterByCategory = (category) => {
+  selectedCategory.value = category
+  store.getArticles(category)
+}
 onMounted(() => {
-  if (isEditMode.value) {
-    store.getArticleDetail(route.params.id)
-    // articleDetail은 ref니까 onMounted에서 바로 접근 가능
-    setTimeout(() => {
-      const detail = store.articleDetail
-      if (detail) {
-        title.value = detail.title
-        content.value = detail.content
-        category.value = detail.category
-      }
-    }, 100) // 잠깐 딜레이 주면 store에서 값 들어오고 세팅됨
-  }
+  store.getArticles(selectedCategory.value)
 })
-
-const handleSubmit = () => {
-  const payload = {
-    title: title.value,
-    content: content.value,
-    category: category.value,
-  }
-
-  if (isEditMode.value) {
-    store
-      .updateArticle(route.params.id, payload)
-      .then(() => {
-        router.push(`/community/${route.params.id}`)
-      })
-      .catch((err) => {
-        console.error('수정 실패:', err.response?.data || err)
-      })
-  } else {
-    store
-      .createArticle(payload)
-      .then((res) => {
-        router.push(`/community/${res.data.id}`)
-      })
-      .catch((err) => {
-        console.error('작성 실패:', err.response?.data || err)
-      })
-  }
-}
-
-const handleDelete = () => {
-  if (confirm('정말 삭제할까요? ㅠㅠ')) {
-    store
-      .deleteArticle(route.params.id)
-      .then(() => {
-        router.push({ name: 'CommunityPage' })
-      })
-      .catch((err) => {
-        console.error('삭제 실패:', err.response?.data || err)
-      })
-  }
-}
 </script>
 
 <style scoped>
-.create-article {
-  max-width: 600px;
-  margin: 0 auto;
-  padding: 2rem 1rem;
+.table-wrapper {
+  max-width: 1000px;
+  margin: 2rem auto;
+  /* padding: 1rem; */
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  overflow-x: auto;
 }
 
-.form-title {
-  font-size: 1.5rem;
-  font-weight: 600;
-  margin-bottom: 2rem;
-  text-align: center;
-}
-
-.input,
-.textarea {
+.custom-table {
   width: 100%;
-  border: none;
-  border-bottom: 1px solid #ccc;
-  padding: 0.75rem 0;
-  font-size: 1rem;
-  margin-bottom: 1.5rem;
-  background-color: transparent;
+  border-collapse: collapse;
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 15px;
+  color: #191f28;
 }
 
-.input:focus,
-.textarea:focus {
-  border-bottom: 1px solid #000;
-  outline: none;
+.custom-table thead {
+  background-color: #f1f5f9;
+  text-transform: uppercase;
+  font-size: 13px;
+  color: #191f28;
 }
 
-.submit-btn,
-.delete-btn {
-  width: 100%;
-  padding: 0.9rem 0;
-  font-weight: 600;
-  font-size: 1rem;
-  border: none;
-  border-radius: 10px;
+.custom-table th,
+.custom-table td {
+  padding: 14px 16px;
+  border-bottom: 1px solid #e5e7eb;
+  text-align: left;
+}
+
+.custom-table tbody tr {
+  transition: background-color 0.2s;
   cursor: pointer;
+}
+
+.custom-table tbody tr:hover {
+  background-color: #f0f4f8;
+}
+
+.highlight {
+  font-weight: bold;
+  color: #2563eb;
+}
+
+.category-filter {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
   margin-bottom: 1rem;
 }
 
-.submit-btn {
-  background: #000;
-  color: #fff;
+.category-filter button {
+  background-color: #e0e7ff;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
 }
 
-.delete-btn {
-  background: #eee;
-  color: #000;
+.category-filter button:hover {
+  background-color: #c7d2fe;
 }
 </style>

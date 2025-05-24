@@ -36,16 +36,14 @@ const title = ref('')
 const content = ref('')
 const category = ref('')
 
-// 쿼리 파라미터 기준으로 수정 모드 판단
 const isEditMode = computed(() => route.query.mode === 'edit')
 const articleId = computed(() => route.query.id)
 
-// articleDetail이 변경될 때마다 입력 필드 업데이트
 watch(
   () => store.articleDetail,
   (newDetail) => {
     if (newDetail && isEditMode.value && newDetail.id == articleId.value) {
-      console.log('데이터 로드됨:', newDetail) // 디버깅용
+      console.log('데이터 로드됨:', newDetail)
       title.value = newDetail.title || ''
       content.value = newDetail.content || ''
       category.value = newDetail.category || ''
@@ -58,13 +56,11 @@ onMounted(() => {
   console.log('수정 모드:', isEditMode.value, '글 ID:', articleId.value) // 디버깅용
 
   if (isEditMode.value && articleId.value) {
-    // 이미 데이터가 있고 같은 글이라면 바로 설정
     if (store.articleDetail && store.articleDetail.id == articleId.value) {
       title.value = store.articleDetail.title || ''
       content.value = store.articleDetail.content || ''
       category.value = store.articleDetail.category || ''
     } else {
-      // 데이터가 없다면 새로 가져오기
       store.getArticleDetail(articleId.value)
     }
   }
@@ -171,4 +167,3 @@ const handleDelete = () => {
   color: #000;
 }
 </style>
-  
