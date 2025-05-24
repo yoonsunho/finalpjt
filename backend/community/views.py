@@ -23,8 +23,25 @@ def article_list_create(request):
         # 현재 사용자 (로그인 여부 확인)
         user = request.user if request.user.is_authenticated else None
 
+        # 1. 필수 필터링 파라미터 (기본값: REVIEW)
+        category = request.GET.get('category', 'REVIEW')  # 기본 카테고리 설정
+        ordering = request.GET.get('ordering', 'latest')  # 기본 정렬: 최신순
+
+        # 2. 카테고리 유효성 검사
+        if category not in dict(Article.CATEGORY_CHOICES):
+            return Response(
+                {"detail": "유효하지 않은 카테고리입니다."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        # 3. 필수 카테고리 필터링
+        queryset = Article.objects.filter(category=category)
+        # 카테고리 필터링
+        if category in dict(Article.CATEGORY_CHOICES):
+            queryset = queryset.filter(category=category)
+
         # annotate로 likes_count와 is_liked 추가
-        queryset = Article.objects.annotate(
+        queryset = queryset.annotate(
             likes_count=Count('likes'),
             is_liked=Exists(
                 Like.objects.filter(
@@ -33,6 +50,16 @@ def article_list_create(request):
                 )
             ) if user else Value(False)  # 비회원은 무조건 False
         ).select_related('user')
+
+        # 5. 정렬
+        if ordering == 'latest':
+            queryset = queryset.order_by('-created_at')
+        elif ordering == 'oldest':
+            queryset = queryset.order_by('created_at')
+        elif ordering == 'popular':
+            queryset = queryset.order_by('-likes_count', '-created_at')
+        else:
+            queryset = queryset.order_by('-created_at')  # 기본값: 최신순
 
         serializer = ArticleSerializer(queryset, many=True)
         return Response(serializer.data)
