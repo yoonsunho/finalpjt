@@ -55,7 +55,7 @@
             </button>
             <ul :class="['dropdown-menu', { active: activeDropdown === 'EtcPage' }]">
               <li>
-                <RouterLink :to="{ name: 'ExchangePage' }" class="dropdown-item">환율</RouterLink>
+                <RouterLink :to="{ name: 'SpotPage' }" class="dropdown-item">환율</RouterLink>
               </li>
               <li>
                 <RouterLink :to="{ name: 'MapPage' }" class="dropdown-item">지도</RouterLink>
