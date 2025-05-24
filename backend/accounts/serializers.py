@@ -1,6 +1,8 @@
 from dj_rest_auth.registration.serializers import RegisterSerializer
 from rest_framework import serializers
 from .models import CustomUser
+from django.contrib.auth.password_validation import validate_password
+
 
 class CustomRegisterSerializer(RegisterSerializer):
     # username 필드 제거, email은 기본 제공
@@ -91,3 +93,35 @@ class UserProfileSerializer(serializers.ModelSerializer):
             'email', 'nickname', 'gender', 'salary', 'wealth', 
             'tendency', 'deposit_amount', 'deposit_period'
         ]
+
+# 회원정보 수정에 사용할 serializer
+class UserProfileUpdateSerializer(serializers.ModelSerializer):
+    email = serializers.EmailField(read_only = True) # 이메일은 수정 불가
+
+    class Meta:
+        model = CustomUser
+        fields = (  'email', 'nickname', 'gender', 'salary', 'wealth', 
+            'tendency', 'deposit_amount', 'deposit_period')
+    
+    def validate_nickname(self,value):
+        user = self.context['request'].user
+        if CustomUser.objects.exclude(pk=user.pk).filter(nickname=value).exists():
+            raise serializers.ValidationError("이미 사용 중인 닉네임입니다.")
+        return value
+    
+# 비밀번호 수정 
+class ChangePasswordSerializer(serializers.Serializer):
+    old_password = serializers.CharField(required=True)
+    new_password = serializers.CharField(required=True, validators=[validate_password])
+    confirm_password = serializers.CharField(required=True)
+
+    def validate(self, data):
+        if data['new_password'] != data['confirm_password']:
+            raise serializers.ValidationError("새 비밀번호와 확인 비밀번호가 일치하지 않습니다.")
+        return data
+    
+    def validate_old_password(self, value):
+        user = self.context['request'].user
+        if not user.check_password(value):
+            raise serializers.ValidationError("현재 비밀번호가 틀렸습니다.")
+        return value

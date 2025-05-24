@@ -5,7 +5,8 @@ from rest_framework.decorators import api_view
 import json
 from rest_framework import status
 
-from .serializers import UserProfileSerializer
+from .serializers import UserProfileSerializer, UserProfileUpdateSerializer, ChangePasswordSerializer
+from django.contrib.auth import update_session_auth_hash    # 비밀번호 변경 후 사용자의 세션을 유지(로그아웃 방지)
 
 from rest_framework.response import Response
 
@@ -39,14 +40,32 @@ def check_nickname(request):
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=400)
 
-# 마이페이지 조회 함수
-@api_view(['GET',])
+# 마이페이지 조회 , 수정
+@api_view(['GET','PUT'])
 @permission_classes([IsAuthenticated])
 def my_profile_view(request):
-   try:
-       # 현재 로그인한 사용자 정보 직렬화
-       serializer = UserProfileSerializer(request.user)
+   user = request.user
+
+    # 조회
+   if request.method == 'GET':
+       serializer = UserProfileSerializer(user)
        return Response(serializer.data, status = status.HTTP_200_OK)
-   except Exception as e:
-       # 예외시 에러 메세지 반환
-       return Response({'error':str(e)}, status = status.HTTP_500_INTERNAL_SERVER_ERROR)
+   
+   # 수정
+   elif request.method =='PUT':
+       serializer = UserProfileUpdateSerializer(user, data = request.data, partial = True, context={'request': request})  # context 추가)
+       if serializer.is_valid(raise_exception = True):
+           serializer.save()
+           return Response(serializer.data, status = status.HTTP_200_OK)
+           
+# 비밀번호 수정
+@api_view(['PUT'])
+@permission_classes([IsAuthenticated])
+def change_password(request):
+    serializer = ChangePasswordSerializer(data=request.data, context={'request': request})
+    if serializer.is_valid(raise_exception=True):
+        user = request.user
+        user.set_password(serializer.validated_data['new_password'])
+        user.save()
+        update_session_auth_hash(request, user)  # 세션 유지
+        return Response({"detail": "비밀번호가 성공적으로 변경되었습니다."}, status=status.HTTP_200_OK)
