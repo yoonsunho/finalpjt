@@ -1,4 +1,32 @@
 <template>
+  <div>
+    <!-- 🔍 필터 섹션 -->
+    <div class="filter-bar">
+      <form @submit.prevent="filterDeposits" class="filter-form">
+        <input v-model="searchBank" placeholder="은행검색" @input="fetchFilteredProducts" />
+
+        <select v-model="selectedRateType" @change="fetchFilteredProducts">
+          <option value="">이율 유형 전체</option>
+          <option value="단리">단리</option>
+          <option value="복리">복리</option>
+        </select>
+
+        <select v-model="selectedOrdering" @change="fetchFilteredProducts">
+          <option value="">기본 정렬</option>
+          <option value="interest_count">찜 많은 순</option>
+          <option value="-interest_count">찜 적은 순</option>
+          <option value="joined_count">가입 많은 순</option>
+          <option value="-joined_count">가입 적은 순</option>
+        </select>
+        <button type="submit">검색</button>
+      </form>
+    </div>
+
+    <!-- 📝 예금 리스트 -->
+    <div v-for="product in store.depositProducts" :key="product.id">
+      <DepositItem :product="product" />
+    </div>
+  </div>
   <div class="table-wrapper">
     <fwb-table hoverable>
       <fwb-table-head>
@@ -37,11 +65,36 @@ import {
 } from 'flowbite-vue'
 
 import { useDepositStore } from '@/stores/deposit'
-import { onMounted } from 'vue'
-
+import { ref, onMounted } from 'vue'
+import axios from 'axios'
 const store = useDepositStore()
+
+const searchBank = ref('')
+const selectedRateType = ref('')
+const selectedOrdering = ref('')
+
+const filterDeposits = function () {
+  const params = {}
+
+  if (searchBank.value) params.kor_co_nm = searchBank.value
+  if (selectedOrdering.value) params.ordering = selectedOrdering.value
+  if (selectedRateType.value) params.intr_rate_type_nm = selectedRateType.value
+
+  axios
+    .get(`${store.API_URL}/finlife/deposit/`, {
+      params: params,
+    })
+    .then((res) => {
+      store.depositProducts = res.data
+    })
+    .catch((err) => {
+      console.error('필터링 실패:', err)
+    })
+}
+
 onMounted(() => {
-  store.getDepositProducts()
+  // store.getDepositProducts()
+  filterDeposits()
 })
 </script>
 
@@ -54,8 +107,14 @@ onMounted(() => {
   /* box-shadow: inset 0 0 3px dodgerblue; */
   border: 2px solid dodgerblue;
 }
-.deposit_product_name {
-  font-weight: bold;
-  width: 300px;
+.filter-bar {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+input,
+select {
+  padding: 0.5rem;
+  font-size: 0.9rem;
 }
 </style>
