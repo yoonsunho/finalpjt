@@ -36,9 +36,6 @@ def article_list_create(request):
         
         # 3. 필수 카테고리 필터링
         queryset = Article.objects.filter(category=category)
-        # 카테고리 필터링
-        if category in dict(Article.CATEGORY_CHOICES):
-            queryset = queryset.filter(category=category)
 
         # annotate로 likes_count와 is_liked 추가
         queryset = queryset.annotate(

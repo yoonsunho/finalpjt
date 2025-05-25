@@ -53,7 +53,11 @@ def my_profile_view(request):
    
    # 수정
    elif request.method =='PUT':
-       serializer = UserProfileUpdateSerializer(user, data = request.data, partial = True, context={'request': request})  # context 추가)
+       serializer = UserProfileUpdateSerializer(
+           user, 
+           data = request.data, 
+           partial = True, 
+           context={'request': request})  # context 추가)
        if serializer.is_valid(raise_exception = True):
            serializer.save()
            return Response(serializer.data, status = status.HTTP_200_OK)
