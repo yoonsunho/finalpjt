@@ -136,6 +136,11 @@ def deposit_product_list(request):
         joined_count=Count('joined_users', distinct=True)
     )
 
+    # 검색 기능 추가
+    search_term = request.query_params.get('search')
+    if search_term:
+        queryset = queryset.filter(fin_prdt_nm__icontains = search_term)
+
     # 필터링
     intr_rate_type_nm = request.query_params.get('intr_rate_type_nm')
     kor_co_nm = request.query_params.get('kor_co_nm')
@@ -176,6 +181,11 @@ def saving_product_list(request):
         interest_count=Count('interest_users', distinct=True),
         joined_count=Count('joined_users', distinct=True)
     )
+
+    # 검색 기능 추가
+    search_term = request.query_params.get('search')
+    if search_term:
+        queryset = queryset.filter(fin_prdt_nm__icontains = search_term)
 
     # 필터링 처리
     intr_rate_type_nm = request.query_params.get('intr_rate_type_nm')
