@@ -1,190 +1,269 @@
 <template>
   <div class="search-bank">
-    <select v-model="selectedName" @change="onNameChange">
-      <option disabled value="">시/도 선택</option>
-      <option v-for="item in mapInfo" :key="item.name" :value="item.name">{{ item.name }}</option>
-    </select>
+    <div class="selectors" :class="{ disabled: !isKakaoReady }">
+      <select v-model="selectedName" @change="onNameChange" :disabled="!isKakaoReady">
+        <option disabled value="">시/도 선택</option>
+        <option v-for="item in mapInfo" :key="item.name" :value="item.name">{{ item.name }}</option>
+      </select>
 
-    <select v-model="selectedCountry" :disabled="!selectedName">
-      <option disabled value="">시/군/구 선택</option>
-      <option v-for="country in countries" :key="country">{{ country }}</option>
-    </select>
+      <select v-model="selectedCountry" :disabled="!selectedName || !isKakaoReady">
+        <option disabled value="">시/군/구 선택</option>
+        <option v-for="country in countries" :key="country" :value="country">{{ country }}</option>
+      </select>
 
-    <select v-model="selectedBank">
-      <option disabled value="">은행 선택</option>
-      <option v-for="bank in bankInfo" :key="bank">{{ bank }}</option>
-    </select>
+      <select v-model="selectedBank" :disabled="!isKakaoReady">
+        <option disabled value="">은행 선택</option>
+        <option v-for="bank in bankInfo" :key="bank" :value="bank">{{ bank }}</option>
+      </select>
 
-    <button @click="combineSelection">검색</button>
+      <button @click="combineSelection" :disabled="!isKakaoReady || isSearching || !map">
+        {{ isSearching ? '검색 중' : '검색' }}
+      </button>
+    </div>
+
+    <div class="kakao-map-container" ref="mapContainerRef"></div>
   </div>
-
-  <KakaoMap
-    class="kakao-map-container"
-    :lat="37.566826"
-    :lng="126.9786567"
-    @onLoadKakaoMap="onLoadKakaoMap"
-  >
-    <KakaoMapMarker
-      v-for="(marker, index) in markerList"
-      :key="marker.key === undefined ? index : marker.key"
-      :lat="marker.lat"
-      :lng="marker.lng"
-      :infoWindow="marker.infoWindow"
-      :clickable="true"
-      @onClickKakaoMapMarker="onClickMapMarker(marker)"
-    />
-  </KakaoMap>
 </template>
 <script setup>
-import { KakaoMap, KakaoMapMarker } from 'vue3-kakao-maps'
-import { ref, watch, onMounted } from 'vue'
+import { ref, watch, onMounted, nextTick } from 'vue'
 import jsonData from '@/assets/data.json'
-const isKakaoReady = ref(false)
-
-const map = ref(null)
-const markerList = ref([])
 
 const mapInfo = ref(jsonData.mapInfo)
 const bankInfo = ref(jsonData.bankInfo)
 
-const selectedName = ref('') // 선택한 도
-const selectedCountry = ref('') // 선택한 시군구
-const selectedBank = ref('') // 선택한 은행
-
+const selectedName = ref('')
+const selectedCountry = ref('')
+const selectedBank = ref('')
 const countries = ref([])
 
+const isKakaoReady = ref(false)
+const isSearching = ref(false)
+const mapContainerRef = ref(null)
+const map = ref(null)
+const markerList = ref([])
+
+const mapCenter = ref({
+  lat: 37.566826,
+  lng: 126.9786567,
+})
+
+const getCurrentLocation = () => {
+  return new Promise((resolve, reject) => {
+    if (!navigator.geolocation) {
+      reject(new Error('브라우저가 위치 정보를 지원하지 않아요!'))
+    } else {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          resolve({
+            lat: position.coords.latitude,
+            lng: position.coords.longitude,
+          })
+        },
+        (err) => {
+          reject(new Error('위치 정보 접근 실패'))
+        },
+      )
+    }
+  })
+}
 watch(selectedName, (newVal) => {
-  const nameData = mapInfo.value.find((item) => item.name === newVal)
-  countries.value = nameData ? nameData.countries : []
+  const selected = mapInfo.value.find((item) => item.name === newVal)
+  countries.value = selected ? selected.countries : []
   selectedCountry.value = ''
 })
 
-const onLoadKakaoMap = (mapRef) => {
-  map.value = mapRef
-  // searchPlace()
+const checkKakaoReady = (timeout = 10000) => {
+  return new Promise((resolve, reject) => {
+    const start = Date.now()
+    const check = () => {
+      if (window.kakao && kakao.maps && typeof kakao.maps.Map === 'function') {
+        resolve(true)
+      } else if (Date.now() - start > timeout) {
+        reject(new Error('카카오맵 SDK 로딩 타임아웃'))
+      } else {
+        setTimeout(check, 100)
+      }
+    }
+    check()
+  })
 }
 
-const combineSelection = () => {
+const initMap = () => {
+  const { kakao } = window
+  const options = {
+    center: new kakao.maps.LatLng(mapCenter.value.lat, mapCenter.value.lng),
+    level: 3,
+  }
+
+  const kakaoMap = new kakao.maps.Map(mapContainerRef.value, options)
+
+  const zoomControl = new kakao.maps.ZoomControl()
+  kakaoMap.addControl(zoomControl, kakao.maps.ControlPosition.RIGHT)
+
+  kakao.maps.event.addListener(kakaoMap, 'dragend', () => {
+    const center = kakaoMap.getCenter()
+    mapCenter.value = { lat: center.getLat(), lng: center.getLng() }
+  })
+
+  map.value = kakaoMap
+}
+
+const combineSelection = async () => {
   if (!selectedName.value || !selectedCountry.value || !selectedBank.value) {
     alert('항목을 모두 선택해주세요.')
     return
   }
 
-  if (!isKakaoReady.value) {
-    alert('지도가 아직 준비 중이에요! 조금만 기다려주세요!')
+  if (!map.value) {
+    alert('지도가 아직 준비되지 않았습니다.')
     return
   }
 
-  const combined = `${selectedName.value} ${selectedCountry.value} ${selectedBank.value}`
-  searchPlace(combined)
+  const keyword = `${selectedName.value} ${selectedCountry.value} ${selectedBank.value}`
+  await searchPlace(keyword)
 }
+const searchPlace = async (keyword) => {
+  const { kakao } = window
+  if (!keyword || !map.value || !kakao?.maps?.services?.Places) return
 
-const searchPlace = (keyword) => {
-  if (!keyword || !map.value) {
-    console.warn('지도 또는 키워드가 비어 있어요!')
-    return
-  }
+  isSearching.value = true
 
-  if (typeof kakao === 'undefined' || !kakao.maps?.services) {
-    console.warn('카카오 객체 또는 services가 아직 준비되지 않았어요!')
-    alert('지도가 아직 준비 중이에요! 잠시 후 다시 시도해주세요!')
-    console.error()
-    return
-  }
+  markerList.value.forEach((markerObj) => markerObj.marker.setMap(null))
   markerList.value = []
 
-  const ps = new kakao.maps.services.Places()
-  ps.keywordSearch(keyword, (data, status) => {
-    if (status === kakao.maps.services.Status.OK) {
-      const bounds = new kakao.maps.LatLngBounds()
+  try {
+    const ps = new kakao.maps.services.Places()
+    const data = await new Promise((resolve) => {
+      ps.keywordSearch(keyword, (res, status) => {
+        resolve(status === kakao.maps.services.Status.OK ? res : [])
+      })
+    })
 
-      for (let marker of data) {
-        const markerItem = {
-          lat: marker.y,
-          lng: marker.x,
-          infoWindow: {
-            content: `<div style="padding:4px 10px">${marker.place_name}</div>`,
-            visible: false,
-          },
-        }
-        markerList.value.push(markerItem)
-        bounds.extend(new kakao.maps.LatLng(Number(marker.y), Number(marker.x)))
-      }
-
-      map.value.setBounds(bounds)
-    } else {
+    if (data.length === 0) {
       alert('검색 결과가 없습니다.')
+      return
     }
-  })
+
+    const bounds = new kakao.maps.LatLngBounds()
+
+    for (const place of data) {
+      const position = new kakao.maps.LatLng(place.y, place.x)
+      const marker = new kakao.maps.Marker({
+        position,
+        map: map.value,
+      })
+      const infoWindow = new kakao.maps.InfoWindow({
+        content: `
+          <div style="padding: 8px 12px; min-width: 200px;">
+            <h4 style="margin: 0 0 4px 0; font-size: 14px; font-weight: bold;">${place.place_name}</h4>
+            <p style="margin: 0; font-size: 12px; color: #666;">${place.address_name}</p>
+            ${place.phone ? `<p style="margin: 2px 0 0 0; font-size: 12px; color: #0066cc;">${place.phone}</p>` : ''}
+          </div>
+        `,
+      })
+      kakao.maps.event.addListener(marker, 'click', () => {
+        markerList.value.forEach(({ infoWindow }) => infoWindow.close()) // 기존 창 닫기
+        infoWindow.open(map.value, marker)
+      })
+      markerList.value.push({ marker, infoWindow })
+      bounds.extend(position)
+    }
+
+    map.value.setBounds(bounds)
+  } finally {
+    isSearching.value = false
+  }
 }
 
-const onClickMapMarker = (markerItem) => {
-  markerItem.infoWindow.visible = !markerItem.infoWindow.visible
-}
-onMounted(() => {
-  const checkKakaoReady = setInterval(() => {
-    if (window.kakao && kakao.maps && kakao.maps.services) {
-      isKakaoReady.value = true
-      clearInterval(checkKakaoReady)
-      console.log('카카오맵 SDK 로딩 완료!')
-    }
-  }, 300)
+// 컴포넌트 마운트 후 지도 준비
+onMounted(async () => {
+  try {
+    await checkKakaoReady() // 카카오 sdk를 준비
+    const location = await getCurrentLocation() // 현재 사용자의 좌표를 받아옴
+    mapCenter.value = location
+  } catch (err) {
+    mapCenter.value = { lat: 37.566826, lng: 126.9786567 } // fallback
+  }
+
+  await nextTick()
+  initMap()
+  isKakaoReady.value = true
 })
 </script>
 <style scoped>
 .search-bank {
   display: flex;
   flex-direction: column;
-  gap: 24px;
-  max-width: 600px;
-  margin: 0 auto;
+  align-items: center;
   padding: 40px 20px;
-  background: white;
-  border-radius: 20px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  /* max-width: 640px; */
+  width: 100%;
+  margin: 100px;
+  background-color: #ffffff;
+  border-radius: 24px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
 }
 
 .selectors {
+  width: 100%;
   display: flex;
   flex-direction: column;
   gap: 16px;
+  margin-bottom: 32px;
+}
+
+.selectors.disabled {
+  opacity: 0.6;
+  pointer-events: none;
 }
 
 select {
-  padding: 12px 16px;
-  border: 1px solid #e5e7eb;
-  border-radius: 12px;
+  width: 100%;
+  padding: 14px 16px;
   font-size: 16px;
+  border: 1px solid #d1d5db;
+  border-radius: 14px;
   background-color: #f9fafb;
-  transition: all 0.2s ease;
+  color: #111827;
+  transition:
+    border-color 0.2s ease,
+    background-color 0.2s ease;
 }
 
 select:focus {
   outline: none;
   border-color: #3b82f6;
-  background-color: white;
+  background-color: #ffffff;
 }
 
 button {
-  padding: 12px;
+  width: 100%;
+  padding: 14px;
   font-size: 16px;
-  background-color: #3b82f6;
-  color: white;
+  font-weight: 500;
   border: none;
-  border-radius: 12px;
+  border-radius: 14px;
+  background-color: #3b82f6;
+  color: #ffffff;
   cursor: pointer;
   transition: background-color 0.2s ease;
 }
 
-button:hover {
+button:hover:not(:disabled) {
   background-color: #2563eb;
 }
 
+button:disabled {
+  background-color: #cbd5e1;
+  cursor: not-allowed;
+}
+
 .kakao-map-container {
-  width: 100%;
-  height: 500px;
+  width: 700px;
+  height: 480px;
   border-radius: 20px;
+  background-color: #f1f5f9;
   overflow: hidden;
-  margin-top: 24px;
+  border: 1px solid #e5e7eb;
 }
 </style>
