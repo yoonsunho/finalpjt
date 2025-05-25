@@ -1,80 +1,77 @@
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
 import axios from 'axios'
 import { useAccountStore } from './user'
 
 export const useArticleStore = defineStore('article', () => {
   const API_URL = 'http://127.0.0.1:8000'
+  const accountStore = useAccountStore()
+
   const articles = ref([])
   const articleDetail = ref(null)
   const comments = ref([])
-  const accountStore = useAccountStore()
+  const selectedCategory = ref('REVIEW')
+  const selectedOrdering = ref('')
 
-  const getArticles = function (category = 'REVIEW') {
-    axios({
-      method: 'GET',
-      url: `${API_URL}/community/?category=${category}`,
-    })
+  const newComment = ref('')
+  const editCommentId = ref(null)
+  const editContent = ref('')
+
+  const getArticles = () => {
+    let url = `${API_URL}/community/?category=${selectedCategory.value}`
+    if (selectedOrdering.value) url += `&ordering=${selectedOrdering.value}`
+
+    axios
+      .get(url)
       .then((res) => {
         articles.value = res.data
       })
       .catch((err) => {
-        console.error(err)
+        console.error('게시글 목록 조회 실패:', err)
       })
   }
 
-  const getArticleDetail = function (id) {
+  const getArticleDetail = (id) => {
     articleDetail.value = null
-    axios({
-      method: 'GET',
-      url: `${API_URL}/community/${id}`,
-    })
+    axios
+      .get(`${API_URL}/community/${id}`)
       .then((res) => {
         articleDetail.value = res.data
-        // return res.data
       })
       .catch((err) => {
-        console.error(err)
+        console.error('게시글 상세 조회 실패:', err)
       })
   }
 
   const createArticle = (data) => {
-    return axios({
-      method: 'POST',
-      url: `${API_URL}/community/create`,
-      headers: {
-        Authorization: `Token ${accountStore.token}`,
-      },
-      data,
-    })
-  }
-
-  const updateArticle = (articleId, data) => {
-    return axios({
-      method: 'PUT',
-      url: `${API_URL}/community/${articleId}/`,
-      headers: {
-        Authorization: `Token ${accountStore.token}`,
-      },
-      data,
-    })
-  }
-
-  const deleteArticle = (articleId) => {
-    return axios({
-      method: 'DELETE',
-      url: `${API_URL}/community/${articleId}/`,
+    return axios.post(`${API_URL}/community/create`, data, {
       headers: {
         Authorization: `Token ${accountStore.token}`,
       },
     })
   }
 
-  const toggleLike = (articleId) => {
+  const updateArticle = (id, data) => {
+    return axios.put(`${API_URL}/community/${id}/`, data, {
+      headers: {
+        Authorization: `Token ${accountStore.token}`,
+      },
+    })
+  }
+
+  const deleteArticle = (id) => {
+    return axios.delete(`${API_URL}/community/${id}/`, {
+      headers: {
+        Authorization: `Token ${accountStore.token}`,
+      },
+    })
+  }
+
+  const toggleLike = (id) => {
     if (!accountStore.isLogin) return
     axios
       .post(
-        `${API_URL}/community/${articleId}/like/`,
+        `${API_URL}/community/${id}/like/`,
         {},
         {
           headers: {
@@ -82,17 +79,9 @@ export const useArticleStore = defineStore('article', () => {
           },
         },
       )
-      .then(() => {
-        getArticleDetail(articleId)
-      })
-      .catch((err) => {
-        console.error('좋아요 실패:', err)
-      })
+      .then(() => getArticleDetail(id))
+      .catch((err) => console.error('좋아요 실패:', err))
   }
-
-  const newComment = ref('')
-  const editCommentId = ref(null)
-  const editContent = ref('')
 
   const getComments = (articleId) => {
     axios
@@ -100,9 +89,7 @@ export const useArticleStore = defineStore('article', () => {
       .then((res) => {
         comments.value = res.data
       })
-      .catch((err) => {
-        console.error(err)
-      })
+      .catch((err) => console.error('댓글 조회 실패:', err))
   }
 
   const createComment = () => {
@@ -123,9 +110,7 @@ export const useArticleStore = defineStore('article', () => {
         getComments(articleDetail.value.id)
         newComment.value = ''
       })
-      .catch((err) => {
-        console.error('댓글 작성 실패:', err.response?.data || err)
-      })
+      .catch((err) => console.error('댓글 작성 실패:', err))
   }
 
   const startEdit = (comment) => {
@@ -151,9 +136,7 @@ export const useArticleStore = defineStore('article', () => {
         if (idx !== -1) comments.value[idx] = res.data
         editCommentId.value = null
       })
-      .catch((err) => {
-        console.error('댓글 수정 실패:', err.response?.data || err)
-      })
+      .catch((err) => console.error('댓글 수정 실패:', err))
   }
 
   const deleteComment = (commentId) => {
@@ -166,27 +149,24 @@ export const useArticleStore = defineStore('article', () => {
       .then(() => {
         comments.value = comments.value.filter((c) => c.id !== commentId)
       })
-      .catch((err) => {
-        console.error('댓글 삭제 실패:', err.response?.data || err)
-      })
+      .catch((err) => console.error('댓글 삭제 실패:', err))
   }
 
   return {
-    API_URL,
     articles,
     articleDetail,
     comments,
+    selectedCategory,
+    selectedOrdering,
     newComment,
     editCommentId,
     editContent,
-
     getArticles,
     getArticleDetail,
     createArticle,
     updateArticle,
     deleteArticle,
     toggleLike,
-
     getComments,
     createComment,
     startEdit,

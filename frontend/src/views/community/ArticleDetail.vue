@@ -6,7 +6,7 @@
         <h1 class="article-title">{{ store.articleDetail.title }}</h1>
         <div class="article-meta">
           <span class="username">{{ store.articleDetail.user }}</span>
-          <span class="created_at">{{ store.articleDetail.created_at }}</span>
+          <span class="created_at">{{ formatDate(store.articleDetail.created_at) }}</span>
         </div>
       </div>
       <div class="article-content">
@@ -92,6 +92,18 @@ const deleteArticle = () => {
       })
   }
 }
+
+const formatDate = (isoString) => {
+  const date = new Date(isoString)
+  return date.toLocaleString('ko-KR', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+  })
+}
+
 onMounted(() => {
   store.getArticleDetail(articleId)
   store.getComments(articleId)

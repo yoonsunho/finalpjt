@@ -63,7 +63,7 @@ export const useAccountStore = defineStore(
         })
         console.log(res.data)
         token.value = res.data.key
-        await fetchUserInfo() // 로그인 성공 후 바로 사용자 정보 가져오기
+        await fetchUserInfo() // 로그인 성공 후 사용자 정보 가져오기
         router.push({ name: 'MainPage' })
       } catch (err) {
         console.error('❌ 로그인 실패:', err.response?.data || err)
@@ -85,7 +85,6 @@ export const useAccountStore = defineStore(
 
     const userInfo = ref(null)
 
-    // fetchUserInfo 함수 async함수로 변경
     const fetchUserInfo = async function () {
       try {
         const res = await axios({

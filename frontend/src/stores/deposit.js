@@ -27,7 +27,7 @@ export const useDepositStore = defineStore(
       }
 
       axios({
-        method: 'post', // DELETE가 아닌 POST 사용
+        method: 'POST', // DELETE가 아닌 POST 사용
         url: `${API_URL}/finlife/deposit/${id}/interest/`,
         headers: headers,
         data: {},
@@ -60,7 +60,6 @@ export const useDepositStore = defineStore(
         data: {},
       })
         .then((response) => {
-          // Django에서 반환하는 action 값에 따라 처리
           if (response.data.action === 'joined') {
             joinedProducts.value.push(id)
           } else if (response.data.action === 'canceled') {
