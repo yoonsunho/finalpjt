@@ -7,9 +7,14 @@ import { createPinia } from 'pinia'
 
 import App from './App.vue'
 import router from './router'
+import { useKakao } from 'vue3-kakao-maps/@utils'
 
 const app = createApp(App)
 const pinia = createPinia()
+useKakao(import.meta.env.VITE_KAKAO_API_KEY, {
+  libraries: ['services'],
+})
+// useKakao('API key', ['clusterer', 'services', 'drawing'])
 
 pinia.use(piniaPluginPersistedstate)
 // app.use(createPinia())
