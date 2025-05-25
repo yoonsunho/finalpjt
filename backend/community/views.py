@@ -5,7 +5,7 @@ from rest_framework import status
 # Permissions
 from rest_framework.decorators import permission_classes
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
-from django.db.models import Count,Exists, OuterRef,Value
+from django.db.models import Count,Exists, OuterRef,Value,Q
 
 from django.shortcuts import get_object_or_404
 
@@ -36,6 +36,19 @@ def article_list_create(request):
         
         # 3. 필수 카테고리 필터링
         queryset = Article.objects.filter(category=category)
+
+        # 검색 기능 추가 
+        search_field = request.GET.get('search_field','').strip()
+        search = request.GET.get('search','').strip()
+
+        # 검색 필드에 따라 다르게 필터링
+        if search and search_field in ['title', 'content', 'nickname']:
+            if search_field == 'title':
+                queryset = queryset.filter(title__icontains=search)
+            elif search_field == 'content':
+                queryset = queryset.filter(content__icontains=search)
+            elif search_field == 'nickname':
+                queryset = queryset.filter(user__nickname__icontains=search)
 
         # annotate로 likes_count와 is_liked 추가
         queryset = queryset.annotate(
