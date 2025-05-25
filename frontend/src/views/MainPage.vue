@@ -22,7 +22,9 @@
 
     <!-- 맞춤 추천 -->
     <section ref="recommend" class="section recommend">
-      <button class="cta">추천받기</button>
+      <RouterLink :to="{ name: 'RecommendView' }">
+        <button class="cta">추천받기</button>
+      </RouterLink>
       <h2>나에게 맞는 예적금을 추천 받아요.</h2>
       <p>몇 가지 질문에만 답하면 끝!</p>
     </section>
@@ -30,7 +32,32 @@
     <!-- 커뮤니티 -->
     <section ref="community" class="section community">
       <h2>혼자보다 함께 더 똑똑한 금융 생활!</h2>
-      <div class="tags"><span>#후기</span><span>#절약팁</span><span>#자유수다</span></div>
+      <div class="community-container">
+        <div class="community-card">
+          <div class="community-title">안녕하세요</div>
+          <div class="community-tags">
+            <span class="community-tag">#자유게시판</span>
+          </div>
+          <div class="community-extra">뚱인데요</div>
+        </div>
+        <div class="community-card">
+          <div class="community-title">등촌칼국수를 드셔 보신 적이 있으신가요?</div>
+          <div class="community-tags">
+            <span class="community-tag">#절약 꿀팁</span>
+          </div>
+          <div class="community-extra">와 진짜 너무 맛있던데요??</div>
+        </div>
+        <div class="community-card">
+          <div class="community-title">뼈찜이 먹고싶은 하루네요..</div>
+          <div class="community-tags">
+            <span class="community-tag">#적금 후기</span>
+          </div>
+          <div class="community-extra">
+            뼈찜이 너무 인기가 많아서 아쉽습니다<br />
+            언제쯤 먹어볼 수 있을까요?
+          </div>
+        </div>
+      </div>
     </section>
 
     <!-- 금/은 시세 -->
@@ -59,6 +86,7 @@
 import { ref, onMounted } from 'vue'
 import gsap from 'gsap'
 import ScrollTrigger from 'gsap/ScrollTrigger'
+import { RouterLink } from 'vue-router'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -158,7 +186,7 @@ body {
   text-align: center;
 }
 
-.cards products {
+.cards.products {
   display: flex;
   flex-wrap: wrap;
   gap: 2rem;
@@ -215,5 +243,58 @@ body {
   font-size: 0.9rem;
   font-weight: 500;
   color: #2563eb;
+}
+
+.community-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+}
+
+.community-card {
+  width: 280px;
+  border-radius: 20px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
+  background-color: #ffffff;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  padding: 1.2rem;
+  font-family: 'Pretendard', 'Apple SD Gothic Neo', sans-serif;
+}
+
+.community-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #111827;
+  line-height: 1.4;
+  margin-bottom: 0.8rem;
+}
+
+.community-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  font-size: 0.75rem;
+  color: #9ca3af;
+  margin-bottom: 1rem;
+}
+
+.community-tag {
+  background-color: #f3f4f6;
+  padding: 0.2rem 0.6rem;
+  border-radius: 9999px;
+}
+
+.community-extra {
+  font-size: 0.85rem;
+  line-height: 1.4;
+  color: #374151;
+  background-color: #f9fafb;
+  padding: 0.8rem;
+  border-radius: 12px;
+  margin-top: auto;
 }
 </style>
