@@ -69,6 +69,12 @@ const combineSelection = () => {
     alert('항목을 모두 선택해주세요.')
     return
   }
+
+  if (!isKakaoReady.value) {
+    alert('지도가 아직 준비 중이에요! 조금만 기다려주세요!')
+    return
+  }
+
   const combined = `${selectedName.value} ${selectedCountry.value} ${selectedBank.value}`
   searchPlace(combined)
 }
@@ -82,9 +88,9 @@ const searchPlace = (keyword) => {
   if (typeof kakao === 'undefined' || !kakao.maps?.services) {
     console.warn('카카오 객체 또는 services가 아직 준비되지 않았어요!')
     alert('지도가 아직 준비 중이에요! 잠시 후 다시 시도해주세요!')
+    console.error()
     return
   }
-
   markerList.value = []
 
   const ps = new kakao.maps.services.Places()
@@ -125,19 +131,60 @@ onMounted(() => {
   }, 300)
 })
 </script>
-
 <style scoped>
+.search-bank {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 40px 20px;
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+}
+
+.selectors {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+select {
+  padding: 12px 16px;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  font-size: 16px;
+  background-color: #f9fafb;
+  transition: all 0.2s ease;
+}
+
+select:focus {
+  outline: none;
+  border-color: #3b82f6;
+  background-color: white;
+}
+
+button {
+  padding: 12px;
+  font-size: 16px;
+  background-color: #3b82f6;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+button:hover {
+  background-color: #2563eb;
+}
+
 .kakao-map-container {
   width: 100%;
   height: 500px;
-  margin-top: 12px;
-}
-
-input {
-  padding: 8px;
-  font-size: 16px;
-  width: 100%;
-  max-width: 400px;
-  margin-bottom: 10px;
+  border-radius: 20px;
+  overflow: hidden;
+  margin-top: 24px;
 }
 </style>
