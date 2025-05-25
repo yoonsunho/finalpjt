@@ -121,8 +121,4 @@ const router = createRouter({
   ],
 })
 
-// router.beforeEach((to,from)=>{
-//   const accountStore = useAccountStore()
-// })
-
 export default router

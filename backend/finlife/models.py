@@ -1,5 +1,6 @@
 from django.db import models
 from django.conf import settings
+from django.db.models import Max
 
 # Create your models here.
 # 예금
@@ -26,6 +27,9 @@ class DepositProducts(models.Model):
     join_deny = models.IntegerField(default=0)  # 가입 제한(1.제한 없음, 2: 서면전용, 3: 일부제한)
     etc_note = models.TextField()   # 기타 유의사항
     max_limit = models.IntegerField(blank=True, null=True)  # 최고한도
+
+    def max_rate(self):
+        return self.depositoptions_set.aggregate(max_rate=Max('intr_rate2'))['max_rate']
 
     
 
@@ -65,6 +69,9 @@ class SavingProducts(models.Model):
     join_deny = models.IntegerField(default=0) # 가입제한 Ex) 1:제한없음, 2:서민전용, 3:일부제한
     etc_note = models.TextField()   # 기타 유의사항
     max_limit = models.IntegerField(blank=True, null=True)   # 최고한도
+
+    def max_rate(self):
+        return self.savingoptions_set.aggregate(max_rate=Max('intr_rate2'))['max_rate']
 
 class SavingOptions(models.Model):
 

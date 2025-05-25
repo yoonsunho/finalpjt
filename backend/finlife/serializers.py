@@ -223,3 +223,30 @@ class SavingJoinSerializer(serializers.ModelSerializer):
         model = SavingJoin
         fields = ['id', 'user', 'product', 'joined_at', 'product_name', 'company_name']
         read_only_fields = ['user', 'joined_at']
+
+# 추천 알고리즘에서 사용할 serializer
+class DepositRecommendSerializer(DepositListSerializer):
+    recommend_reason = serializers.SerializerMethodField()
+
+    class Meta(DepositListSerializer.Meta):
+        fields = DepositListSerializer.Meta.fields + ('recommend_reason',)
+
+    def get_recommend_reason(self, obj):
+        user = self.context.get('user')
+        if user:
+            from recommend.utils.ai import generate_recommend_reason
+            return generate_recommend_reason(user, obj)
+        return None
+    
+class SavingRecommendSerializer(SavingListSerializer):
+    recommend_reason = serializers.SerializerMethodField()
+
+    class Meta(SavingListSerializer.Meta):
+        fields = SavingListSerializer.Meta.fields + ('recommend_reason',)
+
+    def get_recommend_reason(self, obj):
+        user = self.context.get('user')
+        if user:
+            from recommend.utils.ai import generate_recommend_reason
+            return generate_recommend_reason(user, obj)
+        return None

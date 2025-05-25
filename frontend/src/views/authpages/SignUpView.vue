@@ -249,7 +249,6 @@ const onSignUp = async function () {
     return
   }
 
-  // ...중복 체크 등 추가 후 회원가입 진행
   const userInfo = {
     email: email.value,
     nickname: nickname.value,
@@ -266,11 +265,9 @@ const onSignUp = async function () {
     await accountStore.signUp(userInfo)
     router.push({ name: 'SignUpSuccessView' })
   } catch (err) {
-    // 비밀번호 규칙 위반 등 백엔드에서 온 에러 처리
     if (err.response && err.response.data) {
       const data = err.response.data
       if (data.password1) {
-        // 여러 에러 메시지가 배열로 올 수 있으니 join으로 합침
         errors.value.password1 = Array.isArray(data.password1)
           ? data.password1.join(' ')
           : data.password1
