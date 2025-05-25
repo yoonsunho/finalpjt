@@ -67,17 +67,35 @@ const isLogin = computed(() => !!accountStore.token)
 const showJoinModal = ref(false)
 const showCancelModal = ref(false)
 
-const toggleLike = () => store.toggleLike(productId)
 const confirmJoin = () => (showJoinModal.value = true)
 const confirmCancelJoin = () => (showCancelModal.value = true)
-
-const doJoin = () => {
-  store.toggleJoin(productId)
-  showJoinModal.value = false
+const doJoin = async () => {
+  try {
+    const result = await store.toggleJoin(productId)
+    console.log('가입 처리:', result)
+    showJoinModal.value = false
+  } catch (err) {
+    alert('가입 처리 중 오류 발생!')
+  }
 }
-const doCancel = () => {
-  store.toggleJoin(productId)
-  showCancelModal.value = false
+
+const doCancel = async () => {
+  try {
+    const result = await store.toggleJoin(productId)
+    console.log('가입 취소 처리:', result)
+    showCancelModal.value = false
+  } catch (err) {
+    alert('가입 취소 처리 중 오류 발생!')
+  }
+}
+
+const toggleLike = async () => {
+  try {
+    const result = await store.toggleLike(productId)
+    console.log('찜 처리:', result)
+  } catch (err) {
+    alert('찜 처리 중 오류 발생!')
+  }
 }
 
 const getDepositDetail = () => {

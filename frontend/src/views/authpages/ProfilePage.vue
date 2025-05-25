@@ -1,6 +1,9 @@
 <template>
   <div class="profile-wrapper">
-    <h1 class="profile-name"><strong>선호바보개</strong>님의 프로필</h1>
+    <h1 class="profile-name">
+      <strong>{{ user?.nickname }}</strong
+      >님의 프로필
+    </h1>
     <div class="profile-container"></div>
     <div class="profile-tab-category">
       <button @click="activeTab = '회원정보'" :class="{ active: activeTab === '회원정보' }">
@@ -85,8 +88,6 @@ const activeTab = ref('회원정보') // 초기메뉴
 .profile-tab-content {
   margin-top: 20px;
   padding: 10px;
-
-  background-color: #191f28;
 }
 
 button.active {

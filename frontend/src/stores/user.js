@@ -78,6 +78,7 @@ export const useAccountStore = defineStore(
       })
         .then((res) => {
           token.value = null
+          userInfo.value = null // 로그아웃 시 사용자 정보도 초기화
           router.push({ name: 'MainPage' })
         })
         .catch((err) => console.log(err))
@@ -85,12 +86,17 @@ export const useAccountStore = defineStore(
 
     const userInfo = ref(null)
 
-    // fetchUserInfo 함수 async함수로 변경
+    // fetchUserInfo 함수 - 백엔드 URL에 맞춤
     const fetchUserInfo = async function () {
+      if (!token.value) {
+        console.error('토큰이 없습니다.')
+        return null
+      }
+
       try {
         const res = await axios({
           method: 'GET',
-          url: `${ACCOUNT_API_URL}/myprofile/`,
+          url: `${ACCOUNT_API_URL}/myprofile/`, // 백엔드 URL 맞춤
           headers: {
             Authorization: `Token ${token.value}`,
           },
@@ -100,6 +106,11 @@ export const useAccountStore = defineStore(
         return res.data
       } catch (err) {
         console.error('유저 정보를 불러오지 못했습니다', err.response?.data || err)
+        // 토큰이 유효하지 않은 경우 로그아웃 처리
+        if (err.response?.status === 401) {
+          token.value = null
+          userInfo.value = null
+        }
         throw err
       }
     }
