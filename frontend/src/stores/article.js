@@ -44,7 +44,7 @@ export const useArticleStore = defineStore('article', () => {
   }
 
   const createArticle = (data) => {
-    return axios.post(`${API_URL}/community/create`, data, {
+    return axios.post(`${API_URL}/community/`, data, {
       headers: {
         Authorization: `Token ${accountStore.token}`,
       },
