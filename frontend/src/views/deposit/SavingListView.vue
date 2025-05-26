@@ -17,6 +17,9 @@
         <option value="-joined_count">가입 적은 순</option>
       </select>
       <button type="submit">검색</button>
+      <RouterLink :to="{ name: 'RecommendView' }">
+        <button class="cta">추천받기</button>
+      </RouterLink>
     </form>
   </div>
   <div class="table-wrapper">
