@@ -2,5 +2,5 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path('<int:user_id>/',views.recommend_view, name='recommend'),
+    path('<str:user_email>/',views.recommend_view, name='recommend'),
 ]
