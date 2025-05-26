@@ -29,8 +29,8 @@
             </div>
             <div class="carousel-card-content">
               <h3>{{ deposit.fin_prdt_nm }}</h3>
-              <p>{{ deposit.kor_co_nm }}</p>
-              <p>금리: {{ deposit.max_intr_rate2 }}%</p>
+              <h4>{{ deposit.kor_co_nm }}</h4>
+              <h5>금리: {{ deposit.max_intr_rate2 }}%</h5>
             </div>
           </div>
 
@@ -45,8 +45,8 @@
             </div>
             <div class="carousel-card-content">
               <h3>{{ deposit.fin_prdt_nm }}</h3>
-              <p>{{ deposit.kor_co_nm }}</p>
-              <p>금리: {{ deposit.max_intr_rate2 }}%</p>
+              <h4>{{ deposit.kor_co_nm }}</h4>
+              <h5>금리: {{ deposit.max_intr_rate2 }}%</h5>
             </div>
           </div>
         </div>
@@ -68,8 +68,8 @@
             </div>
             <div class="carousel-card-content">
               <h3>{{ saving.fin_prdt_nm }}</h3>
-              <p>{{ saving.kor_co_nm }}</p>
-              <p>금리: {{ saving.max_intr_rate2 }}%</p>
+              <h4>{{ saving.kor_co_nm }}</h4>
+              <h5>금리: {{ saving.max_intr_rate2 }}%</h5>
             </div>
           </div>
           <div class="carousel-card" v-for="saving in topSavings" :key="'saving-' + saving.id">
@@ -83,8 +83,8 @@
             </div>
             <div class="carousel-card-content">
               <h3>{{ saving.fin_prdt_nm }}</h3>
-              <p>{{ saving.kor_co_nm }}</p>
-              <p>금리: {{ saving.max_intr_rate2 }}%</p>
+              <h4>{{ saving.kor_co_nm }}</h4>
+              <h5>금리: {{ saving.max_intr_rate2 }}%</h5>
             </div>
           </div>
         </div>
@@ -270,6 +270,16 @@ body {
   box-sizing: border-box;
   /* padding: none !important; */
 }
+
+.section.recommend {
+  font-size: 2rem;
+  font-weight: 600;
+}
+
+.section.recommend p {
+  font-size: 1.5rem;
+  font-weight: 500;
+}
 .hero {
   /* 기존 배경 그대로 유지하고 */
   position: relative;
@@ -322,11 +332,13 @@ body {
   text-align: center;
 }
 .products-text p {
-  font-size: 1rem;
-  font-weight: normal;
+  font-size: 1.5rem;
+  margin-top: 10px;
+  font-weight: 500;
   word-break: keep-all;
   white-space: normal;
 }
+
 .recommend {
   display: flex;
   flex-direction: column;
@@ -521,7 +533,7 @@ body {
 }
 
 .carousel-card-header {
-  flex: 0 0 50%; /* 높이의 45% */
+  flex: 0 0 40%; /* 높이의 45% */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -529,7 +541,7 @@ body {
 }
 
 .carousel-card-header img {
-  max-height: 125px;
+  max-height: 100px;
   max-width: 100%;
   object-fit: cover;
   padding: 1rem;
@@ -540,9 +552,25 @@ body {
   padding: 1rem;
   text-align: center;
   display: flex;
+  gap: 5px;
   flex-direction: column;
   justify-content: center;
+  /* align-self: center; */
   font-size: 0.95rem;
+}
+
+.carousel-card-content h3 {
+  font-size: 1.1rem;
+  font-weight: 500;
+}
+.carousel-card-content h4 {
+  font-size: 1rem;
+  font-weight: 400;
+}
+.carousel-card-content h5 {
+  font-size: 0.8rem;
+  font-color: #4e5968;
+  font-weight: 400;
 }
 
 .carousel-row-title {
