@@ -1,43 +1,36 @@
 <template>
   <div class="my-joins">
-    <h1>내 가입 목록</h1>
-    <!-- 예금 가입 목록 -->
+    <h1>가입한 상품</h1>
+
+    <!-- 예금 섹션 -->
     <div class="section" v-if="depositJoins.length > 0">
       <h2>예금 상품</h2>
       <div class="products-list">
         <div v-for="item in depositJoins" :key="item.id" class="product-item">
-          <div class="product-info">
-            <h3>{{ item.product.fin_prdt_nm }}</h3>
-            <p>{{ item.product.kor_co_nm }}</p>
-            <small>가입일: {{ formatDate(item.joined_at) }}</small>
-          </div>
-          <button @click="cancelJoin('deposit', item.product.id)" class="btn-cancel">
-            가입 취소
-          </button>
+          <h3>{{ item.product_name }}</h3>
+          <p>{{ item.company_name }}</p>
+          <small>가입일: {{ formatDate(item.joined_at) }}</small>
+          <button @click="cancelJoin('deposit', item.product)" class="btn-remove">가입 해제</button>
         </div>
       </div>
+    </div>
 
-      <!-- 적금 가입 목록 -->
-      <div class="section" v-if="savingJoins.length > 0">
-        <h2>적금 상품</h2>
-        <div class="products-list">
-          <div v-for="item in savingJoins" :key="item.id" class="product-item">
-            <div class="product-info">
-              <h3>{{ item.product.fin_prdt_nm }}</h3>
-              <p>{{ item.product.kor_co_nm }}</p>
-              <small>가입일: {{ formatDate(item.joined_at) }}</small>
-            </div>
-            <button @click="cancelJoin('saving', item.product.id)" class="btn-cancel">
-              가입 취소
-            </button>
-          </div>
+    <!-- 적금 섹션 -->
+    <div class="section" v-if="savingJoins.length > 0">
+      <h2>적금 상품</h2>
+      <div class="products-list">
+        <div v-for="item in savingJoins" :key="item.id" class="product-item">
+          <h3>{{ item.product_name }}</h3>
+          <p>{{ item.company_name }}</p>
+          <small>가입일: {{ formatDate(item.joined_at) }}</small>
+          <button @click="cancelJoin('saving', item.product)" class="btn-remove">가입 해제</button>
         </div>
       </div>
+    </div>
 
-      <!-- 가입한 상품이 없을 때 -->
-      <div v-if="depositJoins.length === 0 && savingJoins.length === 0" class="no-data">
-        <p>가입한 상품이 없습니다.</p>
-      </div>
+    <!-- 아무것도 없을 때 -->
+    <div v-if="depositJoins.length === 0 && savingJoins.length === 0" class="no-data">
+      <p>가입한 상품이 없습니다.</p>
     </div>
   </div>
 </template>
@@ -96,9 +89,9 @@ const cancelJoin = async (type, productId) => {
 
     // 목록에서 제거
     if (type === 'deposit') {
-      depositJoins.value = depositJoins.value.filter((item) => item.product.id !== productId)
+      depositJoins.value = depositJoins.value.filter((item) => item.product !== productId)
     } else {
-      savingJoins.value = savingJoins.value.filter((item) => item.product.id !== productId)
+      savingJoins.value = savingJoins.value.filter((item) => item.product !== productId)
     }
   } catch (error) {
     console.error('가입 취소 실패:', error)
@@ -106,7 +99,6 @@ const cancelJoin = async (type, productId) => {
   }
 }
 
-// 날짜 포맷팅
 const formatDate = (dateString) => {
   if (!dateString) return '정보 없음'
 
@@ -123,91 +115,88 @@ onMounted(() => {
 })
 </script>
 
-<style scoped>
-.my-joins {
-  max-width: 800px;
+<style scoped>.my-joins,
+.my-interests {
+  max-width: 720px;
   margin: 0 auto;
-  padding: 20px;
+  padding: 32px 20px;
+  background-color: #f8f9fa;
+  font-family: 'Pretendard', sans-serif;
 }
 
 h1 {
-  font-size: 2rem;
-  margin-bottom: 30px;
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: #212529;
   text-align: center;
-}
-
-.loading {
-  text-align: center;
-  padding: 50px;
-  font-size: 1.1rem;
-  color: #191f28;
-}
-
-.section {
-  margin-bottom: 40px;
+  margin-bottom: 24px;
 }
 
 .section h2 {
-  font-size: 1.5rem;
-  margin-bottom: 20px;
-  color: #2c3e50;
-  border-bottom: 2px solid #27ae60;
-  padding-bottom: 10px;
+  font-size: 1.25rem;
+  font-weight: 500;
+  border-left: 4px solid #00aaff;
+  padding-left: 12px;
+  margin-bottom: 16px;
+  color: #343a40;
 }
 
 .products-list {
-  display: grid;
-  gap: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
 .product-item {
-  border: 1px solid #ddd;
-  border-radius: 8px;
+  background-color: #ffffff;
+  border-radius: 16px;
   padding: 20px;
-  background: white;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  border: 1px solid #dee2e6;
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
 }
 
-.product-info h3 {
-  font-size: 1.2rem;
-  margin-bottom: 5px;
-  color: #2c3e50;
+.product-item h3 {
+  font-size: 1.1rem;
+  margin-bottom: 6px;
+  font-weight: 500;
+  color: #212529;
 }
 
-.product-info p {
-  color: #191f28;
-  margin: 5px 0;
+.product-item p {
+  font-size: 0.95rem;
+  color: #495057;
+  margin-bottom: 4px;
 }
 
-.product-info small {
-  color: #191f28;
+.product-item small {
   font-size: 0.85rem;
+  color: #868e96;
 }
 
-.btn-cancel {
-  background-color: #f39c12;
-  color: white;
-  border: none;
-  padding: 8px 16px;
-  border-radius: 4px;
+.btn-remove {
+  background-color: transparent;
+  color: #ff4d4f;
+  border: 1px solid #ff4d4f;
+  padding: 6px 14px;
+  font-size: 0.9rem;
+  border-radius: 8px;
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: all 0.2s ease-in-out;
 }
 
-.btn-cancel:hover {
-  background-color: #e67e22;
+.btn-remove:hover {
+  background-color: #ff4d4f;
+  color: white;
 }
 
 .no-data {
   text-align: center;
-  padding: 50px;
-  color: #191f28;
+  padding: 40px;
+  color: #868e96;
+  font-size: 1rem;
 }
 
-.no-data p {
-  font-size: 1.1rem;
-}
 </style>
