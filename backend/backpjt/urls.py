@@ -9,5 +9,6 @@ urlpatterns = [
     path('accounts/signup/', include('dj_rest_auth.registration.urls')),
     path('community/',include('community.urls')),
     path('map/', include('map.urls')),
-    path('recommend/',include('recommend.urls'))
+    path('recommend/',include('recommend.urls')),
+    path('spot/',include('spot.urls'))
 ]

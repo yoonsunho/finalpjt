@@ -35,13 +35,37 @@
             </ul>
           </li>
 
-          <li class="nav-item">
-            <a href="#" class="nav-link">
-              <RouterLink :to="{ name: 'CommunityPage' }">커뮤니티</RouterLink>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a href="#" class="nav-link">저축</a>
+          <li
+            class="nav-item dropdown"
+            @mouseenter="openDropdown('community')"
+            @mouseleave="closeDropdown"
+          >
+            <button class="nav-link dropdown-toggle" @click="toggleDropdown('community')">
+              <p>커뮤니티</p>
+            </button>
+            <ul :class="['dropdown-menu', { active: activeDropdown === 'community' }]">
+              <li>
+                <RouterLink
+                  :to="{ name: 'CommunityPage', params: { category: 'review' } }"
+                  class="dropdown-item"
+                  >예적금 후기</RouterLink
+                >
+              </li>
+              <li>
+                <RouterLink
+                  :to="{ name: 'CommunityPage', params: { category: 'tip' } }"
+                  class="dropdown-item"
+                  >절약 꿀팁</RouterLink
+                >
+              </li>
+              <li>
+                <RouterLink
+                  :to="{ name: 'CommunityPage', params: { category: 'free' } }"
+                  class="dropdown-item"
+                  >자유 게시판</RouterLink
+                >
+              </li>
+            </ul>
           </li>
 
           <li
@@ -55,7 +79,7 @@
             </button>
             <ul :class="['dropdown-menu', { active: activeDropdown === 'EtcPage' }]">
               <li>
-                <RouterLink :to="{ name: 'ExchangePage' }" class="dropdown-item">환율</RouterLink>
+                <RouterLink :to="{ name: 'SpotPage' }" class="dropdown-item">환율</RouterLink>
               </li>
               <li>
                 <RouterLink :to="{ name: 'MapPage' }" class="dropdown-item">지도</RouterLink>

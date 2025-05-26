@@ -22,7 +22,7 @@ import ArticleDetail from '@/views/community/ArticleDetail.vue'
 import CreateArticle from '@/views/community/CreateArticle.vue'
 
 import EtcPage from '@/views/etcpages/EtcPage.vue'
-import ExchangePage from '@/views/etcpages/ExchangePage.vue'
+import SpotPage from '@/views/etcpages/SpotPage.vue'
 import MapPage from '@/views/etcpages/MapPage.vue'
 
 const router = createRouter({
@@ -108,16 +108,20 @@ const router = createRouter({
       name: 'CommunityPage',
       component: CommunityPage,
     },
-
+    {
+      path: '/community/:category?',
+      name: 'CommunityPage',
+      component: CommunityPage,
+    },
     {
       path: '/etc',
       name: 'EtcPage',
       component: EtcPage,
     },
     {
-      path: '/exchange',
-      name: 'ExchangePage',
-      component: ExchangePage,
+      path: '/spot',
+      name: 'SpotPage',
+      component: SpotPage,
     },
     {
       path: '/map',

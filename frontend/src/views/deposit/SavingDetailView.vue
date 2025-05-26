@@ -54,36 +54,58 @@ import { useRoute } from 'vue-router'
 import { ref, onMounted, computed, watch } from 'vue'
 import ConfirmModal from '@/components/ConfirmModal.vue'
 
+const savingStore = useSavingStore()
 const product = ref(null)
-const store = useSavingStore()
 const accountStore = useAccountStore()
 const route = useRoute()
-const productId = route.params.id // 현재상품id
+const productId = route.params.id 
 
-const isLiked = computed(() => store.isLiked(productId))
-const isJoined = computed(() => store.isJoined(productId))
+const isLiked = computed(() => {
+  return savingStore.isLiked(productId)
+})
+const isJoined = computed(() => {
+  return savingStore.isJoined(productId)
+})
 const isLogin = computed(() => !!accountStore.token)
 
 const showJoinModal = ref(false)
 const showCancelModal = ref(false)
 
-const toggleLike = () => store.toggleLike(productId)
 const confirmJoin = () => (showJoinModal.value = true)
 const confirmCancelJoin = () => (showCancelModal.value = true)
-
-const doJoin = () => {
-  store.toggleJoin(productId)
-  showJoinModal.value = false
+const doJoin = async () => {
+  try {
+    const result = await savingStore.toggleJoin(productId)
+    console.log('적금 가입 결과:', result)
+    showJoinModal.value = false
+  } catch (err) {
+    alert('가입 처리 중 오류 발생!')
+  }
 }
-const doCancel = () => {
-  store.toggleJoin(productId)
-  showCancelModal.value = false
+
+const doCancel = async () => {
+  try {
+    const result = await savingStore.toggleJoin(productId)
+    console.log('적금 가입 취소 결과:', result)
+    showCancelModal.value = false
+  } catch (err) {
+    alert('가입 취소 처리 중 오류 발생!')
+  }
+}
+
+const toggleLike = async () => {
+  try {
+    const result = await store.toggleLike(productId)
+    console.log('적금 찜 처리:', result)
+  } catch (err) {
+    alert('찜 처리 중 오류 발생!')
+  }
 }
 
 const getSavingDetail = function () {
   axios({
     method: 'GET',
-    url: `${store.API_URL}/finlife/saving/${route.params.id}/`,
+    url: `${savingStore.API_URL}/finlife/saving/${route.params.id}/`,
   })
     .then((res) => {
       product.value = res.data
@@ -94,6 +116,8 @@ const getSavingDetail = function () {
 }
 
 onMounted(() => {
+  savingStore.getSavingInterests()
+  savingStore.getSavingJoins()
   getSavingDetail()
 })
 
