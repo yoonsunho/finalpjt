@@ -253,7 +253,9 @@ body {
 
   /* box-shadow: inset 0 0 3px dodgerblue; */
 }
-
+h2 {
+  text-align: center;
+}
 .section {
   min-height: 100vh;
   /* padding: 6rem 2rem; */
@@ -278,7 +280,7 @@ body {
 
 .section.recommend p {
   font-size: 1.5rem;
-  font-weight: 500;
+  font-weight: 600;
 }
 .hero {
   /* 기존 배경 그대로 유지하고 */

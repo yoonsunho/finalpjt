@@ -129,7 +129,7 @@ const router = createRouter({
       path: '/google-additional-info',
       name: 'GoogleAdditionalInfoView',
       component: GoogleAdditionalInfoView,
-    }
+    },
   ],
 })
 
