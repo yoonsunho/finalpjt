@@ -15,6 +15,7 @@ import SavingListView from '@/views/deposit/SavingListView.vue'
 import SavingDetailView from '@/views/deposit/SavingDetailView.vue'
 import MyInterests from '@/components/product/MyInterests.vue'
 import MyJoins from '@/components/product/MyJoins.vue'
+import RecommendView from '@/views/deposit/RecommendView.vue'
 
 import CommunityPage from '@/views/community/CommunityPage.vue'
 import ArticleDetail from '@/views/community/ArticleDetail.vue'
@@ -76,6 +77,11 @@ const router = createRouter({
       path: '/finlife/my-joins',
       name: 'MyJoins',
       component: MyJoins,
+    },
+    {
+      path: '/recommend/',
+      name: 'RecommendView',
+      component: RecommendView,
     },
     {
       path: '/profile',

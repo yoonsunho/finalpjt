@@ -62,7 +62,7 @@ const getMyJoins = async () => {
         Authorization: `Token ${accountStore.token}`,
       },
     })
-
+    
     depositJoins.value = response.data.deposits || []
     savingJoins.value = response.data.savings || []
   } catch (error) {
