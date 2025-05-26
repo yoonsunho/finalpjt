@@ -204,9 +204,11 @@ def complete_social_signup(request):
     2. 프로필 완료 상태로 업데이트
     """
     user = request.user
+    # print(f"[DEBUG] User {user.email} 시작. has_completed_profile: {user.has_completed_profile}")  # 추가
     
     # 1. 이미 프로필 완료된 사용자 차단
     if user.has_completed_profile:
+        # print(f"[ERROR] 이미 완료된 프로필: {user.email}")  # 추가
         return Response(
             {'error': '이미 프로필을 완료했습니다.'},
             status=status.HTTP_400_BAD_REQUEST
@@ -214,6 +216,7 @@ def complete_social_signup(request):
 
     # 2. 요청 데이터 유효성 검사
     data = request.data
+    # print(f"[DEBUG] 요청 데이터: {data}")  # 추가
     required_fields = [
         'nickname', 'gender', 'salary', 
         'wealth', 'tendency', 'deposit_amount', 
@@ -249,12 +252,15 @@ def complete_social_signup(request):
         user.has_completed_profile = True  # 프로필 완료 플래그 설정
         
         user.save()
+        # print(f"[SUCCESS] {user.email} 프로필 업데이트 완료")  # 추가
         return Response(
             {'status': '프로필이 성공적으로 업데이트되었습니다.'},
             status=status.HTTP_200_OK
         )
     except IntegrityError as e:
         # 데이터베이스 무결성 오류 처리
+        # print(f"[ERROR] 무결성 오류: {str(e)}")  # 추가
+
         return Response(
             {'error': '데이터 저장 중 오류 발생', 'detail': str(e)},
             status=status.HTTP_500_INTERNAL_SERVER_ERROR

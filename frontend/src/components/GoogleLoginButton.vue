@@ -32,12 +32,12 @@ import { useAccountStore } from '@/stores/user'
 
 const router = useRouter()
 const accountStore = useAccountStore()
-const apiBaseUrl = import.meta.env.VITE_API_BASE_URL
+const { ACCOUNT_API_URL } = accountStore
 
 const handleGoogleLogin = async () => {
   try {
     const { code } = await googleAuthCodeLogin()
-    const response = await axios.post(`${apiBaseUrl}/accounts/google/`, {
+    const response = await axios.post(`${ACCOUNT_API_URL}/google/`, {
       code,
       redirect_uri: window.location.origin,
     })

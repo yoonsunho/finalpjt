@@ -160,7 +160,7 @@ const onSubmit = async() => {
   }
 
   try {
-    await axios.post(`${ACCOUNT_API_URL}/complete-social-signup/`, {
+    const response = await axios.post(`${ACCOUNT_API_URL}/complete-social-signup/`, {
       nickname: nickname.value,
       gender: gender.value,
       salary: salary.value,
@@ -171,18 +171,25 @@ const onSubmit = async() => {
     }, {
       headers: { Authorization: `Token ${token}` }
     })
-    
-    router.push({ name: 'SignUpSuccessView' })
+    // console.log('성공응답:',response.data)
+    // ✅ 1. 토큰을 Pinia store에 저장 (이미 있다면 생략 가능)
+    accountStore.token = token
+
+    // ✅ 2. 사용자 정보 불러오기
+    await accountStore.fetchUserInfo()
+    router.push({ name: 'MainPage' })
   } catch (err) {
-    if (err.response && err.response.data) {
-      
-        const data = err.response.data
+    // console.log('에러 전체:',err)
+    // console.log('에러 응답 데이터:',err.response?.data)
+    if (err.response?.data?.detail) {
+      alert(err.response.data.detail);
+        // const data = err.response.data
      
-        if (data.nickname) {
-        errors.value.nickname = Array.isArray(data.nickname)
-          ? data.nickname.join(' ')
-          : data.nickname
-      }
+        // if (data.nickname) {
+        // errors.value.nickname = Array.isArray(data.nickname)
+        //   ? data.nickname.join(' ')
+        //   : data.nickname
+      // }
     }
   }
 }
