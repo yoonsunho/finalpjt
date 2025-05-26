@@ -2,7 +2,7 @@
   <div class="landing-wrapper">
     <section ref="hero" class="section hero">
       <h1 class="hero-title">금융생활을 보다 더 편리하게</h1>
-      <p class="hero-subtitle">예적금 비교, 추천받기, 현물 시세 확인, 커뮤니티까지 한 번에</p>
+      <p class="hero-subtitle">당신의 금융,<br />선호하는 것을 지원해 드립니다.</p>
       <button class="cta">지금 시작하기</button>
     </section>
 

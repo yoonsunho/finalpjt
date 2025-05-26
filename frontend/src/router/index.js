@@ -3,7 +3,6 @@ import { createRouter, createWebHistory } from 'vue-router'
 import MainPage from '@/views/MainPage.vue'
 
 import SignUpView from '@/views/authpages/SignUpView.vue'
-import SignUpSuccessView from '@/views/authpages/SignUpSuccessView.vue'
 import LoginView from '@/views/authpages/LoginView.vue'
 import ProfilePage from '@/views/authpages/ProfilePage.vue'
 import ProfileEdit from '@/views/authpages/ProfileEdit.vue'
@@ -42,11 +41,6 @@ const router = createRouter({
       path: '/signup',
       name: 'SignUpView',
       component: SignUpView,
-    },
-    {
-      path: '/signup/success',
-      name: 'SignUpSuccessView',
-      component: SignUpSuccessView,
     },
     {
       path: '/deposits',

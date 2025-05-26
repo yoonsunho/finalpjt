@@ -21,7 +21,25 @@
       </button>
     </div>
 
-    <div class="kakao-map-container" ref="mapContainerRef"></div>
+    <div class="result-area">
+      <div class="kakao-map-container" ref="mapContainerRef"></div>
+
+      <div class="result-list">
+        <div v-if="searchResults.length === 0" class="empty-state">
+          이곳에 검색 결과가 표시됩니다.
+        </div>
+        <div
+          v-for="place in searchResults"
+          :key="place.id"
+          class="result-card"
+          @click="focusMarker(place.id)"
+        >
+          <h4>{{ place.place_name }}</h4>
+          <p>{{ place.address_name }}</p>
+          <p v-if="place.phone">{{ place.phone }}</p>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 <script setup>
@@ -41,7 +59,7 @@ const isSearching = ref(false)
 const mapContainerRef = ref(null)
 const map = ref(null)
 const markerList = ref([])
-
+const searchResults = ref([])
 const mapCenter = ref({
   lat: 37.566826,
   lng: 126.9786567,
@@ -139,6 +157,7 @@ const searchPlace = async (keyword) => {
       })
     })
 
+    searchResults.value = data
     if (data.length === 0) {
       alert('검색 결과가 없습니다.')
       return
@@ -165,7 +184,7 @@ const searchPlace = async (keyword) => {
         markerList.value.forEach(({ infoWindow }) => infoWindow.close()) // 기존 창 닫기
         infoWindow.open(map.value, marker)
       })
-      markerList.value.push({ marker, infoWindow })
+      markerList.value.push({ marker, infoWindow, id: place.id })
       bounds.extend(position)
     }
 
@@ -174,7 +193,17 @@ const searchPlace = async (keyword) => {
     isSearching.value = false
   }
 }
-
+const focusMarker = (placeId) => {
+  const markerObj = markerList.value.find((item) => item.id === placeId)
+  if (markerObj) {
+    map.value.panTo(markerObj.marker.getPosition())
+    map.value.setCenter(markerObj.marker.getPosition())
+    // 닫고
+    markerList.value.forEach(({ infoWindow }) => infoWindow.close())
+    // 연다
+    markerObj.infoWindow.open(map.value, markerObj.marker)
+  }
+}
 // 컴포넌트 마운트 후 지도 준비
 onMounted(async () => {
   try {
@@ -265,5 +294,43 @@ button:disabled {
   background-color: #f1f5f9;
   overflow: hidden;
   border: 1px solid #e5e7eb;
+}
+.result-area {
+  display: flex;
+  gap: 20px;
+}
+
+.result-list {
+  width: 300px;
+  max-height: 480px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.result-card {
+  background-color: #f8fafc;
+  padding: 12px 16px;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.result-card h4 {
+  font-size: 16px;
+  font-weight: bold;
+  margin-bottom: 4px;
+}
+.result-card p {
+  font-size: 14px;
+  color: #555;
+  margin: 2px 0;
+}
+.empty-state {
+  font-size: 14px;
+  color: #999;
+  text-align: center;
+  padding: 20px;
 }
 </style>
