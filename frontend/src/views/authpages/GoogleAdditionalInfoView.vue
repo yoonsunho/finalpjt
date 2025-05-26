@@ -1,38 +1,15 @@
 <template>
   <div class="signup-container">
-    <h2>회원가입</h2>
-    <form @submit.prevent="onSignUp">
-      <div class="form-group">
-        <label for="email">이메일</label>
-        <input
-          type="email"
-          id="email"
-          v-model="email"
-          @input="
-            () => {
-              errors.email = ''
-            }
-          "
-          required
-        />
-        <button type="button" @click="checkEmailDuplicate">중복확인</button>
-        <div v-if="emailCheckMessage" :class="{ error: !isEmailAvailable }">
-          {{ emailCheckMessage }}
-        </div>
-        <div v-if="errors.email" class="error">{{ errors.email }}</div>
-      </div>
-
+    <h2>추가 정보 기입</h2>
+    <form @submit.prevent="onSubmit">
+        
       <div class="form-group">
         <label for="nickname">닉네임</label>
         <input
           type="text"
           id="nickname"
           v-model="nickname"
-          @input="
-            () => {
-              errors.nickname = ''
-            }
-          "
+          @input="() => {errors.nickname = ''}"
           required
         />
         <button type="button" @click="checkNicknameDuplicate">중복확인</button>
@@ -40,25 +17,6 @@
           {{ nicknameCheckMessage }}
         </div>
         <div v-if="errors.nickname" class="error">{{ errors.nickname }}</div>
-      </div>
-
-      <div class="form-group">
-        <label for="password1">비밀번호</label>
-        <input type="password" id="password1" v-model="password1" required />
-        <div class="password-rules">
-          <ul>
-            <li>최소 8자 이상</li>
-            <li>숫자, 영문자, 특수문자 조합 권장</li>
-            <li>너무 쉬운 비밀번호(예: 123456, password 등) 불가</li>
-          </ul>
-        </div>
-        <div v-if="errors.password1" class="error">{{ errors.password1 }}</div>
-      </div>
-
-      <div class="form-group">
-        <label for="password2">비밀번호 확인</label>
-        <input type="password" id="password2" v-model="password2" required />
-        <div v-if="errors.password2" class="error">{{ errors.password2 }}</div>
       </div>
 
       <div class="form-group">
@@ -129,15 +87,9 @@
         </select>
       </div>
 
-      <button type="submit">회원가입</button>
-      <!-- <div v-if="errors.non_field_errors" class="error general-error">
-        {{ errors.non_field_errors }}
-      </div> -->
+      <button type="submit">제출</button>
+
     </form>
-    <div class="social-signup-section">
-      <div class="divider">간편 가입</div>
-      <GoogleLoginButton />
-    </div>
     <div class="login-link">
       이미 계정이 있으신가요?
       <RouterLink :to="{ name: 'LoginView' }" class="login-link-text">로그인</RouterLink>
@@ -147,17 +99,18 @@
 
 <script setup>
 import { ref } from 'vue'
+import axios from 'axios'
+import { useRoute, useRouter, RouterLink } from 'vue-router'
 import { useAccountStore } from '@/stores/user'
-import { useRouter, RouterLink } from 'vue-router'
-import GoogleLoginButton from '@/components/GoogleLoginButton.vue'
-const router = useRouter()
 const accountStore = useAccountStore()
 const { ACCOUNT_API_URL } = accountStore
 
-const email = ref('')
+
+const route = useRoute()
+const router = useRouter()
+const token = route.query.token // 구글 로그인에서 받은 토큰
+
 const nickname = ref('')
-const password1 = ref('')
-const password2 = ref('')
 const gender = ref('')
 const salary = ref('')
 const wealth = ref('')
@@ -167,49 +120,12 @@ const deposit_period = ref('')
 
 const errors = ref({})
 
-const emailCheckMessage = ref('')
-const isEmailAvailable = ref(false)
-
-// 이메일 중복 확인
-const checkEmailDuplicate = async () => {
-  const isValidEmail = (email) => {
-    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-    return regex.test(email)
-  }
-  // 먼저 형식 검사
-  if (!isValidEmail(email.value)) {
-    errors.value.email = '이메일 형식이 올바르지 않습니다.'
-    emailCheckMessage.value = ''
-    isEmailAvailable.value = false
-    return
-  }
-  // 이메일 형식이 맞는 경우 에러 초기화
-  errors.value.email = ''
-  // 형식 맞으면 서버에 요청해서 중복검사
-  try {
-    const res = await fetch(`${ACCOUNT_API_URL}/check-email/`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email: email.value }),
-    })
-    const data = await res.json()
-    if (data.available) {
-      emailCheckMessage.value = '사용 가능한 이메일입니다.'
-      isEmailAvailable.value = true
-      errors.value.email = ''
-    } else {
-      emailCheckMessage.value = '이미 사용 중인 이메일입니다.'
-      isEmailAvailable.value = false
-    }
-  } catch (err) {
-    emailCheckMessage.value = '중복 확인 중 오류가 발생했습니다.'
-    isEmailAvailable.value = false
-  }
-}
 
 // 닉네임 중복 확인
 const nicknameCheckMessage = ref('')
 const isNicknameAvailable = ref(false)
+
+
 const checkNicknameDuplicate = async () => {
   try {
     const res = await fetch(`${ACCOUNT_API_URL}/check-nickname/`, {
@@ -232,60 +148,37 @@ const checkNicknameDuplicate = async () => {
   }
 }
 
-const onSignUp = async function () {
+const onSubmit = async() => {
   //비동기 처리 해주기
 
   errors.value = {}
-
-  // 비밀번호 일치 검사
-  if (password1.value !== password2.value) {
-    errors.value.password2 = '비밀번호가 일치하지 않습니다.'
-    return
-  }
-
-  // 이메일,닉네임 중복 확인이 안 되었거나 사용 불가일 때
-  if (!isEmailAvailable.value) {
-    errors.value.email = '이메일 중복 확인을 해주세요.'
-    return
-  }
+  
 
   if (!isNicknameAvailable.value) {
     errors.value.nickname = '닉네임 중복 확인을 해주세요.'
     return
   }
 
-  const userInfo = {
-    email: email.value,
-    nickname: nickname.value,
-    password1: password1.value,
-    password2: password2.value,
-    gender: gender.value,
-    salary: salary.value,
-    wealth: wealth.value,
-    tendency: tendency.value,
-    deposit_amount: deposit_amount.value,
-    deposit_period: deposit_period.value,
-  }
   try {
-    await accountStore.signUp(userInfo)
+    await axios.post(`${ACCOUNT_API_URL}/complete-social-signup/`, {
+      nickname: nickname.value,
+      gender: gender.value,
+      salary: salary.value,
+      wealth: wealth.value,
+      tendency: tendency.value,
+      deposit_amount: deposit_amount.value,
+      deposit_period: deposit_period.value,
+    }, {
+      headers: { Authorization: `Token ${token}` }
+    })
+    
     router.push({ name: 'SignUpSuccessView' })
   } catch (err) {
     if (err.response && err.response.data) {
-      const data = err.response.data
-      if (data.password1) {
-        errors.value.password1 = Array.isArray(data.password1)
-          ? data.password1.join(' ')
-          : data.password1
-      }
-      if (data.password2) {
-        errors.value.password2 = Array.isArray(data.password2)
-          ? data.password2.join(' ')
-          : data.password2
-      }
-      if (data.email) {
-        errors.value.email = Array.isArray(data.email) ? data.email.join(' ') : data.email
-      }
-      if (data.nickname) {
+      
+        const data = err.response.data
+     
+        if (data.nickname) {
         errors.value.nickname = Array.isArray(data.nickname)
           ? data.nickname.join(' ')
           : data.nickname

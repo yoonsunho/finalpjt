@@ -81,6 +81,10 @@ class CustomRegisterSerializer(RegisterSerializer):
         user.tendency = self.validated_data.get('tendency')
         user.deposit_amount = self.validated_data.get('deposit_amount')
         user.deposit_period = self.validated_data.get('deposit_period')
+        
+         # ✅ 일반 회원가입은 프로필 완료 상태로 설정
+        user.has_completed_profile = True
+        
         user.save()
         return user
         

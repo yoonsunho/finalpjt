@@ -25,6 +25,10 @@
           <button @click="showLoginErrorModal = false">닫기</button>
         </div>
       </div>
+      <div class="social-login-section">
+        <div class="divider">또는</div>
+        <GoogleLoginButton />
+      </div>
       <div class="signup-router">
         <p>계정이 없으신가요?</p>
         <RouterLink :to="{ name: 'SignUpView' }"><p class="signup-link">회원가입</p></RouterLink>
@@ -36,8 +40,8 @@
 <script setup>
 import { ref } from 'vue'
 import { useAccountStore } from '@/stores/user'
-import SignUpView from './SignUpView.vue'
 import { RouterLink } from 'vue-router'
+import GoogleLoginButton from '@/components/GoogleLoginButton.vue'
 
 const accountStore = useAccountStore()
 

@@ -7,6 +7,8 @@ import SignUpSuccessView from '@/views/authpages/SignUpSuccessView.vue'
 import LoginView from '@/views/authpages/LoginView.vue'
 import ProfilePage from '@/views/authpages/ProfilePage.vue'
 import ProfileEdit from '@/views/authpages/ProfileEdit.vue'
+import GoogleAdditionalInfoView from '@/views/authpages/GoogleAdditionalInfoView.vue'
+// import GoogleLoginView from '@/views/authpages/GoogleLoginView.vue'
 
 // import { useAccountStore } from '@/stores/user'
 import DepositListView from '@/views/deposit/DepositListView.vue'
@@ -128,6 +130,11 @@ const router = createRouter({
       name: 'MapPage',
       component: MapPage,
     },
+    {
+      path: '/google-additional-info',
+      name: 'GoogleAdditionalInfoView',
+      component: GoogleAdditionalInfoView,
+    }
   ],
 })
 
