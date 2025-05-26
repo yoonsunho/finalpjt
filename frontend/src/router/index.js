@@ -108,7 +108,11 @@ const router = createRouter({
       name: 'CommunityPage',
       component: CommunityPage,
     },
-
+    {
+      path: '/community/:category?',
+      name: 'CommunityPage',
+      component: CommunityPage,
+    },
     {
       path: '/etc',
       name: 'EtcPage',
