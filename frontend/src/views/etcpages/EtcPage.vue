@@ -6,4 +6,8 @@
 
 <script setup></script>
 
-<style scoped></style>
+<style scoped>
+* {
+  font-family: Pretendard;
+}
+</style>

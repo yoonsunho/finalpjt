@@ -43,6 +43,9 @@ const activeTab = ref('회원정보') // 초기메뉴
 </script>
 
 <style scoped>
+* {
+  font-family: Pretendard;
+}
 .profile-wrapper {
   display: flex;
   flex-direction: column;

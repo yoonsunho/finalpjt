@@ -220,6 +220,9 @@ onMounted(async () => {
 })
 </script>
 <style scoped>
+* {
+  font-family: Pretendard;
+}
 .search-bank {
   display: flex;
   flex-direction: column;

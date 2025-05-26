@@ -110,6 +110,9 @@ onMounted(() => {
 })
 </script>
 <style scoped>
+* {
+  font-family: Pretendard;
+}
 .article-container {
   min-width: 1200px;
   margin: 1rem auto;

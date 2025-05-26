@@ -124,7 +124,9 @@ onMounted(() => {
 })
 </script>
 <style scoped>
-/* 전체 레이아웃 정리 */
+* {
+  font-family: Pretendard;
+}
 .table-wrapper {
   max-width: 900px;
   width: 100%;

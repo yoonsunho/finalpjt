@@ -22,6 +22,9 @@ const close = () => emit('close')
 </script>
 
 <style scoped>
+* {
+  font-family: Pretendard;
+}
 .modal-overlay {
   position: fixed;
   inset: 0;

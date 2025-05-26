@@ -58,7 +58,7 @@ const savingStore = useSavingStore()
 const product = ref(null)
 const accountStore = useAccountStore()
 const route = useRoute()
-const productId = route.params.id 
+const productId = route.params.id
 
 const isLiked = computed(() => {
   return savingStore.isLiked(productId)
@@ -138,6 +138,9 @@ watch(
 </script>
 
 <style scoped>
+* {
+  font-family: Pretendard;
+}
 .product-detail {
   max-width: 720px;
   margin: 3rem auto;

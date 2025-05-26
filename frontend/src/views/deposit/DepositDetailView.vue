@@ -136,6 +136,9 @@ watch(
 </script>
 
 <style scoped>
+* {
+  font-family: Pretendard;
+}
 .product-detail {
   max-width: 720px;
   margin: 3rem auto;

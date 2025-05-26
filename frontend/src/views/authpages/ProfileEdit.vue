@@ -142,6 +142,9 @@ const save = async () => {
 }
 </script>
 <style scoped>
+* {
+  font-family: Pretendard;
+}
 form {
   margin-top: 1rem;
 }

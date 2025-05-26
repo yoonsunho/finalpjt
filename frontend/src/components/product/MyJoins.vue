@@ -5,12 +5,17 @@
       <h2>예금 상품</h2>
       <div class="products-list">
         <div v-for="item in depositJoins" :key="item.id" class="product-item">
-          <RouterLink :to="{ name:'DepositDetailView', params:{id: item.product}}" class="product-content">
+          <RouterLink
+            :to="{ name: 'DepositDetailView', params: { id: item.product } }"
+            class="product-content"
+          >
             <h3>{{ item.product_name }}</h3>
             <p>{{ item.company_name }}</p>
             <small>가입일: {{ formatDate(item.joined_at) }}</small>
           </RouterLink>
-          <button @click="() => cancelJoin('deposit', item.product)" class="btn-remove">가입 해제</button>
+          <button @click="() => cancelJoin('deposit', item.product)" class="btn-remove">
+            가입 해제
+          </button>
         </div>
       </div>
     </div>
@@ -18,12 +23,17 @@
       <h2>적금 상품</h2>
       <div class="products-list">
         <div v-for="item in savingJoins" :key="item.id" class="product-item">
-          <RouterLink :to="{ name:'SavingDetailView', params:{id: item.product} }" class="product-content">
+          <RouterLink
+            :to="{ name: 'SavingDetailView', params: { id: item.product } }"
+            class="product-content"
+          >
             <h3>{{ item.product_name }}</h3>
             <p>{{ item.company_name }}</p>
             <small>가입일: {{ formatDate(item.joined_at) }}</small>
           </RouterLink>
-          <button @click="() => cancelJoin('saving', item.product)" class="btn-remove">가입 해제</button>
+          <button @click="() => cancelJoin('saving', item.product)" class="btn-remove">
+            가입 해제
+          </button>
         </div>
       </div>
     </div>
@@ -34,8 +44,6 @@
     </div>
   </div>
 </template>
-
-
 
 <script setup>
 import { ref, onMounted } from 'vue'
@@ -54,7 +62,6 @@ const isLoading = ref(true)
 const depositJoins = ref([])
 const savingJoins = ref([])
 
-
 // 가입한 상품 목록 가져오기
 const getMyJoins = async () => {
   try {
@@ -63,7 +70,7 @@ const getMyJoins = async () => {
         Authorization: `Token ${accountStore.token}`,
       },
     })
-    
+
     depositJoins.value = response.data.deposits || []
     savingJoins.value = response.data.savings || []
     console.log(response.data)
@@ -98,7 +105,6 @@ const cancelJoin = async (type, productId) => {
   }
 }
 
-
 const formatDate = (dateString) => {
   if (!dateString) return '정보 없음'
 
@@ -115,7 +121,11 @@ onMounted(() => {
 })
 </script>
 
-<style scoped>.my-joins,
+<style scoped>
+* {
+  font-family: Pretendard;
+}
+.my-joins,
 .my-interests {
   max-width: 720px;
   margin: 0 auto;
@@ -198,5 +208,4 @@ h1 {
   color: #868e96;
   font-size: 1rem;
 }
-
 </style>

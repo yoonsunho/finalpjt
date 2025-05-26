@@ -7,38 +7,57 @@
     </section>
 
     <!-- 예적금 상품 리스트 -->
+    <!-- 예적금 캐러셀 -->
     <section ref="products" class="section products">
       <div class="products-text">
         <h2>다양한 금융 상품을 한 눈에 비교해요.</h2>
         <p>예적금 상품을 모아 볼 수 있어요.</p>
       </div>
 
-      <div class="cards-section">
-        <div class="cards-row">
-          <div class="card" v-for="deposit in topDeposits" :key="'deposit-' + deposit.id">
+      <div class="carousel-row-wrapper">
+        <h3 class="carousel-row-title">예금 TOP10</h3>
+        <div ref="depositCarousel" class="carousel-row-track">
+          <div class="carousel-card" v-for="deposit in topDeposits" :key="'deposit-' + deposit.id">
+            <h3>{{ deposit.fin_prdt_nm }}</h3>
+            <p>{{ deposit.kor_co_nm }}</p>
+            <p>금리: {{ deposit.max_intr_rate2 }}%</p>
+          </div>
+          <div class="carousel-card" v-for="deposit in topDeposits" :key="'deposit-' + deposit.id">
             <h3>{{ deposit.fin_prdt_nm }}</h3>
             <p>{{ deposit.kor_co_nm }}</p>
             <p>금리: {{ deposit.max_intr_rate2 }}%</p>
           </div>
         </div>
+        <div class="gradient-overlay gradient-overlay-left"></div>
+        <div class="gradient-overlay gradient-overlay-right"></div>
+      </div>
 
-        <div class="cards-row">
-          <div class="card" v-for="saving in topSavings" :key="'saving-' + saving.id">
+      <div class="carousel-row-wrapper">
+        <h3 class="carousel-row-title">적금 TOP10</h3>
+        <div ref="savingCarousel" class="carousel-row-track">
+          <div class="carousel-card" v-for="saving in topSavings" :key="'saving-' + saving.id">
+            <h3>{{ saving.fin_prdt_nm }}</h3>
+            <p>{{ saving.kor_co_nm }}</p>
+            <p>금리: {{ saving.max_intr_rate2 }}%</p>
+          </div>
+          <div class="carousel-card" v-for="saving in topSavings" :key="'saving-' + saving.id">
             <h3>{{ saving.fin_prdt_nm }}</h3>
             <p>{{ saving.kor_co_nm }}</p>
             <p>금리: {{ saving.max_intr_rate2 }}%</p>
           </div>
         </div>
+        <div class="gradient-overlay gradient-overlay-left"></div>
+        <div class="gradient-overlay gradient-overlay-right"></div>
       </div>
     </section>
 
     <!-- 맞춤 추천 -->
     <section ref="recommend" class="section recommend">
+      <h2>나에게 맞는 예적금을 추천 받아요.</h2>
+      <p>몇 가지 질문에만 답하면 끝!</p>
       <RouterLink :to="{ name: 'RecommendView' }">
         <button class="cta">추천받기</button>
       </RouterLink>
-      <h2>나에게 맞는 예적금을 추천 받아요.</h2>
-      <p>몇 가지 질문에만 답하면 끝!</p>
     </section>
 
     <!-- 커뮤니티 -->
@@ -113,6 +132,9 @@ const API_URL = 'http://127.0.0.1:8000'
 const topDeposits = ref([])
 const topSavings = ref([])
 
+const depositCarousel = ref(null)
+const savingCarousel = ref(null)
+
 onMounted(async () => {
   // 1. 인기 예금/적금 불러오기
   try {
@@ -121,8 +143,8 @@ onMounted(async () => {
       axios.get(`${API_URL}/finlife/saving/`, { params: { ordering: '-joined_count' } }),
     ])
 
-    topDeposits.value = depositRes.data.slice(0, 3)
-    topSavings.value = savingRes.data.slice(0, 3)
+    topDeposits.value = depositRes.data.slice(0, 10)
+    topSavings.value = savingRes.data.slice(0, 10)
   } catch (err) {
     console.error('인기 상품 불러오기 실패:', err)
   }
@@ -148,66 +170,137 @@ onMounted(async () => {
         delay: i * 0.15,
       },
     )
+    gsap.to(depositCarousel.value, {
+      x: `-50%`,
+      ease: 'none',
+      duration: 60,
+      repeat: -1,
+      modifiers: {
+        x: gsap.utils.unitize((x) => parseFloat(x) % depositCarousel.value.scrollWidth),
+      },
+    })
+
+    gsap.to(savingCarousel.value, {
+      x: `-50%`,
+      ease: 'none',
+      duration: 60,
+      repeat: -1,
+      modifiers: {
+        x: gsap.utils.unitize((x) => parseFloat(x) % savingCarousel.value.scrollWidth),
+      },
+    })
   })
 })
 </script>
 
 <style scoped>
+* {
+  font-family: Pretendard;
+}
 html,
 body {
   scroll-behavior: smooth;
   margin: 0;
   padding: 0;
-  font-family: 'Pretendard', sans-serif;
   background: #f9fafb;
+
+  /* box-shadow: inset 0 0 3px dodgerblue; */
 }
 
 .section {
   min-height: 100vh;
-  padding: 6rem 2rem;
+  /* padding: 6rem 2rem; */
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   scroll-snap-align: start;
+  /* padding: 200px; */
+  /* box-shadow: inset 0 0 3px dodgerblue; */
+}
+.section.products {
+  flex-direction: column;
+  box-sizing: border-box;
+  /* padding: none !important; */
+}
+.hero {
+  /* 기존 배경 그대로 유지하고 */
+  position: relative;
+  background:
+    linear-gradient(to bottom, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.3)),
+    url('@/assets/images/image10.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  text-align: center;
+  color: white;
 }
 
-.hero {
-  background: linear-gradient(to bottom, #e0f2fe, #ffffff);
-  background-attachment: fixed;
-  text-align: center;
+.hero::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 100%;
+  height: 200px;
+  background: linear-gradient(to bottom, transparent, #ffffff);
+  z-index: 1;
 }
+
 .hero-title {
+  display: block;
+  word-break: keep-all;
+  white-space: normal;
+  text-align: center;
   font-weight: 600;
   font-size: 4rem;
-  color: #191f28;
+  /* color: #191f28; */
 }
 .hero-subtitle {
   font-size: 2rem;
-  color: #4e5968;
+  /* color: #4e5968; */
 }
 
 .products {
   display: flex;
   flex-direction: row;
-  background: #fef3c7;
+  background: #fff;
 }
 .products-text {
+  font-size: 2rem;
+  font-weight: 600;
   flex-direction: column;
+  word-break: keep-all;
+  white-space: normal;
+  text-align: center;
+}
+.products-text p {
+  font-size: 1rem;
+  font-weight: normal;
+  word-break: keep-all;
+  white-space: normal;
 }
 .recommend {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   background: #bae6fd;
+  word-break: keep-all;
+  white-space: normal;
 }
 .community {
   background: #d1fae5;
+  word-break: keep-all;
+  white-space: normal;
 }
 .market {
   background: #f3e8ff;
+  word-break: keep-all;
+  white-space: normal;
 }
 .map {
   background: #fff7ed;
+  word-break: keep-all;
+  white-space: normal;
 }
 
 .final-cta {
@@ -347,5 +440,55 @@ body {
 .card {
   flex: 0 0 calc(33.33% - 2rem);
   max-width: 300px;
+}
+.carousel-row-wrapper {
+  width: 100%;
+  overflow: hidden;
+  position: relative;
+  padding: 2rem 0;
+  background-color: #fff;
+}
+
+.carousel-row-track {
+  display: flex;
+  gap: 2.5rem;
+  width: max-content;
+  flex-wrap: nowrap;
+}
+
+.carousel-card {
+  width: 250px;
+  height: 250px;
+  background-color: #e5e7eb;
+  padding: 2rem;
+  border-radius: 0.75rem;
+  text-align: center;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  flex-shrink: 0;
+  word-break: keep-all;
+  white-space: normal;
+}
+
+.carousel-row-title {
+  text-align: center;
+  font-size: 1.5rem;
+}
+.gradient-overlay {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 200px; /* 더 넓게 */
+  z-index: 999;
+  pointer-events: none;
+}
+
+.gradient-overlay-left {
+  left: 0;
+  background: linear-gradient(to right, #ffffff, rgba(255, 255, 255, 0));
+}
+
+.gradient-overlay-right {
+  right: 0;
+  background: linear-gradient(to left, #ffffff, rgba(255, 255, 255, 0));
 }
 </style>

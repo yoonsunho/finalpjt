@@ -115,6 +115,9 @@ const handleDelete = () => {
 </script>
 
 <style scoped>
+* {
+  font-family: Pretendard;
+}
 .create-article {
   max-width: 600px;
   margin: 0 auto;

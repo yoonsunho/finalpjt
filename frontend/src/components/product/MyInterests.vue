@@ -5,12 +5,17 @@
       <h2>예금 상품</h2>
       <div class="products-list">
         <div v-for="item in depositInterests" :key="item.id" class="product-item">
-          <RouterLink :to="{ name:'DepositDetailView', params:{id: item.product}}" class="product-content">
+          <RouterLink
+            :to="{ name: 'DepositDetailView', params: { id: item.product } }"
+            class="product-content"
+          >
             <h3>{{ item.product_name }}</h3>
             <p>{{ item.company_name }}</p>
             <small>가입일: {{ formatDate(item.joined_at) }}</small>
           </RouterLink>
-          <button @click="() => removeLike('deposit', item.product)" class="btn-remove">찜 해제</button>
+          <button @click="() => removeLike('deposit', item.product)" class="btn-remove">
+            찜 해제
+          </button>
         </div>
       </div>
     </div>
@@ -18,12 +23,17 @@
       <h2>적금 상품</h2>
       <div class="products-list">
         <div v-for="item in savingInterests" :key="item.id" class="product-item">
-          <RouterLink :to="{ name:'SavingDetailView', params:{id: item.product} }" class="product-content">
+          <RouterLink
+            :to="{ name: 'SavingDetailView', params: { id: item.product } }"
+            class="product-content"
+          >
             <h3>{{ item.product_name }}</h3>
             <p>{{ item.company_name }}</p>
             <small>가입일: {{ formatDate(item.joined_at) }}</small>
           </RouterLink>
-          <button @click="() => removeLike('saving', item.product)" class="btn-remove">찜 해제</button>
+          <button @click="() => removeLike('saving', item.product)" class="btn-remove">
+            찜 해제
+          </button>
         </div>
       </div>
     </div>
@@ -52,7 +62,6 @@ const isLoading = ref(true)
 const depositInterests = ref([])
 const savingInterests = ref([])
 
-
 // 찜한 상품 목록 가져오기
 const getMyInterests = async () => {
   try {
@@ -78,12 +87,16 @@ const removeLike = async (type, productId) => {
   try {
     if (type === 'deposit') {
       await depositStore.toggleLike(productId)
-      depositInterests.value = depositInterests.value.filter(item => item.product !== productId)
+      depositInterests.value = depositInterests.value.filter((item) => item.product !== productId)
     } else {
-      await axios.post(`${API_URL}/finlife/saving/${productId}/interest/`, {}, {
-        headers: { Authorization: `Token ${accountStore.token}` }
-      })
-      savingInterests.value = savingInterests.value.filter(item => item.product !== productId)
+      await axios.post(
+        `${API_URL}/finlife/saving/${productId}/interest/`,
+        {},
+        {
+          headers: { Authorization: `Token ${accountStore.token}` },
+        },
+      )
+      savingInterests.value = savingInterests.value.filter((item) => item.product !== productId)
     }
   } catch (error) {
     console.error('찜 해제 실패:', error)
@@ -107,6 +120,9 @@ onMounted(() => {
 </script>
 
 <style scoped>
+* {
+  font-family: Pretendard;
+}
 .my-joins,
 .my-interests {
   max-width: 720px;

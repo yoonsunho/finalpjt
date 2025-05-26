@@ -6,6 +6,10 @@
 
 <script></script>
 
-<style scoped></style>
+<style scoped>
+* {
+  font-family: Pretendard;
+}
+</style>
 
 <!-- 지도 컴포넌트 MapPage, DepositDetail에 삽입 -->

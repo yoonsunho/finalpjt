@@ -89,6 +89,9 @@ onMounted(async () => {
 </script>
 
 <style scoped>
+* {
+  font-family: Pretendard;
+}
 .recommend-container {
   padding: 20px;
 }

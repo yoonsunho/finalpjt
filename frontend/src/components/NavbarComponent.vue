@@ -182,6 +182,9 @@ onMounted(() => {
 </script>
 
 <style scoped>
+* {
+  font-family: Pretendard;
+}
 .navbar {
   width: 100%;
   background-color: #ffffff;

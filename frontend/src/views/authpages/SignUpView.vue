@@ -1,8 +1,16 @@
 <template>
   <div class="signup-wrapper">
-    <h2>회원가입</h2>
-    <div class="signup-container">
-      <div ref="formContainer" class="">
+    <!-- STEP 1, 2 -->
+    <div class="signup-container" v-if="step === 1 || step === 2">
+      <div class="signup-info">
+        <h3>회원가입</h3>
+        <p v-if="step === 1">기본 정보를 입력해 주세요.</p>
+        <p v-else>
+          추가 정보를 입력해 주세요.<br />추가 정보는 맞춤 데이터를 제공하는 데 활용됩니다.
+        </p>
+      </div>
+
+      <div ref="formContainer" class="signup-form">
         <form @submit.prevent="onSignUp">
           <!-- STEP 1 -->
           <div v-if="step === 1">
@@ -20,7 +28,10 @@
                 required
               />
               <button type="button" @click="checkEmailDuplicate">중복확인</button>
-              <div v-if="emailCheckMessage" :class="{ error: !isEmailAvailable }">
+              <div
+                v-if="emailCheckMessage"
+                :class="{ error: !isEmailAvailable, success: isEmailAvailable }"
+              >
                 {{ emailCheckMessage }}
               </div>
               <div v-if="errors.email" class="error">{{ errors.email }}</div>
@@ -40,9 +51,13 @@
                 required
               />
               <button type="button" @click="checkNicknameDuplicate">중복확인</button>
-              <div v-if="nicknameCheckMessage" :class="{ error: !isNicknameAvailable }">
+              <div
+                v-if="nicknameCheckMessage"
+                :class="{ error: !isNicknameAvailable, success: isNicknameAvailable }"
+              >
                 {{ nicknameCheckMessage }}
               </div>
+
               <div v-if="errors.nickname" class="error">{{ errors.nickname }}</div>
             </div>
 
@@ -51,9 +66,9 @@
               <input type="password" id="password1" v-model="password1" required />
               <div class="password-rules">
                 <ul>
-                  <li>최소 8자 이상</li>
-                  <li>숫자, 영문자, 특수문자 조합 권장</li>
-                  <li>너무 쉬운 비밀번호 불가</li>
+                  <li>
+                    최소 8자 이상 / 숫자, 영문자, 특수문자 조합 권장 / 너무 쉬운 비밀번호 불가
+                  </li>
                 </ul>
               </div>
               <div v-if="errors.password1" class="error">{{ errors.password1 }}</div>
@@ -139,22 +154,25 @@
               <button type="submit">회원가입</button>
             </div>
           </div>
-          <!-- STEP 3 -->
-          <div v-else-if="step === 3" class="complete-message">
-            <h2>회원가입이 완료되었습니다!</h2>
-            <p>이제 로그인하여 서비스를 이용하실 수 있어요.</p>
-            <button class="primary-btn" @click="router.push({ name: 'LoginView' })">
-              로그인하러 가기
-            </button>
-          </div>
         </form>
       </div>
     </div>
+
+    <!-- STEP 3 -->
+    <div v-else-if="step === 3" class="signup-complete">
+      <h2>회원가입이 완료되었습니다!</h2>
+      <p>이제 로그인하여 서비스를 이용하실 수 있어요.</p>
+      <button class="primary-btn" @click="router.push({ name: 'LoginView' })">
+        로그인하러 가기
+      </button>
+    </div>
+
     <div class="progress-bar">
       <div class="progress" :style="{ width: `${(step / 3) * 100}%` }"></div>
     </div>
   </div>
 </template>
+
 <script setup>
 import { ref, watch, nextTick } from 'vue'
 import { useRouter } from 'vue-router'
@@ -165,7 +183,7 @@ const router = useRouter()
 const accountStore = useAccountStore()
 const { ACCOUNT_API_URL } = accountStore
 
-const step = ref(1) // <-- 여기가 빠져있어서 warning 발생했던 거야!
+const step = ref(1)
 const formContainer = ref(null)
 
 const email = ref('')
@@ -193,7 +211,6 @@ const animateStepChange = () => {
     { opacity: 1, x: 0, duration: 0.5, ease: 'power2.out' },
   )
 }
-
 watch(step, () => nextTick(animateStepChange))
 
 const goToStep2 = () => {
@@ -233,13 +250,10 @@ const checkEmailDuplicate = async () => {
     body: JSON.stringify({ email: email.value }),
   })
   const data = await res.json()
-  if (data.available) {
-    isEmailAvailable.value = true
-    emailCheckMessage.value = '사용 가능한 이메일입니다.'
-  } else {
-    isEmailAvailable.value = false
-    emailCheckMessage.value = '이미 사용 중인 이메일입니다.'
-  }
+  isEmailAvailable.value = data.available
+  emailCheckMessage.value = data.available
+    ? '사용 가능한 이메일입니다.'
+    : '이미 사용 중인 이메일입니다.'
 }
 
 const checkNicknameDuplicate = async () => {
@@ -249,14 +263,12 @@ const checkNicknameDuplicate = async () => {
     body: JSON.stringify({ nickname: nickname.value }),
   })
   const data = await res.json()
-  if (data.available) {
-    isNicknameAvailable.value = true
-    nicknameCheckMessage.value = '사용 가능한 닉네임입니다.'
-  } else {
-    isNicknameAvailable.value = false
-    nicknameCheckMessage.value = '이미 사용 중인 닉네임입니다.'
-  }
+  isNicknameAvailable.value = data.available
+  nicknameCheckMessage.value = data.available
+    ? '사용 가능한 닉네임입니다.'
+    : '이미 사용 중인 닉네임입니다.'
 }
+
 const onSignUp = async () => {
   errors.value = {}
   const userInfo = {
@@ -283,43 +295,69 @@ const onSignUp = async () => {
 
 <style scoped>
 .signup-wrapper {
-  max-width: 600px;
-  margin: 40px auto;
-  padding: 20px;
-  font-family: 'Segoe UI', sans-serif;
-}
-
-.progress-bar {
-  width: 100%;
-  height: 6px;
-  background: #e0e7ff;
-  margin-bottom: 24px;
-  border-radius: 3px;
-  overflow: hidden;
-}
-
-.progress {
-  height: 100%;
-  background-color: #6366f1;
-  transition: width 0.3s ease;
+  /* max-width: 800px; */
+  /* margin: 40px auto; */
+  /* padding: 20px; */
 }
 
 .signup-container {
+  display: flex;
+  gap: 40px;
+  align-items: flex-start;
   background-color: #ffffff;
   border-radius: 16px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
   padding: 40px;
 }
 
-.form-title {
-  text-align: center;
-  font-size: 24px;
+.signup-info {
+  flex: 1;
+  border-right: 1px solid #e5e7eb;
+  padding-right: 20px;
+}
+
+.signup-info h3 {
+  font-size: 2rem;
   font-weight: 600;
-  color: #1f2937;
-  margin-bottom: 32px;
+  /* color: #3182f6; */
+  margin-bottom: 12px;
+}
+
+.signup-info p {
+  font-size: 1rem;
+}
+
+.signup-form {
+  flex: 2;
+}
+
+.signup-complete {
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 40px 20px;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+  text-align: center;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 6px;
+  background: #e0e7ff;
+  margin-top: 20px;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.progress {
+  height: 100%;
+  background-color: #3182f6;
+  transition: width 0.3s ease;
 }
 
 .form-group {
+  font-size: 1rem;
   margin-bottom: 20px;
 }
 
@@ -342,60 +380,24 @@ select {
 
 input:focus,
 select:focus {
-  border-color: #6366f1;
+  border-color: #3182f6;
   outline: none;
   box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
 }
 
-.input-with-button {
-  display: flex;
-  gap: 8px;
-}
-
-.check-btn {
-  background-color: #e5e7eb;
+button {
+  margin-top: 10px;
+  padding: 10px 16px;
   border: none;
-  padding: 0 16px;
-  border-radius: 6px;
-  font-size: 14px;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.check-btn:hover {
-  background-color: #d1d5db;
-}
-
-.primary-btn {
-  background-color: #6366f1;
+  border-radius: 8px;
+  background-color: #3182f6;
   color: white;
-  border: none;
-  padding: 12px;
-  border-radius: 8px;
-  font-size: 15px;
   font-weight: 600;
-  width: 100%;
-  transition: background-color 0.2s;
+  cursor: pointer;
 }
 
-.primary-btn:hover {
-  background-color: #4f46e5;
-}
-
-.secondary-btn {
-  background-color: #e5e7eb;
-  color: #374151;
-  border: none;
-  padding: 12px;
-  border-radius: 8px;
-  font-size: 15px;
-  font-weight: 600;
-  width: 100%;
-  transition: background-color 0.2s;
-}
-
-.secondary-btn:hover {
-  background-color: #d1d5db;
+button:hover {
+  background-color: #2563eb;
 }
 
 .button-group {
@@ -405,14 +407,14 @@ select:focus {
 }
 
 .error {
-  color: #dc2626;
-  font-size: 13px;
+  color: #bd0000;
+  font-size: 0.9rem;
   margin-top: 6px;
 }
 
 .success {
-  color: #16a34a;
-  font-size: 13px;
+  color: #3182f6;
+  font-size: 0.9rem;
   margin-top: 6px;
 }
 
@@ -422,14 +424,27 @@ select:focus {
   margin-top: 6px;
   padding-left: 18px;
 }
-.complete-message {
-  text-align: center;
-  padding: 40px 20px;
+.next-btn-wrapper {
+  display: flex;
+  justify-content: flex-end;
 }
 
-.complete-message h2 {
-  color: #4f46e5;
-  font-size: 24px;
-  margin-bottom: 16px;
+.next-btn {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 50%;
+  transition: background-color 0.2s;
+}
+
+.next-btn:hover {
+  background-color: #f3f4f6;
+}
+
+.arrow-icon {
+  width: 32px;
+  height: 32px;
+  color: #3182f6;
 }
 </style>

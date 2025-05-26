@@ -73,6 +73,9 @@ const slides = [
 </script>
 
 <style scoped>
+* {
+  font-family: Pretendard;
+}
 .mySwiper {
   width: 100%;
   padding: 0 !important;
@@ -147,7 +150,7 @@ const slides = [
 
 .cta-button {
   background-color: white;
-  color: #191F28;
+  color: #191f28;
   padding: 0.5rem 1.4rem;
   border: none;
   border-radius: 9999px;

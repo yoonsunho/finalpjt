@@ -1,33 +1,39 @@
 <template>
-  <div class="login-wrapper">
-    <div class="login-container">
-      <h2>로그인</h2>
-      <!-- <div v-if="successMessage" class="success-message">
-        {{ successMessage }}
-      </div> -->
-      <form @submit.prevent="onLogIn">
-        <div class="form-group">
-          <label for="email">이메일</label>
-          <input type="email" id="email" v-model="email" required />
-          <!-- <div v-if="errors.email" class="error">{{ errors.email }}</div> -->
-        </div>
-
-        <div class="form-group">
-          <label for="password">비밀번호</label>
-          <input type="password" id="password" v-model="password" required />
-        </div>
-
-        <button type="submit">로그인</button>
-      </form>
-      <div v-if="showLoginErrorModal" class="modal">
-        <div class="modal-content">
-          <p>올바른 로그인 정보를 입력하세요!</p>
-          <button @click="showLoginErrorModal = false">닫기</button>
+  <div class="signup-wrapper">
+    <div class="signup-container">
+      <!-- 왼쪽 설명 영역 -->
+      <div class="signup-info">
+        <h3>로그인</h3>
+        <p>이메일과 비밀번호를 입력해 주세요.</p>
+        <div class="signup-router">
+          <p>
+            계정이 없으신가요?
+            <RouterLink :to="{ name: 'SignUpView' }" class="signup-link"> 회원가입 </RouterLink>
+          </p>
         </div>
       </div>
-      <div class="signup-router">
-        <p>계정이 없으신가요?</p>
-        <RouterLink :to="{ name: 'SignUpView' }"><p class="signup-link">회원가입</p></RouterLink>
+
+      <!-- 오른쪽 폼 영역 -->
+      <div class="signup-form">
+        <form @submit.prevent="onLogIn">
+          <div class="form-group">
+            <label for="email">이메일</label>
+            <input type="email" id="email" v-model="email" required />
+          </div>
+
+          <div class="form-group">
+            <label for="password">비밀번호</label>
+            <input type="password" id="password" v-model="password" required />
+          </div>
+
+          <div class="button-group">
+            <button type="submit">로그인</button>
+          </div>
+
+          <div v-if="showLoginErrorModal" class="error general-error">
+            올바른 로그인 정보를 입력하세요!
+          </div>
+        </form>
       </div>
     </div>
   </div>
@@ -36,7 +42,6 @@
 <script setup>
 import { ref } from 'vue'
 import { useAccountStore } from '@/stores/user'
-import SignUpView from './SignUpView.vue'
 import { RouterLink } from 'vue-router'
 
 const accountStore = useAccountStore()
@@ -45,7 +50,7 @@ const email = ref('')
 const password = ref('')
 const showLoginErrorModal = ref(false)
 
-const onLogIn = async function () {
+const onLogIn = async () => {
   const userInfo = {
     email: email.value,
     password: password.value,
@@ -60,142 +65,112 @@ const onLogIn = async function () {
 </script>
 
 <style scoped>
-.login-wrapper {
+.signup-wrapper {
+  padding: 100px;
+  /* layout wrapper */
 }
 
-.login-container {
-  max-width: 400px;
-  margin: 0 auto;
-  padding: 40px;
+.signup-container {
+  display: flex;
+  gap: 40px;
+  align-items: flex-start;
   background-color: #ffffff;
-  border-radius: 12px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+  padding: 40px;
 }
 
-h2 {
-  text-align: center;
-  margin-bottom: 30px;
-  font-size: 24px;
+.signup-info {
+  flex: 1;
+  border-right: 1px solid #e5e7eb;
+  padding-right: 20px;
+}
+
+.signup-info h3 {
+  font-size: 2rem;
   font-weight: 600;
+  margin-bottom: 12px;
+}
+
+.signup-info p {
+  font-size: 1rem;
+}
+
+.signup-form {
+  flex: 2;
 }
 
 .form-group {
+  font-size: 1rem;
   margin-bottom: 20px;
 }
 
 label {
   display: block;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
   font-weight: 500;
-  color: #191f28;
+  color: #374151;
 }
 
 input {
   width: 100%;
-  padding: 12px 14px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
+  padding: 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
   font-size: 14px;
   transition: border 0.2s;
 }
 
 input:focus {
+  border-color: #3182f6;
   outline: none;
-  border-color: #2196f3;
-  box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.2);
+  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
 }
 
 button {
-  width: 100%;
-  padding: 12px;
-  background-color: #2196f3;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  font-size: 16px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background-color 0.2s;
   margin-top: 10px;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 8px;
+  background-color: #3182f6;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
 }
 
 button:hover {
-  background-color: #1976d2;
+  background-color: #2563eb;
 }
 
-button:disabled {
-  background-color: #cccccc;
-  cursor: not-allowed;
+.button-group {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 20px;
 }
 
 .error {
-  color: #d32f2f;
-  font-size: 13px;
+  color: #bd0000;
+  font-size: 0.9rem;
   margin-top: 6px;
 }
 
 .general-error {
-  margin: 16px 0;
+  margin-top: 12px;
   text-align: center;
 }
 
-.success-message {
-  background-color: #e0f7e9;
-  color: #2e7d32;
-  padding: 12px;
-  margin-bottom: 24px;
-  border-radius: 6px;
+.signup-router {
+  margin-top: 24px;
   text-align: center;
-  font-weight: 500;
 }
 
 .signup-link {
-  text-align: center;
-  margin-top: 24px;
-  font-size: 14px;
+  color: #3182f6;
+  font-weight: 600;
+  margin-left: 6px;
+  cursor: pointer;
 }
-
-a {
-  color: #2196f3;
-  text-decoration: none;
-  font-weight: 500;
-}
-
-a:hover {
+.signup-link:hover {
   text-decoration: underline;
-}
-
-.token-info {
-  margin-top: 30px;
-  padding: 15px;
-  background-color: #f9f9f9;
-  border-radius: 6px;
-  font-size: 13px;
-  color: #191f28;
-}
-
-.token-info pre {
-  white-space: pre-wrap;
-  word-break: break-word;
-}
-
-.modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.4); /* 반투명 검정 배경 */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-}
-.modal-content {
-  background: white;
-  padding: 24px 32px;
-  border-radius: 8px;
-  text-align: center;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
 }
 </style>

@@ -117,6 +117,9 @@ onMounted(() => {
 </script>
 
 <style scoped>
+* {
+  font-family: Pretendard;
+}
 .table-wrapper {
   /* max-width: 1000px; */
   margin: 2rem auto;

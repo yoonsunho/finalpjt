@@ -39,6 +39,9 @@ const user = computed(() => accountStore.userInfo)
 </script>
 
 <style scoped>
+* {
+  font-family: Pretendard;
+}
 .profile-category-info {
   /* border: 1px solid red; */
   display: flex;

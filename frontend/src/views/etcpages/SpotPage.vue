@@ -75,6 +75,9 @@ onMounted(() => {
 })
 </script>
 <style scoped>
+* {
+  font-family: Pretendard;
+}
 .spot-page {
   padding: 20px;
   font-family: 'Pretendard', sans-serif;

@@ -10,4 +10,8 @@
 import { RouterLink } from 'vue-router'
 </script>
 
-<style scoped></style>
+<style scoped>
+* {
+  font-family: Pretendard;
+}
+</style>
