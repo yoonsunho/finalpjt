@@ -19,10 +19,17 @@
           <option value="-joined_count">가입 적은 순</option>
         </select>
         <button type="submit">검색</button>
-          <RouterLink :to="{ name: 'RecommendView' }">
-        <button class="cta">추천받기</button>
-      </RouterLink>
       </form>
+      <!-- 추천받기 버튼 -->
+      <button class="cta" @click="handleRecommendClick">추천받기</button>
+
+      <!-- 로그인 필요 모달 -->
+      <ConfirmModal
+        :show="showLoginModal"
+        title="로그인이 필요한 기능입니다. 로그인 하시겠습니까?"
+        @confirm="goToLogin"
+        @close="showLoginModal = false"
+      />
     </div>
 
     <!-- 📝 예금 리스트 -->
@@ -66,15 +73,33 @@ import {
   FwbTableHeadCell,
   FwbTableRow,
 } from 'flowbite-vue'
-
+import ConfirmModal from '@/components/ConfirmModal.vue'
 import { useDepositStore } from '@/stores/deposit'
 import { ref, onMounted } from 'vue'
+import { useAccountStore } from '@/stores/user'
 import axios from 'axios'
 const store = useDepositStore()
+const accountStore = useAccountStore()
 
 const searchBank = ref('')
 const selectedRateType = ref('')
 const selectedOrdering = ref('')
+import { useRouter } from 'vue-router'
+// import { useAccountStore } from '@/stores/user'
+const router = useRouter()
+const showLoginModal = ref(false)
+const handleRecommendClick = () => {
+  if (accountStore.isLogin) {
+    router.push({ name: 'RecommendView' })
+  } else {
+    showLoginModal.value = true
+  }
+}
+
+const goToLogin = () => {
+  showLoginModal.value = false
+  router.push({ name: 'LoginView' })
+}
 
 const filterDeposits = function () {
   const params = {}

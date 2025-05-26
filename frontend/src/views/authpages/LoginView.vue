@@ -25,14 +25,10 @@
           <button @click="showLoginErrorModal = false">닫기</button>
         </div>
       </div>
-      <!-- <div class="signup-link">
-        계정이 없으신가요? <router-link :to="{name:'SignUpView'}">회원가입</router-link>
+      <div class="signup-router">
+        <p>계정이 없으신가요?</p>
+        <RouterLink :to="{ name: 'SignUpView' }"><p class="signup-link">회원가입</p></RouterLink>
       </div>
-      -->
-      <!-- <div v-if="tokenInfo" class="token-info">
-        <h3>토큰 정보</h3>
-        <pre>{{ tokenInfo }}</pre>
-      </div> -->
     </div>
   </div>
 </template>
@@ -40,6 +36,8 @@
 <script setup>
 import { ref } from 'vue'
 import { useAccountStore } from '@/stores/user'
+import SignUpView from './SignUpView.vue'
+import { RouterLink } from 'vue-router'
 
 const accountStore = useAccountStore()
 
