@@ -1,6 +1,5 @@
 <template>
   <div class="landing-wrapper">
-    <!-- Hero Section -->
     <section ref="hero" class="section hero">
       <h1 class="hero-title">금융생활을 보다 더 편리하게</h1>
       <p class="hero-subtitle">예적금 비교, 추천받기, 현물 시세 확인, 커뮤니티까지 한 번에</p>
@@ -14,9 +13,22 @@
         <p>예적금 상품을 모아 볼 수 있어요.</p>
       </div>
 
-      <div class="cards products">
-        <div class="card">신한은행 3.2%</div>
-        <div class="card">카카오뱅크 3.0%</div>
+      <div class="cards-section">
+        <div class="cards-row">
+          <div class="card" v-for="deposit in topDeposits" :key="'deposit-' + deposit.id">
+            <h3>{{ deposit.fin_prdt_nm }}</h3>
+            <p>{{ deposit.kor_co_nm }}</p>
+            <p>금리: {{ deposit.max_intr_rate2 }}%</p>
+          </div>
+        </div>
+
+        <div class="cards-row">
+          <div class="card" v-for="saving in topSavings" :key="'saving-' + saving.id">
+            <h3>{{ saving.fin_prdt_nm }}</h3>
+            <p>{{ saving.kor_co_nm }}</p>
+            <p>금리: {{ saving.max_intr_rate2 }}%</p>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -84,6 +96,7 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
+import axios from 'axios'
 import gsap from 'gsap'
 import ScrollTrigger from 'gsap/ScrollTrigger'
 import { RouterLink } from 'vue-router'
@@ -96,8 +109,25 @@ const recommend = ref(null)
 const community = ref(null)
 const market = ref(null)
 const map = ref(null)
+const API_URL = 'http://127.0.0.1:8000'
+const topDeposits = ref([])
+const topSavings = ref([])
 
-onMounted(() => {
+onMounted(async () => {
+  // 1. 인기 예금/적금 불러오기
+  try {
+    const [depositRes, savingRes] = await Promise.all([
+      axios.get(`${API_URL}/finlife/deposit/`, { params: { ordering: '-joined_count' } }),
+      axios.get(`${API_URL}/finlife/saving/`, { params: { ordering: '-joined_count' } }),
+    ])
+
+    topDeposits.value = depositRes.data.slice(0, 3)
+    topSavings.value = savingRes.data.slice(0, 3)
+  } catch (err) {
+    console.error('인기 상품 불러오기 실패:', err)
+  }
+
+  // 2. gsap
   const sections = [products, recommend, community, market, map]
 
   sections.forEach((sectionRef, i) => {
@@ -296,5 +326,26 @@ body {
   padding: 0.8rem;
   border-radius: 12px;
   margin-top: auto;
+}
+
+.cards-section {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  margin-top: 2rem;
+  width: 100%;
+  align-items: center;
+}
+
+.cards-row {
+  display: flex;
+  gap: 2rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.card {
+  flex: 0 0 calc(33.33% - 2rem);
+  max-width: 300px;
 }
 </style>

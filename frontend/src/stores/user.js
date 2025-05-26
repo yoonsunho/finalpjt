@@ -86,7 +86,6 @@ export const useAccountStore = defineStore(
 
     const userInfo = ref(null)
 
-    // fetchUserInfo 함수 - 백엔드 URL에 맞춤
     const fetchUserInfo = async function () {
       if (!token.value) {
         console.error('토큰이 없습니다.')

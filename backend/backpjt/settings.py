@@ -16,6 +16,8 @@ environ.Env.read_env(
 FIN_API_KEY = env("FIN_API_KEY")
 KAKAO_API_KEY = env("KAKAO_API_KEY")
 OPENAI_API_KEY = env("OPENAI_API_KEY")
+GOOGLE_CLIENT_ID = env('GOOGLE_CLIENT_ID')
+GOOGLE_CLIENT_SECRET = env('GOOGLE_CLIENT_SECRET')
 # ====================================
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
@@ -58,6 +60,7 @@ INSTALLED_APPS = [
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
+    'allauth.socialaccount.providers.google',
     'dj_rest_auth.registration',
     ##
     'django.contrib.admin',
@@ -171,6 +174,25 @@ ACCOUNT_USERNAME_REQUIRED = False   # username 비필수
 ACCOUNT_AUTHENTICATION_METHOD = 'email'
 # ✅ 이메일 인증 OFF
 ACCOUNT_EMAIL_VERIFICATION = 'none'
+# 소셜 로그인
+REST_USE_JWT = False  # Token 인증 유지 (네가 기존에 TokenAuthentication 사용 중이니까)
+
+SOCIALACCOUNT_PROVIDERS = {
+    'google': {
+        'SCOPE': [
+            'profile',
+            'email',
+        ],
+        'AUTH_PARAMS': {
+            'access_type': 'online',
+        },
+        'APP': {
+            'client_id': os.getenv('GOOGLE_CLIENT_ID'),
+            'secret': os.getenv('GOOGLE_CLIENT_SECRET'),
+            'key': ''
+        }
+    }
+}
 
 ## 추가! 내가만들 serializer쓸 수 있도록 등록
 REST_AUTH = {

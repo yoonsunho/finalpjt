@@ -14,6 +14,9 @@ from rest_framework.response import Response
 from rest_framework.decorators import permission_classes
 from rest_framework.permissions import IsAuthenticated
 
+# 소셜 로그인
+from allauth.socialaccount.providers.google.views import GoogleOAuth2Adapter
+from dj_rest_auth.registration.views import SocialLoginView
 
 
 User = get_user_model()
@@ -73,3 +76,5 @@ def change_password(request):
         user.save()
         update_session_auth_hash(request, user)  # 세션 유지
         return Response({"detail": "비밀번호가 성공적으로 변경되었습니다."}, status=status.HTTP_200_OK)
+    
+

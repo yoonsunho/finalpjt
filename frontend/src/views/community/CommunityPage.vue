@@ -1,14 +1,7 @@
 <template>
   <div class="table-wrapper">
-    <div class="category-filter">
-      <button
-        v-for="(label, key) in categoryLabels"
-        :key="key"
-        @click="changeCategory(key)"
-        :class="{ active: store.selectedCategory === key }"
-      >
-        {{ label }}
-      </button>
+    <div class="category-title">
+      <h2>{{ categoryLabels[store.selectedCategory] || '커뮤니티' }}</h2>
     </div>
 
     <div class="filter-bar">
@@ -18,6 +11,14 @@
         <option value="oldest">등록일순</option>
         <option value="popular">인기순</option>
       </select>
+      <select v-model="searchField">
+        <option value="title">제목</option>
+        <option value="content">내용</option>
+        <option value="nickname">작성자</option>
+      </select>
+
+      <input v-model="searchQuery" placeholder="검색어 입력" @keyup.enter="searchArticles" />
+      <button @click="searchArticles">검색</button>
     </div>
 
     <table class="custom-table">
@@ -58,11 +59,14 @@
 </template>
 
 <script setup>
-import { onMounted } from 'vue'
+import { onMounted, watch, ref } from 'vue'
 import { useArticleStore } from '@/stores/article'
-import { RouterLink } from 'vue-router'
+import { useRoute, RouterLink } from 'vue-router'
 
 const store = useArticleStore()
+const route = useRoute()
+const searchField = ref('title')
+const searchQuery = ref('')
 
 const categoryLabels = {
   REVIEW: '예적금 후기',
@@ -70,10 +74,16 @@ const categoryLabels = {
   FREE: '자유게시판',
 }
 
-const changeCategory = (category) => {
-  store.selectedCategory = category
-  store.getArticles()
-}
+watch(
+  () => route.params.category,
+  (newCategory) => {
+    if (newCategory) {
+      store.selectedCategory = newCategory.toUpperCase()
+      store.getArticles()
+    }
+  },
+  { immediate: true },
+)
 
 const formatDate = (isoString) => {
   const date = new Date(isoString)
@@ -91,7 +101,17 @@ const handleOrderingChange = () => {
   store.getArticles()
 }
 
+const searchArticles = () => {
+  store.getArticles({
+    search_field: searchField.value,
+    search: searchQuery.value,
+  })
+}
+
 onMounted(() => {
+  if (route.params.category) {
+    store.selectedCategory = route.params.category.toUpperCase()
+  }
   store.getArticles()
 })
 </script>
@@ -141,28 +161,6 @@ onMounted(() => {
 .highlight {
   font-weight: bold;
   color: #2563eb;
-}
-
-.category-filter {
-  display: flex;
-  justify-content: center;
-  gap: 1rem;
-  margin-bottom: 1rem;
-}
-
-.category-filter button {
-  background-color: #e0e7ff;
-  border: none;
-  padding: 0.5rem 1rem;
-  border-radius: 6px;
-  cursor: pointer;
-  font-weight: bold;
-  transition: background-color 0.2s;
-}
-
-.category-filter button.active,
-.category-filter button:hover {
-  background-color: #c7d2fe;
 }
 
 .filter-bar {

@@ -13,8 +13,8 @@ from finlife.serializers import DepositRecommendSerializer, SavingRecommendSeria
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
-def recommend_view(request, user_id):
-    user = get_object_or_404(CustomUser, id=user_id)
+def recommend_view(request, user_email):
+    user = get_object_or_404(CustomUser, email=user_email)
     recommendations = recommend_products(user)
     
     deposit_data = DepositRecommendSerializer(
