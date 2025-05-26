@@ -55,13 +55,17 @@ import { watch, ref, onMounted, computed } from 'vue'
 import ConfirmModal from '@/components/ConfirmModal.vue'
 
 const product = ref(null)
-const store = useDepositStore()
+const depositStore = useDepositStore()
 const accountStore = useAccountStore()
 const route = useRoute()
 const productId = route.params.id
 
-const isLiked = computed(() => store.isLiked(productId))
-const isJoined = computed(() => store.isJoined(productId))
+const isLiked = computed(() => {
+  return depositStore.isLiked(productId)
+})
+const isJoined = computed(() => {
+  return depositStore.isJoined(productId)
+})
 const isLogin = computed(() => !!accountStore.token)
 
 const showJoinModal = ref(false)
@@ -71,7 +75,7 @@ const confirmJoin = () => (showJoinModal.value = true)
 const confirmCancelJoin = () => (showCancelModal.value = true)
 const doJoin = async () => {
   try {
-    const result = await store.toggleJoin(productId)
+    const result = await depositStore.toggleJoin(productId)
     console.log('가입 처리:', result)
     showJoinModal.value = false
   } catch (err) {
@@ -81,7 +85,7 @@ const doJoin = async () => {
 
 const doCancel = async () => {
   try {
-    const result = await store.toggleJoin(productId)
+    const result = await depositStore.toggleJoin(productId)
     console.log('가입 취소 처리:', result)
     showCancelModal.value = false
   } catch (err) {
@@ -91,7 +95,7 @@ const doCancel = async () => {
 
 const toggleLike = async () => {
   try {
-    const result = await store.toggleLike(productId)
+    const result = await depositStore.toggleLike(productId)
     console.log('찜 처리:', result)
   } catch (err) {
     alert('찜 처리 중 오류 발생!')
@@ -100,7 +104,7 @@ const toggleLike = async () => {
 
 const getDepositDetail = () => {
   axios
-    .get(`${store.API_URL}/finlife/deposit/${productId}/`)
+    .get(`${depositStore.API_URL}/finlife/deposit/${productId}/`)
     .then((res) => {
       product.value = res.data
     })
@@ -110,6 +114,8 @@ const getDepositDetail = () => {
 }
 
 onMounted(() => {
+  depositStore.getDepositInterests()
+  depositStore.getDepositJoins()
   getDepositDetail()
 })
 

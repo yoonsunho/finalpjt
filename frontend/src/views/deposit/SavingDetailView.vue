@@ -54,14 +54,18 @@ import { useRoute } from 'vue-router'
 import { ref, onMounted, computed, watch } from 'vue'
 import ConfirmModal from '@/components/ConfirmModal.vue'
 
+const savingStore = useSavingStore()
 const product = ref(null)
-const store = useSavingStore()
 const accountStore = useAccountStore()
 const route = useRoute()
-const productId = route.params.id // 현재상품id
+const productId = route.params.id 
 
-const isLiked = computed(() => store.isLiked(productId))
-const isJoined = computed(() => store.isJoined(productId))
+const isLiked = computed(() => {
+  return savingStore.isLiked(productId)
+})
+const isJoined = computed(() => {
+  return savingStore.isJoined(productId)
+})
 const isLogin = computed(() => !!accountStore.token)
 
 const showJoinModal = ref(false)
@@ -71,7 +75,7 @@ const confirmJoin = () => (showJoinModal.value = true)
 const confirmCancelJoin = () => (showCancelModal.value = true)
 const doJoin = async () => {
   try {
-    const result = await store.toggleJoin(productId)
+    const result = await savingStore.toggleJoin(productId)
     console.log('적금 가입 결과:', result)
     showJoinModal.value = false
   } catch (err) {
@@ -81,7 +85,7 @@ const doJoin = async () => {
 
 const doCancel = async () => {
   try {
-    const result = await store.toggleJoin(productId)
+    const result = await savingStore.toggleJoin(productId)
     console.log('적금 가입 취소 결과:', result)
     showCancelModal.value = false
   } catch (err) {
@@ -101,7 +105,7 @@ const toggleLike = async () => {
 const getSavingDetail = function () {
   axios({
     method: 'GET',
-    url: `${store.API_URL}/finlife/saving/${route.params.id}/`,
+    url: `${savingStore.API_URL}/finlife/saving/${route.params.id}/`,
   })
     .then((res) => {
       product.value = res.data
@@ -112,6 +116,8 @@ const getSavingDetail = function () {
 }
 
 onMounted(() => {
+  savingStore.getSavingInterests()
+  savingStore.getSavingJoins()
   getSavingDetail()
 })
 
