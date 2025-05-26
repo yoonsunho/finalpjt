@@ -5,11 +5,13 @@
       <div class="signup-info">
         <h3>로그인</h3>
         <p>이메일과 비밀번호를 입력해 주세요.</p>
+        <div class="social-login-section">
+          <div class="divider">또는</div>
+          <GoogleLoginButton />
+        </div>
         <div class="signup-router">
-          <p>
-            계정이 없으신가요?
-            <RouterLink :to="{ name: 'SignUpView' }" class="signup-link"> 회원가입 </RouterLink>
-          </p>
+          <p>계정이 없으신가요?</p>
+          <RouterLink :to="{ name: 'SignUpView' }"><p class="signup-link">회원가입</p></RouterLink>
         </div>
       </div>
 
@@ -43,6 +45,7 @@
 import { ref } from 'vue'
 import { useAccountStore } from '@/stores/user'
 import { RouterLink } from 'vue-router'
+import GoogleLoginButton from '@/components/GoogleLoginButton.vue'
 
 const accountStore = useAccountStore()
 

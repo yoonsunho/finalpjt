@@ -6,6 +6,8 @@ import SignUpView from '@/views/authpages/SignUpView.vue'
 import LoginView from '@/views/authpages/LoginView.vue'
 import ProfilePage from '@/views/authpages/ProfilePage.vue'
 import ProfileEdit from '@/views/authpages/ProfileEdit.vue'
+import GoogleAdditionalInfoView from '@/views/authpages/GoogleAdditionalInfoView.vue'
+// import GoogleLoginView from '@/views/authpages/GoogleLoginView.vue'
 import PasswordEdit from '@/views/authpages/PasswordEdit.vue'
 
 import DepositListView from '@/views/deposit/DepositListView.vue'
@@ -123,6 +125,11 @@ const router = createRouter({
       name: 'MapPage',
       component: MapPage,
     },
+    {
+      path: '/google-additional-info',
+      name: 'GoogleAdditionalInfoView',
+      component: GoogleAdditionalInfoView,
+    }
   ],
 })
 

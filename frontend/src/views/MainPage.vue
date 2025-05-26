@@ -6,8 +6,6 @@
       <button class="cta">지금 시작하기</button>
     </section>
 
-    <!-- 예적금 상품 리스트 -->
-    <!-- 예적금 캐러셀 -->
     <section ref="products" class="section products">
       <div class="products-text">
         <h2>다양한 금융 상품을 한 눈에 비교해요.</h2>

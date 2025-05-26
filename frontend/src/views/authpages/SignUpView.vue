@@ -4,6 +4,14 @@
     <div class="signup-container" v-if="step === 1 || step === 2">
       <div class="signup-info">
         <h3>회원가입</h3>
+        <div class="login-link">
+          이미 계정이 있으신가요?
+          <RouterLink :to="{ name: 'LoginView' }" class="login-link-text">로그인</RouterLink>
+        </div>
+        <div class="social-signup-section">
+          <div class="divider">간편 가입</div>
+          <GoogleLoginButton />
+        </div>
         <p v-if="step === 1">기본 정보를 입력해 주세요.</p>
         <p v-else>
           추가 정보를 입력해 주세요.<br />추가 정보는 맞춤 데이터를 제공하는 데 활용됩니다.
@@ -175,10 +183,10 @@
 
 <script setup>
 import { ref, watch, nextTick } from 'vue'
-import { useRouter } from 'vue-router'
 import gsap from 'gsap'
 import { useAccountStore } from '@/stores/user'
-
+import { useRouter, RouterLink } from 'vue-router'
+import GoogleLoginButton from '@/components/GoogleLoginButton.vue'
 const router = useRouter()
 const accountStore = useAccountStore()
 const { ACCOUNT_API_URL } = accountStore
@@ -304,7 +312,7 @@ const onSignUp = async () => {
   display: flex;
   gap: 40px;
   align-items: flex-start;
-  background-color: #ffffff;
+  /* background-color: #ffffff; */
   border-radius: 16px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
   padding: 40px;
@@ -312,7 +320,7 @@ const onSignUp = async () => {
 
 .signup-info {
   flex: 1;
-  border-right: 1px solid #e5e7eb;
+  /* border-right: 1px solid #e5e7eb; */
   padding-right: 20px;
 }
 
@@ -358,6 +366,7 @@ const onSignUp = async () => {
 
 .form-group {
   font-size: 1rem;
+  color: black;
   margin-bottom: 20px;
 }
 
