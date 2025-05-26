@@ -53,7 +53,7 @@ watch(
 )
 
 onMounted(() => {
-  console.log('수정 모드:', isEditMode.value, '글 ID:', articleId.value) // 디버깅용
+  console.log('수정 모드:', isEditMode.value, '글 ID:', articleId.value)
 
   if (isEditMode.value && articleId.value) {
     if (store.articleDetail && store.articleDetail.id == articleId.value) {
@@ -78,7 +78,7 @@ const handleSubmit = () => {
       .updateArticle(articleId.value, payload)
       .then(() => {
         alert('수정 완료!')
-        router.push(`/community/${articleId.value}`)
+        router.push({ name: 'ArticleDetail', params: { id: res.data.id } })
       })
       .catch((err) => {
         console.error('수정 실패:', err.response?.data || err)
@@ -89,7 +89,7 @@ const handleSubmit = () => {
       .createArticle(payload)
       .then((res) => {
         alert('작성 완료!')
-        router.push(`/community/${res.data.id}`)
+        router.push({ name: 'ArticleDetail', params: { id: res.data.id } })
       })
       .catch((err) => {
         console.error('작성 실패:', err.response?.data || err)

@@ -8,7 +8,6 @@ import LoginView from '@/views/authpages/LoginView.vue'
 import ProfilePage from '@/views/authpages/ProfilePage.vue'
 import ProfileEdit from '@/views/authpages/ProfileEdit.vue'
 
-// import { useAccountStore } from '@/stores/user'
 import DepositListView from '@/views/deposit/DepositListView.vue'
 import DepositDetailView from '@/views/deposit/DepositDetailView.vue'
 import SavingListView from '@/views/deposit/SavingListView.vue'
@@ -99,20 +98,16 @@ const router = createRouter({
       component: CreateArticle,
     },
     {
-      path: '/community/:id',
+      path: '/community/article/:id',
       name: 'ArticleDetail',
       component: ArticleDetail,
     },
     {
-      path: '/community',
+      path: '/community/:category(review|tip|free)?',
       name: 'CommunityPage',
       component: CommunityPage,
     },
-    {
-      path: '/community/:category?',
-      name: 'CommunityPage',
-      component: CommunityPage,
-    },
+
     {
       path: '/etc',
       name: 'EtcPage',
