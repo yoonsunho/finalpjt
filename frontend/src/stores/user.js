@@ -14,9 +14,7 @@ export const useAccountStore = defineStore(
       return token.value ? true : false
     })
 
-    // 회원가입
-    const signUp = function (payload) {
-      console.log(payload)
+    const signUp = async function (payload) {
       const {
         email,
         nickname,
@@ -29,29 +27,30 @@ export const useAccountStore = defineStore(
         deposit_amount,
         deposit_period,
       } = payload
-      axios({
-        method: 'POST',
-        url: `${ACCOUNT_API_URL}/signup/`,
-        data: {
-          email,
-          nickname,
-          password1,
-          password2,
-          gender,
-          salary,
-          wealth,
-          tendency,
-          deposit_amount,
-          deposit_period,
-        },
-      })
-        .then((res) => {
-          console.log('✅ 회원가입 성공:', res.data)
-          router.push({ name: 'LoginView' })
+
+      try {
+        const res = await axios({
+          method: 'POST',
+          url: `${ACCOUNT_API_URL}/signup/`,
+          data: {
+            email,
+            nickname,
+            password1,
+            password2,
+            gender,
+            salary,
+            wealth,
+            tendency,
+            deposit_amount,
+            deposit_period,
+          },
         })
-        .catch((err) => {
-          console.error('❌ 회원가입 실패:', err.response?.data || err)
-        })
+        console.log('회원가입 성공:', res.data)
+        return res.data
+      } catch (err) {
+        console.error('회원가입 실패:', err.response?.data || err)
+        throw err
+      }
     }
 
     const logIn = async function ({ email, password }) {

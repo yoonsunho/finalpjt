@@ -2,30 +2,12 @@
   <div class="spot-page">
     <div class="controls">
       <!-- 자산 선택 버튼 -->
-      <button 
-        :class="{ active: asset === 'gold' }" 
-        @click="selectAsset('gold')"
-      >
-        금
-      </button>
-      <button 
-        :class="{ active: asset === 'silver' }" 
-        @click="selectAsset('silver')"
-      >
-        은
-      </button>
+      <button :class="{ active: asset === 'gold' }" @click="selectAsset('gold')">금</button>
+      <button :class="{ active: asset === 'silver' }" @click="selectAsset('silver')">은</button>
 
       <!-- 날짜 선택 -->
-      <input 
-        type="date" 
-        v-model="startDate" 
-        placeholder="시작일"
-      />
-      <input 
-        type="date" 
-        v-model="endDate" 
-        placeholder="종료일"
-      />
+      <input type="date" v-model="startDate" placeholder="시작일" />
+      <input type="date" v-model="endDate" placeholder="종료일" />
       <button @click="getSpotData">조회</button>
     </div>
 
@@ -36,11 +18,7 @@
 
     <!-- 차트 영역 -->
     <div class="chart-container">
-      <SpotChart 
-        v-if="chartData && chartData.length" 
-        :chart-data="chartData" 
-        :asset="asset" 
-      />
+      <SpotChart v-if="chartData && chartData.length" :chart-data="chartData" :asset="asset" />
       <div v-else class="no-data">데이터가 없습니다.</div>
     </div>
   </div>
@@ -51,11 +29,11 @@ import { ref, onMounted } from 'vue'
 import axios from 'axios'
 import SpotChart from '@/components/SpotChart.vue'
 
-const asset = ref('gold')       // 선택된 자산 (gold or silver)
-const startDate = ref('')       // 시작일
-const endDate = ref('')         // 종료일
-const chartData = ref([])       // 차트에 사용할 데이터 배열
-const errorMessage = ref('')    // 에러 메시지
+const asset = ref('gold') // 선택된 자산 (gold or silver)
+const startDate = ref('') // 시작일
+const endDate = ref('') // 종료일
+const chartData = ref([]) // 차트에 사용할 데이터 배열
+const errorMessage = ref('') // 에러 메시지
 
 // 자산 선택 함수
 const selectAsset = (selectedAsset) => {
@@ -73,14 +51,13 @@ const getSpotData = async () => {
       ...(endDate.value && { end_date: endDate.value }),
     }
 
-    // 백엔드 API 주소에 맞게 수정하세요
     const response = await axios.get('http://127.0.0.1:8000/spot/commodity_price/', { params })
 
     if (response.data.data && response.data.data.length > 0) {
       // API에서 받은 데이터를 차트용으로 가공
-      chartData.value = response.data.data.map(item => ({
+      chartData.value = response.data.data.map((item) => ({
         date: item.date,
-        price: parseFloat(item.close_last)
+        price: parseFloat(item.close_last),
       }))
     } else {
       chartData.value = []

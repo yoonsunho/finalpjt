@@ -11,21 +11,23 @@
     </div>
     <div class="profile-info-data">
       <p>{{ user?.email }}</p>
-    <p>{{ user?.nickname }}</p>
-    <p>
-      <span v-if="user?.gender === 'M'">남성</span>
-      <span v-else-if="user?.gender === 'F'">여성</span>
-      <span v-else>정보 없음</span>
-    </p>
-    <p>{{ user?.salary }}</p>
-    <p>{{ user?.tendency }}</p>
-    <p>{{ user?.deposit_amount }}</p>
-    <p>{{ user?.deposit_period }}</p>
- 
+      <p>{{ user?.nickname }}</p>
+      <p>
+        <span v-if="user?.gender === 'M'">남성</span>
+        <span v-else-if="user?.gender === 'F'">여성</span>
+        <span v-else>정보 없음</span>
+      </p>
+      <p>{{ user?.salary }}</p>
+      <p>{{ user?.tendency }}</p>
+      <p>{{ user?.deposit_amount }}</p>
+      <p>{{ user?.deposit_period }}</p>
     </div>
-     </div>
+  </div>
   <button class="profile-edit" type="button" @click="$router.push({ name: 'ProfileEdit' })">
     회원정보 수정
+  </button>
+  <button class="password-edit" type="button" @click="$router.push({ name: 'PasswordEdit' })">
+    비밀번호 수정
   </button>
 </template>
 
@@ -50,7 +52,7 @@ const user = computed(() => accountStore.userInfo)
   gap: 10px;
 }
 .profile-info-data {
-display: flex;
+  display: flex;
   flex-direction: column;
   gap: 10px;
 }

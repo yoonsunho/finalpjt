@@ -2,7 +2,6 @@ import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
 import axios from 'axios'
 import { useAccountStore } from './user'
-
 export const useArticleStore = defineStore('article', () => {
   const API_URL = 'http://127.0.0.1:8000'
   const accountStore = useAccountStore()
@@ -10,16 +9,31 @@ export const useArticleStore = defineStore('article', () => {
   const articles = ref([])
   const articleDetail = ref(null)
   const comments = ref([])
-  const selectedCategory = ref('REVIEW')
+  const selectedCategory = ref('') // 기본값을 빈 문자열로 변경
   const selectedOrdering = ref('')
 
   const newComment = ref('')
   const editCommentId = ref(null)
   const editContent = ref('')
 
-  const getArticles = () => {
-    let url = `${API_URL}/community/?category=${selectedCategory.value}`
-    if (selectedOrdering.value) url += `&ordering=${selectedOrdering.value}`
+  const getArticles = (searchParams = {}) => {
+    let url = `${API_URL}/community/`
+    const params = new URLSearchParams()
+    if (selectedCategory.value) {
+      params.append('category', selectedCategory.value)
+    }
+    if (selectedOrdering.value) {
+      params.append('ordering', selectedOrdering.value)
+    }
+    if (searchParams.search && searchParams.search_field) {
+      params.append('search_field', searchParams.search_field)
+      params.append('search', searchParams.search)
+    }
+    if (params.toString()) {
+      url += `?${params.toString()}`
+    }
+
+    console.log('Fetching articles from:', url)
 
     axios
       .get(url)
@@ -32,9 +46,17 @@ export const useArticleStore = defineStore('article', () => {
   }
 
   const getArticleDetail = (id) => {
+    if (!id || isNaN(parseInt(id))) {
+      console.error('Invalid article ID:', id)
+      return
+    }
+
     articleDetail.value = null
+    const url = `${API_URL}/community/${id}/`
+    console.log('Fetching article detail from:', url) // Debug log
+
     axios
-      .get(`${API_URL}/community/${id}`)
+      .get(url)
       .then((res) => {
         articleDetail.value = res.data
       })
@@ -84,8 +106,17 @@ export const useArticleStore = defineStore('article', () => {
   }
 
   const getComments = (articleId) => {
+    // Fix: Ensure we're using a numeric article ID
+    if (!articleId || isNaN(parseInt(articleId))) {
+      console.error('Invalid article ID for comments:', articleId)
+      return
+    }
+
+    const url = `${API_URL}/community/${articleId}/comments/`
+    console.log('Fetching comments from:', url) // Debug log
+
     axios
-      .get(`${API_URL}/community/${articleId}/comments/`)
+      .get(url)
       .then((res) => {
         comments.value = res.data
       })

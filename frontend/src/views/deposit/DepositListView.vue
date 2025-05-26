@@ -3,15 +3,16 @@
     <!-- 🔍 필터 섹션 -->
     <div class="filter-bar">
       <form @submit.prevent="filterDeposits" class="filter-form">
-        <input v-model="searchBank" placeholder="은행검색" @input="fetchFilteredProducts" />
+        <input v-model="searchDeposits" placeholder="예금 이름 검색" />
+        <input v-model="searchBank" placeholder="은행검색" />
 
-        <select v-model="selectedRateType" @change="fetchFilteredProducts">
+        <select v-model="selectedRateType">
           <option value="">이율 유형 전체</option>
           <option value="단리">단리</option>
           <option value="복리">복리</option>
         </select>
 
-        <select v-model="selectedOrdering" @change="fetchFilteredProducts">
+        <select v-model="selectedOrdering">
           <option value="">기본 정렬</option>
           <option value="interest_count">찜 많은 순</option>
           <option value="-interest_count">찜 적은 순</option>
@@ -30,11 +31,6 @@
         @confirm="goToLogin"
         @close="showLoginModal = false"
       />
-    </div>
-
-    <!-- 📝 예금 리스트 -->
-    <div v-for="product in store.depositProducts" :key="product.id">
-      <DepositItem :product="product" />
     </div>
   </div>
   <div class="table-wrapper">
@@ -80,7 +76,7 @@ import { useAccountStore } from '@/stores/user'
 import axios from 'axios'
 const store = useDepositStore()
 const accountStore = useAccountStore()
-
+const searchDeposits = ref('')
 const searchBank = ref('')
 const selectedRateType = ref('')
 const selectedOrdering = ref('')
@@ -104,6 +100,7 @@ const goToLogin = () => {
 const filterDeposits = function () {
   const params = {}
 
+  if (searchDeposits.value) params.search = searchDeposits.value
   if (searchBank.value) params.kor_co_nm = searchBank.value
   if (selectedOrdering.value) params.ordering = selectedOrdering.value
   if (selectedRateType.value) params.intr_rate_type_nm = selectedRateType.value
@@ -114,6 +111,7 @@ const filterDeposits = function () {
     })
     .then((res) => {
       store.depositProducts = res.data
+      console.log(res.data)
     })
     .catch((err) => {
       console.error('필터링 실패:', err)

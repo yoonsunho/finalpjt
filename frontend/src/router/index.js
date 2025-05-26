@@ -3,14 +3,13 @@ import { createRouter, createWebHistory } from 'vue-router'
 import MainPage from '@/views/MainPage.vue'
 
 import SignUpView from '@/views/authpages/SignUpView.vue'
-import SignUpSuccessView from '@/views/authpages/SignUpSuccessView.vue'
 import LoginView from '@/views/authpages/LoginView.vue'
 import ProfilePage from '@/views/authpages/ProfilePage.vue'
 import ProfileEdit from '@/views/authpages/ProfileEdit.vue'
 import GoogleAdditionalInfoView from '@/views/authpages/GoogleAdditionalInfoView.vue'
 // import GoogleLoginView from '@/views/authpages/GoogleLoginView.vue'
+import PasswordEdit from '@/views/authpages/PasswordEdit.vue'
 
-// import { useAccountStore } from '@/stores/user'
 import DepositListView from '@/views/deposit/DepositListView.vue'
 import DepositDetailView from '@/views/deposit/DepositDetailView.vue'
 import SavingListView from '@/views/deposit/SavingListView.vue'
@@ -44,11 +43,6 @@ const router = createRouter({
       path: '/signup',
       name: 'SignUpView',
       component: SignUpView,
-    },
-    {
-      path: '/signup/success',
-      name: 'SignUpSuccessView',
-      component: SignUpSuccessView,
     },
     {
       path: '/deposits',
@@ -96,25 +90,26 @@ const router = createRouter({
       component: ProfileEdit,
     },
     {
+      path: '/profile/password',
+      name: 'PasswordEdit',
+      component: PasswordEdit,
+    },
+    {
       path: '/community/create',
       name: 'CreateArticle',
       component: CreateArticle,
     },
     {
-      path: '/community/:id',
+      path: '/community/article/:id',
       name: 'ArticleDetail',
       component: ArticleDetail,
     },
     {
-      path: '/community',
+      path: '/community/:category(review|tip|free)?',
       name: 'CommunityPage',
       component: CommunityPage,
     },
-    {
-      path: '/community/:category?',
-      name: 'CommunityPage',
-      component: CommunityPage,
-    },
+
     {
       path: '/etc',
       name: 'EtcPage',

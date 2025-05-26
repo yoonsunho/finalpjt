@@ -20,7 +20,6 @@
             @mouseleave="closeDropdown"
           >
             <button class="nav-link dropdown-toggle" @click="toggleDropdown('deposit')">
-              <!-- <RouterLink :to="{ name: 'DepositListView' }">예적금추천</RouterLink> -->
               <p>예적금추천</p>
             </button>
             <ul :class="['dropdown-menu', { active: activeDropdown === 'deposit' }]">

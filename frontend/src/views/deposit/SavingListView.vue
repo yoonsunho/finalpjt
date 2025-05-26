@@ -1,15 +1,16 @@
 <template>
   <div class="filter-bar">
     <form @submit.prevent="filterSavings" class="filter-form">
-      <input v-model="searchBank" placeholder="은행검색" @input="fetchFilteredProducts" />
+      <input v-model="searchSavings" placeholder="적금 이름 검색" />
+      <input v-model="searchBank" placeholder="은행검색" />
 
-      <select v-model="selectedRateType" @change="fetchFilteredProducts">
+      <select v-model="selectedRateType">
         <option value="">이율 유형 전체</option>
         <option value="단리">단리</option>
         <option value="복리">복리</option>
       </select>
 
-      <select v-model="selectedOrdering" @change="fetchFilteredProducts">
+      <select v-model="selectedOrdering">
         <option value="">기본 정렬</option>
         <option value="interest_count">찜 많은 순</option>
         <option value="-interest_count">찜 적은 순</option>
@@ -70,6 +71,8 @@ import { useSavingStore } from '@/stores/saving'
 import { ref, onMounted } from 'vue'
 import axios from 'axios'
 import { useAccountStore } from '@/stores/user'
+
+const searchSavings = ref('')
 const searchBank = ref('')
 const selectedRateType = ref('')
 const selectedOrdering = ref('')
@@ -92,7 +95,8 @@ const goToLogin = () => {
 }
 const filterSavings = function () {
   const params = {}
-
+  console.log(params)
+  if (searchSavings.value) params.search = searchSavings.value
   if (searchBank.value) params.kor_co_nm = searchBank.value
   if (selectedOrdering.value) params.ordering = selectedOrdering.value
   if (selectedRateType.value) params.intr_rate_type_nm = selectedRateType.value
@@ -103,11 +107,13 @@ const filterSavings = function () {
     })
     .then((res) => {
       store.savingProducts = res.data
+      console.log(res.data)
     })
     .catch((err) => {
       console.error('필터링 실패:', err)
     })
 }
+
 onMounted(() => {
   // store.getSavingProducts()
   filterSavings()
