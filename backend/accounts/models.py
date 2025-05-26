@@ -64,6 +64,8 @@ class CustomUser(AbstractUser):
     deposit_amount = models.CharField(max_length=20, choices=DEPOSIT_AMOUNT_CHOICES)
     deposit_period = models.CharField(max_length=20, choices=DEPOSIT_PERIOD_CHOICES)
 
+    has_completed_profile = models.BooleanField(default=False)  # 필드 추가(소셜로그인)
+    
     USERNAME_FIELD = 'email'    # username 필드  email로 변경
     REQUIRED_FIELDS = ['nickname']  # createsuperuser 시 필수
 

@@ -31,7 +31,9 @@ class Command(BaseCommand):
                 wealth=fake.random_element(['under_10m', '10m_30m', '30m_50m', '50m_100m', 'over_100m']),
                 tendency=fake.random_element(['safe', 'neutral', 'aggressive']),
                 deposit_amount=fake.random_element(['under_100k', '100k_500k', '500k_1m', 'over_1m']),
-                deposit_period=fake.random_element(['under_6m', '6m_12m', '1y_2y', 'over_2y'])
+                deposit_period=fake.random_element(['under_6m', '6m_12m', '1y_2y', 'over_2y']),
+                 # ✅ 추가된 부분
+                has_completed_profile=True  # 모든 정보가 입력된 상태
             )
             
             # 예금 상품 매칭 (1~3개 랜덤)
