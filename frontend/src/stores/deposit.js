@@ -26,7 +26,7 @@ export const useDepositStore = defineStore(
         Authorization: `Token ${accountStore.token}`,
       }
 
-      axios({
+      return axios({
         method: 'POST', // DELETE가 아닌 POST 사용
         url: `${API_URL}/finlife/deposit/${id}/interest/`,
         headers: headers,
@@ -41,6 +41,7 @@ export const useDepositStore = defineStore(
           } else if (response.data.action === 'removed') {
             likedProducts.value = likedProducts.value.filter((productId) => productId !== id)
           }
+          return response.data
         })
         .catch((err) => {
           console.error('찜 토글 실패:', err)
@@ -53,7 +54,7 @@ export const useDepositStore = defineStore(
         Authorization: `Token ${accountStore.token}`,
       }
 
-      axios({
+      return axios({
         method: 'post', // DELETE가 아닌 POST 사용
         url: `${API_URL}/finlife/deposit/${id}/join/`,
         headers: headers,
@@ -65,6 +66,7 @@ export const useDepositStore = defineStore(
           } else if (response.data.action === 'canceled') {
             joinedProducts.value = joinedProducts.value.filter((productId) => productId !== id)
           }
+          return response.data
         })
         .catch((err) => {
           console.error('가입 토글 실패:', err)

@@ -1,29 +1,29 @@
 <template>
   <div class="my-interests">
     <h1>찜한 상품</h1>
-
-    <!-- 예금 섹션 -->
     <div class="section" v-if="depositInterests.length > 0">
       <h2>예금 상품</h2>
       <div class="products-list">
         <div v-for="item in depositInterests" :key="item.id" class="product-item">
-          <h3>{{ item.product_name }}</h3>
-          <p>{{ item.company_name }}</p>
-          <small>가입일: {{ formatDate(item.joined_at) }}</small>
-          <button @click="removeLike('deposit', item.product)" class="btn-remove">찜 해제</button>
+          <RouterLink :to="{ name:'DepositDetailView', params:{id: item.product}}" class="product-content">
+            <h3>{{ item.product_name }}</h3>
+            <p>{{ item.company_name }}</p>
+            <small>가입일: {{ formatDate(item.joined_at) }}</small>
+          </RouterLink>
+          <button @click="() => removeLike('deposit', item.product)" class="btn-remove">찜 해제</button>
         </div>
       </div>
     </div>
-
-    <!-- 적금 섹션 -->
     <div class="section" v-if="savingInterests.length > 0">
       <h2>적금 상품</h2>
       <div class="products-list">
         <div v-for="item in savingInterests" :key="item.id" class="product-item">
-          <h3>{{ item.product_name }}</h3>
-          <p>{{ item.company_name }}</p>
-          <small>가입일: {{ formatDate(item.joined_at) }}</small>
-          <button @click="removeLike('saving', item.product)" class="btn-remove">찜 해제</button>
+          <RouterLink :to="{ name:'SavingDetailView', params:{id: item.product} }" class="product-content">
+            <h3>{{ item.product_name }}</h3>
+            <p>{{ item.company_name }}</p>
+            <small>가입일: {{ formatDate(item.joined_at) }}</small>
+          </RouterLink>
+          <button @click="() => removeLike('saving', item.product)" class="btn-remove">찜 해제</button>
         </div>
       </div>
     </div>
@@ -39,13 +39,19 @@
 import { ref, onMounted } from 'vue'
 import axios from 'axios'
 import { useAccountStore } from '@/stores/user'
+import { useDepositStore } from '@/stores/deposit'
+import { useSavingStore } from '@/stores/saving'
 
 const accountStore = useAccountStore()
+const depositStore = useDepositStore()
+const savingStore = useSavingStore()
+
 const API_URL = 'http://127.0.0.1:8000'
 
 const isLoading = ref(true)
 const depositInterests = ref([])
 const savingInterests = ref([])
+
 
 // 찜한 상품 목록 가져오기
 const getMyInterests = async () => {
@@ -58,6 +64,8 @@ const getMyInterests = async () => {
 
     depositInterests.value = response.data.deposits || []
     savingInterests.value = response.data.savings || []
+
+    console.log(response.data)
   } catch (error) {
     console.error('찜 목록 조회 실패:', error)
   } finally {
@@ -68,26 +76,14 @@ const getMyInterests = async () => {
 // 찜 해제
 const removeLike = async (type, productId) => {
   try {
-    const url =
-      type === 'deposit'
-        ? `${API_URL}/finlife/deposit/${productId}/interest/`
-        : `${API_URL}/finlife/saving/${productId}/interest/`
-
-    await axios.post(
-      url,
-      {},
-      {
-        headers: {
-          Authorization: `Token ${accountStore.token}`,
-        },
-      },
-    )
     if (type === 'deposit') {
-      depositInterests.value = depositInterests.value.filter(
-        (item) => item.product.id !== productId,
-      )
+      await depositStore.toggleLike(productId)
+      depositInterests.value = depositInterests.value.filter(item => item.product !== productId)
     } else {
-      savingInterests.value = savingInterests.value.filter((item) => item.product.id !== productId)
+      await axios.post(`${API_URL}/finlife/saving/${productId}/interest/`, {}, {
+        headers: { Authorization: `Token ${accountStore.token}` }
+      })
+      savingInterests.value = savingInterests.value.filter(item => item.product !== productId)
     }
   } catch (error) {
     console.error('찜 해제 실패:', error)
