@@ -5,3 +5,6 @@
 1. 준비 사항
 pip install pandas openpyxl
 
+- db에 넣는 명령
+python spot/gold_price_upload.py
+
