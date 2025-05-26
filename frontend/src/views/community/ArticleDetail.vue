@@ -109,82 +109,152 @@ onMounted(() => {
   store.getComments(articleId)
 })
 </script>
+
 <style scoped>
 * {
-  font-family: Pretendard;
+  font-family: 'Pretendard', sans-serif;
+  box-sizing: border-box;
 }
+
 .article-container {
-  min-width: 1200px;
-  margin: 1rem auto;
-  padding: 1rem;
-  /* box-shadow: inset 0 0 3px dodgerblue; */
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 0 1rem;
 }
 
 .article-card {
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 2.5rem;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  background-color: #fff;
-  padding: 3rem;
-  border-radius: 12px;
-  width: 100%;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  gap: 2rem;
 }
 
 .article-header {
-  margin-bottom: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
 }
 
 .article-category {
-  font-size: 14px;
-  font-weight: bold;
-  color: #2563eb;
-  margin-bottom: 0.5rem;
+  font-size: 13px;
+  font-weight: 600;
+  color: #3b82f6;
+  letter-spacing: 0.5px;
 }
 
 .article-title {
-  font-size: 2rem;
+  font-size: 28px;
   font-weight: 700;
-  color: #191f28;
-  margin-bottom: 0.25rem;
+  color: #111827;
+  margin: 0;
 }
 
 .article-meta {
-  font-size: 0.8rem;
+  font-size: 13px;
   color: #6b7280;
   display: flex;
-  gap: 1rem;
+  gap: 0.75rem;
 }
 
 .article-content {
-  font-size: 1rem;
-  line-height: 1.7;
+  font-size: 15px;
   color: #374151;
-  margin-bottom: 2rem;
+  line-height: 1.7;
+  white-space: pre-wrap;
 }
 
 .article-footer {
-  text-align: center;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
 }
 
 .like-button {
-  background-color: #2563eb;
+  background-color: #3b82f6;
   color: white;
-  padding: 10px;
-  font-size: 0.8rem;
-  border-radius: 8px;
+  font-weight: 600;
+  padding: 0.6rem 1.2rem;
+  border-radius: 9999px;
+  font-size: 14px;
   border: none;
+  transition: background-color 0.2s ease;
   cursor: pointer;
-  transition: background-color 0.17s ease-in-out;
 }
 
 .like-button:hover {
-  background-color: #1e40af;
+  background-color: #2563eb;
+}
+
+.article-footer > div button {
+  margin-left: 0.5rem;
+  background: transparent;
+  border: 1px solid #d1d5db;
+  padding: 0.4rem 0.9rem;
+  font-size: 13px;
+  border-radius: 9999px;
+  cursor: pointer;
+  color: #374151;
+  transition: background-color 0.2s ease;
+}
+
+.article-footer > div button:hover {
+  background-color: #f3f4f6;
 }
 
 .divider {
-  margin-top: 3rem;
   border: none;
   border-top: 1px solid #e5e7eb;
+}
+
+.comment-container {
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+}
+
+.comment-container .border {
+  background: #f9fafb;
+  border-radius: 12px;
+  padding: 1rem;
+  font-size: 14px;
+  color: #374151;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.comment-container input {
+  border: 1px solid #d1d5db;
+  padding: 0.5rem 0.75rem;
+  width: 100%;
+  border-radius: 8px;
+  margin-bottom: 0.5rem;
+}
+
+.comment-container button {
+  font-size: 13px;
+  margin-right: 0.5rem;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+.comment-container .text-blue-600 {
+  color: #3b82f6;
+}
+
+.comment-container .text-red-600 {
+  color: #ef4444;
+}
+
+.comment-container .text-gray-500 {
+  color: #6b7280;
+}
+
+.text-xs {
+  font-size: 12px;
+  color: #9ca3af;
 }
 </style>

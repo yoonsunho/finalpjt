@@ -115,88 +115,121 @@ onMounted(() => {
   store.getArticles()
 })
 </script>
-
 <style scoped>
 * {
-  font-family: Pretendard;
+  font-family: 'Pretendard', sans-serif;
+  box-sizing: border-box;
 }
+
 .table-wrapper {
-  /* max-width: 1000px; */
   margin: 2rem auto;
-  background-color: #fff;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  overflow-x: auto;
-  padding: 1rem;
+  padding: 2rem 1.5rem;
+  border-radius: 16px;
+  background-color: #ffffff;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  max-width: 1000px;
 }
 
-.custom-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-family: 'Segoe UI', sans-serif;
-  font-size: 15px;
-  color: #191f28;
-}
-
-.custom-table thead {
-  background-color: #f1f5f9;
-  text-transform: uppercase;
-  font-size: 13px;
-  color: #191f28;
-}
-
-.custom-table th,
-.custom-table td {
-  padding: 14px 16px;
-  border-bottom: 1px solid #e5e7eb;
-  text-align: left;
-}
-
-.custom-table tbody tr {
-  transition: background-color 0.2s;
-  cursor: pointer;
-}
-
-.custom-table tbody tr:hover {
-  background-color: #f0f4f8;
-}
-
-.highlight {
-  font-weight: bold;
-  color: #2563eb;
+.category-title h2 {
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  color: #1f2937;
 }
 
 .filter-bar {
   display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
   justify-content: flex-end;
-  margin-bottom: 1rem;
+  margin-bottom: 1.5rem;
 }
 
-.filter-bar select {
-  padding: 0.5rem;
-  border: 1px solid #d1d5db;
-  border-radius: 6px;
-  background-color: white;
+.filter-bar select,
+.filter-bar input {
+  padding: 0.5rem 0.75rem;
+  font-size: 14px;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+  background-color: #f9fafb;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.filter-bar select:focus,
+.filter-bar input:focus {
+  border-color: #3b82f6;
+}
+
+.filter-bar button {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 10px;
+  background-color: #3b82f6;
+  color: white;
+  font-weight: 600;
+  transition: background-color 0.2s;
+}
+
+.filter-bar button:hover {
+  background-color: #2563eb;
+}
+
+.custom-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0 8px;
+}
+
+.custom-table thead th {
+  text-align: left;
+  font-size: 13px;
+  color: #6b7280;
+  padding: 0.75rem 1rem;
+}
+
+.custom-table tbody tr {
+  background-color: #f9fafb;
+  border-radius: 12px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.03);
+  transition: transform 0.15s ease;
   cursor: pointer;
+}
+
+.custom-table tbody tr:hover {
+  transform: translateY(-2px);
+}
+
+.custom-table td {
+  padding: 0.75rem 1rem;
+  font-size: 14px;
+  color: #111827;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.highlight {
+  color: #2563eb;
+  font-weight: 600;
 }
 
 .write-button {
+  margin-top: 2rem;
   text-align: right;
-  margin-top: 1rem;
 }
 
 .write-button button {
-  background-color: #3b82f6;
-  color: white;
-  border: none;
   padding: 0.75rem 1.5rem;
-  border-radius: 6px;
-  cursor: pointer;
-  font-weight: bold;
+  background-color: #111827;
+  color: #ffffff;
+  border: none;
+  border-radius: 12px;
+  font-weight: 600;
   transition: background-color 0.2s;
 }
 
 .write-button button:hover {
-  background-color: #2563eb;
+  background-color: #374151;
 }
 </style>

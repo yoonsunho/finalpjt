@@ -1,7 +1,7 @@
 <template>
   <div v-if="product">
     <h1 class="deposit_product_name">{{ product.fin_prdt_nm }}</h1>
-    <h5>id: {{ product.id }}</h5>
+    <!-- <h5>id: {{ product.id }}</h5> -->
     <p>금융회사 명: {{ product.kor_co_nm }}</p>
     <p>가입 방법: {{ product.join_way }}</p>
     <p>만기 후 이자율: {{ product.mtrt_int }}</p>
@@ -134,64 +134,73 @@ watch(
   { immediate: true },
 )
 </script>
-
 <style scoped>
 * {
-  font-family: Pretendard;
+  font-family: 'Pretendard', sans-serif;
+  box-sizing: border-box;
 }
+
 .product-detail {
-  max-width: 720px;
+  max-width: 760px;
   margin: 3rem auto;
-  padding: 2rem;
-  border: none;
-  border-radius: 16px;
+  padding: 2.5rem;
+  border-radius: 20px;
   background-color: #ffffff;
-  font-family: 'Pretendard', 'Apple SD Gothic Neo', sans-serif;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
 }
 
 .deposit_product_name {
   text-align: center;
-  font-size: 2rem;
-  font-weight: 600;
+  font-size: 28px;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 2rem;
+}
+
+h5 {
+  text-align: center;
+  color: #6b7280;
   margin-bottom: 1.5rem;
-  color: #1e1e1e;
 }
 
 p {
-  font-size: 1rem;
-  color: #444;
-  margin: 0.4rem 0;
+  font-size: 15px;
+  color: #374151;
+  margin: 0.5rem 0;
   line-height: 1.6;
 }
 
 h2 {
   margin-top: 2rem;
-  margin-bottom: 1rem;
-  font-size: 1.2rem;
+  font-size: 18px;
   font-weight: 600;
-  color: #222;
-  border-bottom: 1px solid #e5e5e5;
-  padding-bottom: 0.5rem;
+  color: #1f2937;
+  border-bottom: 1px solid #e5e7eb;
+  padding-bottom: 0.4rem;
+  margin-bottom: 1rem;
 }
 
 .option-box {
   margin-bottom: 1rem;
-  padding: 1.2rem;
-  border-radius: 12px;
+  padding: 1.25rem 1.5rem;
   background-color: #f9fafb;
-  border: 1px solid #eaeaea;
-  transition: box-shadow 0.2s ease;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
 }
-.option-box:hover {
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+
+.option-box h3 {
+  font-size: 16px;
+  font-weight: 600;
+  color: #2563eb;
+  margin-bottom: 0.5rem;
 }
 
 .button {
   display: flex;
   gap: 12px;
   justify-content: center;
-  margin-top: 2rem;
+  margin-top: 2.5rem;
 }
 
 .likebutton,
@@ -207,28 +216,33 @@ h2 {
 .joined {
   width: 100%;
   max-width: 160px;
-  padding: 0.75rem 1rem;
-  font-size: 0.95rem;
-  font-weight: 500;
+  padding: 0.75rem 1.25rem;
+  font-size: 15px;
+  font-weight: 600;
   border-radius: 9999px;
-  border: 1.5px solid #d1d5db;
-  background-color: white;
-  color: #1f2937;
+  border: 1px solid transparent;
   cursor: pointer;
-  transition: all 0.2s ease-in-out;
+  transition: all 0.2s ease;
 }
 
-.like:hover,
-.liked:hover,
-.join:hover,
-.joined:hover {
+.like {
+  background-color: white;
+  border: 1.5px solid #d1d5db;
+  color: #374151;
+}
+
+.like:hover {
   background-color: #f3f4f6;
 }
 
 .liked {
-  background-color: #f0f0f0;
-  border-color: #999;
-  color: #111;
+  background-color: #f3f4f6;
+  border: 1.5px solid #9ca3af;
+  color: #1f2937;
+}
+
+.liked:hover {
+  background-color: #e5e7eb;
 }
 
 .join {

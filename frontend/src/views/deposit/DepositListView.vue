@@ -125,87 +125,117 @@ onMounted(() => {
 </script>
 <style scoped>
 * {
-  font-family: Pretendard;
-}
-.table-wrapper {
-  max-width: 900px;
-  width: 100%;
-  margin: 0 auto;
-  overflow-x: auto;
-  border-radius: 12px;
-  border: 1px solid #e5e7eb;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-  background-color: #ffffff;
+  font-family: 'Pretendard', sans-serif;
+  box-sizing: border-box;
 }
 
-/* 필터 바 */
+.table-wrapper {
+  max-width: 900px;
+  margin: 2rem auto;
+  overflow-x: auto;
+  background: #ffffff;
+  border-radius: 20px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.04);
+  padding: 1rem;
+}
+
 .filter-bar {
   display: flex;
   flex-wrap: wrap;
-  align-items: center;
   gap: 1rem;
-  margin: 2rem auto;
-  padding: 1rem;
+  align-items: center;
+  justify-content: space-between;
   max-width: 900px;
-  background-color: #ffffff;
-  border-radius: 12px;
+  margin: 2rem auto;
+  padding: 1.5rem;
+  border-radius: 20px;
+  background: #ffffff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
   border: 1px solid #e5e7eb;
-  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.03);
 }
 
-/* 인풋과 셀렉트 요소 스타일 */
+.filter-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: center;
+}
+
 input,
 select {
   padding: 0.6rem 1rem;
   font-size: 0.9rem;
+  border-radius: 12px;
   border: 1px solid #d1d5db;
-  border-radius: 8px;
   background-color: #f9fafb;
   color: #111827;
-  transition:
-    border 0.2s ease,
-    background-color 0.2s ease;
+  transition: border-color 0.2s ease;
+  min-width: 150px;
 }
 
 input:focus,
 select:focus {
   outline: none;
-  border-color: #60a5fa;
   background-color: #fff;
+  border-color: #3b82f6;
 }
 
-/* 버튼 스타일 */
 button[type='submit'] {
   padding: 0.6rem 1.2rem;
-  background-color: #2563eb;
+  background-color: #3b82f6;
   color: white;
-  font-weight: 500;
   border: none;
-  border-radius: 8px;
+  border-radius: 9999px;
+  font-size: 14px;
+  font-weight: 600;
   cursor: pointer;
   transition: background-color 0.2s ease;
 }
 
 button[type='submit']:hover {
-  background-color: #1d4ed8;
+  background-color: #2563eb;
 }
 
-/* 테이블 hover 효과 */
-.hover\:bg-blue-100:hover {
-  background-color: #f0f9ff !important;
-}
-
-/* 테이블 내부 폰트 및 간격 */
-fwb-table-cell,
-fwb-table-head-cell {
-  font-size: 0.9rem;
-  padding: 1rem;
-  color: #111827;
-}
-
-fwb-table-head-cell {
+/* 추천 버튼 */
+.cta {
+  padding: 0.6rem 1.2rem;
+  background-color: #111827;
+  color: #ffffff;
+  border-radius: 9999px;
+  font-size: 14px;
   font-weight: 600;
-  background-color: #f3f4f6;
-  border-bottom: 1px solid #e5e7eb;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.cta:hover {
+  background-color: #374151;
+}
+
+/* Flowbite Table 커스텀 */
+fwb-table-head-cell {
+  background-color: #f3f4f6 !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  padding: 1rem !important;
+  color: #6b7280 !important;
+  border-bottom: 1px solid #e5e7eb !important;
+}
+
+fwb-table-cell {
+  font-size: 14px !important;
+  padding: 1rem !important;
+  color: #111827 !important;
+  white-space: nowrap;
+}
+
+fwb-table-row {
+  transition: background-color 0.2s ease;
+  cursor: pointer;
+}
+
+.hover\:bg-blue-100:hover {
+  background-color: #eef6ff !important;
 }
 </style>

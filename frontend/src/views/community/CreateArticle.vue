@@ -76,8 +76,9 @@ const handleSubmit = () => {
   if (isEditMode.value && articleId.value) {
     store
       .updateArticle(articleId.value, payload)
-      .then(() => {
+      .then((res) => {
         alert('수정 완료!')
+        console.log(res.data)
         router.push({ name: 'ArticleDetail', params: { id: res.data.id } })
       })
       .catch((err) => {

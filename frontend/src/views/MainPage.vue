@@ -193,45 +193,6 @@ onMounted(async () => {
   }
 
   const sections = [products, recommend, community, market, map]
-
-  sections.forEach((sectionRef, i) => {
-    gsap.fromTo(
-      sectionRef.value,
-      { opacity: 0, y: 100, scale: 0.95 },
-      {
-        scrollTrigger: {
-          trigger: sectionRef.value,
-          start: 'top 80%',
-          toggleActions: 'play none none none',
-        },
-        opacity: 1,
-        y: 0,
-        scale: 1,
-        duration: 0.8,
-        ease: 'power3.out',
-        delay: i * 0.15,
-      },
-    )
-    gsap.to(depositCarousel.value, {
-      x: `-50%`,
-      ease: 'none',
-      duration: 60,
-      repeat: -1,
-      modifiers: {
-        x: gsap.utils.unitize((x) => parseFloat(x) % depositCarousel.value.scrollWidth),
-      },
-    })
-
-    gsap.to(savingCarousel.value, {
-      x: `-50%`,
-      ease: 'none',
-      duration: 60,
-      repeat: -1,
-      modifiers: {
-        x: gsap.utils.unitize((x) => parseFloat(x) % savingCarousel.value.scrollWidth),
-      },
-    })
-  })
 })
 
 function getBankImage(bankName) {
