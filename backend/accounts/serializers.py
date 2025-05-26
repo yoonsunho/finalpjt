@@ -125,3 +125,11 @@ class ChangePasswordSerializer(serializers.Serializer):
         if not user.check_password(value):
             raise serializers.ValidationError("현재 비밀번호가 틀렸습니다.")
         return value
+    
+class SocialSignupCompleteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CustomUser
+        fields = [
+            'nickname', 'gender', 'salary', 'wealth', 
+            'tendency', 'deposit_amount', 'deposit_period'
+        ]
