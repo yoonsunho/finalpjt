@@ -1,5 +1,10 @@
 # finalpjt
 
+1. db 생성 명령어(순서대로)
+$ python manage.py seed_products - 예적금 데이터
+$ python manage.py generate_users   - 더미 유저데이터 삽입(좋아요도 랜덤으로 넣을까 고민중)
+$ python spot/gold_price_upload.py - 현물데이터
+
 # 현물 상품 비교
 엑셀의 파일을 db에 넣어야 함.
 1. 준비 사항

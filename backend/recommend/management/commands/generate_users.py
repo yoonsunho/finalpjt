@@ -11,7 +11,7 @@ class Command(BaseCommand):
         parser.add_argument(
             '--total',
             type=int,
-            default=250,
+            default=300,
             help='생성할 사용자 수 (기본값: 250)'
         )
 

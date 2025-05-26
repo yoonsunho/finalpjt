@@ -17,28 +17,26 @@ from rest_framework.decorators import permission_classes
 from rest_framework.permissions import IsAuthenticated
 
 # Create your views here.
-
-@api_view(['GET',])
-def get_deposit_products(request):
+# 공통 함수로 분리
+def fetch_deposit_products():
     BASE_URL = 'http://finlife.fss.or.kr/finlifeapi/depositProductsSearch.json'
-
     params = {
         'auth': settings.FIN_API_KEY,
         'topFinGrpNo': '020000',
         'pageNo': 1
     }
     
-    response = requests.get(BASE_URL, params = params).json()['result']
-   
-    deposit_baselist = response['baseList']
-    deposit_optionlist = response['optionList']
+    response = requests.get(BASE_URL, params=params).json()['result']
+    return response['baseList'], response['optionList']
 
-    # 상품 정보 저장 및 직렬화
-    for base in deposit_baselist:
-        if DepositProducts.objects.filter(fin_prdt_cd=base['fin_prdt_cd']):
+def save_deposit_data(base_list, option_list):
+    # 상품 저장
+    for base in base_list:
+        if DepositProducts.objects.filter(fin_prdt_cd=base['fin_prdt_cd']).exists():
             continue
-        deposit_product = {
-            'dcls_month' : base.get('dcls_month'),
+            
+        product_data = {
+            'dcls_month': base.get('dcls_month'),
             'fin_prdt_cd': base.get('fin_prdt_cd'),
             'fin_co_no': base.get('fin_co_no'),
             'kor_co_nm': base.get('kor_co_nm'),
@@ -50,83 +48,199 @@ def get_deposit_products(request):
             'etc_note': base.get('etc_note'),
             'max_limit': base.get('max_limit')
         }
-        serializer = DepositProductsSerializer(data=deposit_product)
-        if serializer.is_valid(raise_exception = True):
-            serializer.save()
         
-    # deposit 옵션 정보 저장 및 직렬화
-    for opt in deposit_optionlist:
-        prdt_cd = opt['fin_prdt_cd']
-        products = DepositProducts.objects.filter(fin_prdt_cd=prdt_cd)
+        product_serializer = DepositProductsSerializer(data=product_data)
+        if product_serializer.is_valid(raise_exception=True):
+            product = product_serializer.save()
+
+    # 옵션 저장        
+    for opt in option_list:
+        products = DepositProducts.objects.filter(fin_prdt_cd=opt['fin_prdt_cd'])
         for product in products:
-            deposit_option = {
+            option_data = {
                 'intr_rate_type': opt.get('intr_rate_type'),
                 'intr_rate_type_nm': opt.get('intr_rate_type_nm'),
                 'save_trm': opt.get('save_trm'),
                 'intr_rate': opt.get('intr_rate'),
                 'intr_rate2': opt.get('intr_rate2'),
             }
-            serializer = DepositOptionsSerializer(data=deposit_option)
-            if serializer.is_valid(raise_exception=True):
-                serializer.save(deposit_product = product)
-    return Response('데이터 가져오기 성공!!')
+            option_serializer = DepositOptionsSerializer(data=option_data)
+            if option_serializer.is_valid(raise_exception=True):
+                option_serializer.save(deposit_product=product)
 
-# 적금 saving ====================================
-@api_view(['GET'])
-def get_saving_products(request):
-    
-    BASE_URL ='http://finlife.fss.or.kr/finlifeapi/savingProductsSearch.json'
-
+# 적금도 동일한 패턴으로 생성
+def fetch_saving_products():
+    BASE_URL = 'http://finlife.fss.or.kr/finlifeapi/savingProductsSearch.json'
     params = {
         'auth': settings.FIN_API_KEY,
         'topFinGrpNo': '020000',
         'pageNo': 1
     }
-    
-    response = requests.get(BASE_URL, params = params).json()['result']
-   
-    saving_baselist = response['baseList']
-    saving_optionlist = response['optionList']
+    response = requests.get(BASE_URL, params=params).json()['result']
+    return response['baseList'], response['optionList']
 
-    # 상품 정보 저장 및 직렬화
-    for base in saving_baselist:
-        if SavingProducts.objects.filter(fin_prdt_cd=base['fin_prdt_cd']):
+def save_saving_data(base_list, option_list):
+    # 상품 저장
+    for base in base_list:
+        if SavingProducts.objects.filter(fin_prdt_cd=base['fin_prdt_cd']).exists():
             continue
-        saving_product = {
-            'dcls_month' : base['dcls_month'],
-            'fin_co_no': base['fin_co_no'],
-            'kor_co_nm': base['kor_co_nm'],
-            'fin_prdt_cd': base['fin_prdt_cd'],
-            'fin_prdt_nm': base['fin_prdt_nm'],
-            'join_way': base['join_way'],
-            'mtrt_int': base['mtrt_int'],
-            'spcl_cnd': base['spcl_cnd'],
-            'join_deny': base['join_deny'],
-            'etc_note': base['etc_note'],
-            'max_limit': base['max_limit']
+            
+        product_data = {
+            'dcls_month': base.get('dcls_month'),
+            'fin_co_no': base.get('fin_co_no'),
+            'kor_co_nm': base.get('kor_co_nm'),
+            'fin_prdt_cd': base.get('fin_prdt_cd'),
+            'fin_prdt_nm': base.get('fin_prdt_nm'),
+            'join_way': base.get('join_way'),
+            'mtrt_int': base.get('mtrt_int'),
+            'spcl_cnd': base.get('spcl_cnd'),
+            'join_deny': base.get('join_deny'),
+            'etc_note': base.get('etc_note'),
+            'max_limit': base.get('max_limit')
         }
-        serializer = SavingProductsSerializer(data=saving_product)
-        if serializer.is_valid(raise_exception = True):
-            serializer.save()
         
-    # saving 옵션 정보 저장 및 직렬화
-    for opt in saving_optionlist:
-        prdt_cd = opt['fin_prdt_cd']
-        products =  SavingProducts.objects.filter(fin_prdt_cd=prdt_cd)
+        product_serializer = SavingProductsSerializer(data=product_data)
+        if product_serializer.is_valid(raise_exception=True):
+            product = product_serializer.save()
+
+    # 옵션 저장
+    for opt in option_list:
+        products = SavingProducts.objects.filter(fin_prdt_cd=opt['fin_prdt_cd'])
         for product in products:
-            saving_option = {
+            option_data = {
                 'intr_rate_type': opt.get('intr_rate_type'),
                 'intr_rate_type_nm': opt.get('intr_rate_type_nm'),
                 'rsrv_type': opt.get('rsrv_type'),
                 'rsrv_type_nm': opt.get('rsrv_type_nm'),
                 'save_trm': opt.get('save_trm'),
                 'intr_rate': opt.get('intr_rate'),
-                'intr_rate2': opt.get('intr_rate2'),  
+                'intr_rate2': opt.get('intr_rate2'),
             }
-            serializer = SavingOptionsSerializer(data=saving_option)
-            if serializer.is_valid(raise_exception=True):
-                serializer.save(saving_product = product)
+            option_serializer = SavingOptionsSerializer(data=option_data)
+            if option_serializer.is_valid(raise_exception=True):
+                option_serializer.save(saving_product=product)
+
+# 기존 뷰 함수 유지 (HTTP 요청 처리용)
+@api_view(['GET'])
+def get_deposit_products(request):
+    base_list, option_list = fetch_deposit_products()
+    save_deposit_data(base_list, option_list)
+    return Response('데이터 가져오기 성공!!')
+
+@api_view(['GET'])
+def get_saving_products(request):
+    base_list, option_list = fetch_saving_products()
+    save_saving_data(base_list, option_list)
     return Response('데이터 가져오기 성공!')
+# @api_view(['GET',])
+# def get_deposit_products(request):
+#     BASE_URL = 'http://finlife.fss.or.kr/finlifeapi/depositProductsSearch.json'
+
+#     params = {
+#         'auth': settings.FIN_API_KEY,
+#         'topFinGrpNo': '020000',
+#         'pageNo': 1
+#     }
+    
+#     response = requests.get(BASE_URL, params = params).json()['result']
+   
+#     deposit_baselist = response['baseList']
+#     deposit_optionlist = response['optionList']
+
+#     # 상품 정보 저장 및 직렬화
+#     for base in deposit_baselist:
+#         if DepositProducts.objects.filter(fin_prdt_cd=base['fin_prdt_cd']):
+#             continue
+#         deposit_product = {
+#             'dcls_month' : base.get('dcls_month'),
+#             'fin_prdt_cd': base.get('fin_prdt_cd'),
+#             'fin_co_no': base.get('fin_co_no'),
+#             'kor_co_nm': base.get('kor_co_nm'),
+#             'fin_prdt_nm': base.get('fin_prdt_nm'),
+#             'join_way': base.get('join_way'),
+#             'mtrt_int': base.get('mtrt_int'),
+#             'spcl_cnd': base.get('spcl_cnd'),
+#             'join_deny': base.get('join_deny'),
+#             'etc_note': base.get('etc_note'),
+#             'max_limit': base.get('max_limit')
+#         }
+#         serializer = DepositProductsSerializer(data=deposit_product)
+#         if serializer.is_valid(raise_exception = True):
+#             serializer.save()
+        
+#     # deposit 옵션 정보 저장 및 직렬화
+#     for opt in deposit_optionlist:
+#         prdt_cd = opt['fin_prdt_cd']
+#         products = DepositProducts.objects.filter(fin_prdt_cd=prdt_cd)
+#         for product in products:
+#             deposit_option = {
+#                 'intr_rate_type': opt.get('intr_rate_type'),
+#                 'intr_rate_type_nm': opt.get('intr_rate_type_nm'),
+#                 'save_trm': opt.get('save_trm'),
+#                 'intr_rate': opt.get('intr_rate'),
+#                 'intr_rate2': opt.get('intr_rate2'),
+#             }
+#             serializer = DepositOptionsSerializer(data=deposit_option)
+#             if serializer.is_valid(raise_exception=True):
+#                 serializer.save(deposit_product = product)
+#     return Response('데이터 가져오기 성공!!')
+
+# # 적금 saving ====================================
+# @api_view(['GET'])
+# def get_saving_products(request):
+    
+#     BASE_URL ='http://finlife.fss.or.kr/finlifeapi/savingProductsSearch.json'
+
+#     params = {
+#         'auth': settings.FIN_API_KEY,
+#         'topFinGrpNo': '020000',
+#         'pageNo': 1
+#     }
+    
+#     response = requests.get(BASE_URL, params = params).json()['result']
+   
+#     saving_baselist = response['baseList']
+#     saving_optionlist = response['optionList']
+
+#     # 상품 정보 저장 및 직렬화
+#     for base in saving_baselist:
+#         if SavingProducts.objects.filter(fin_prdt_cd=base['fin_prdt_cd']):
+#             continue
+#         saving_product = {
+#             'dcls_month' : base['dcls_month'],
+#             'fin_co_no': base['fin_co_no'],
+#             'kor_co_nm': base['kor_co_nm'],
+#             'fin_prdt_cd': base['fin_prdt_cd'],
+#             'fin_prdt_nm': base['fin_prdt_nm'],
+#             'join_way': base['join_way'],
+#             'mtrt_int': base['mtrt_int'],
+#             'spcl_cnd': base['spcl_cnd'],
+#             'join_deny': base['join_deny'],
+#             'etc_note': base['etc_note'],
+#             'max_limit': base['max_limit']
+#         }
+#         serializer = SavingProductsSerializer(data=saving_product)
+#         if serializer.is_valid(raise_exception = True):
+#             serializer.save()
+        
+#     # saving 옵션 정보 저장 및 직렬화
+#     for opt in saving_optionlist:
+#         prdt_cd = opt['fin_prdt_cd']
+#         products =  SavingProducts.objects.filter(fin_prdt_cd=prdt_cd)
+#         for product in products:
+#             saving_option = {
+#                 'intr_rate_type': opt.get('intr_rate_type'),
+#                 'intr_rate_type_nm': opt.get('intr_rate_type_nm'),
+#                 'rsrv_type': opt.get('rsrv_type'),
+#                 'rsrv_type_nm': opt.get('rsrv_type_nm'),
+#                 'save_trm': opt.get('save_trm'),
+#                 'intr_rate': opt.get('intr_rate'),
+#                 'intr_rate2': opt.get('intr_rate2'),  
+#             }
+#             serializer = SavingOptionsSerializer(data=saving_option)
+#             if serializer.is_valid(raise_exception=True):
+#                 serializer.save(saving_product = product)
+#     return Response('데이터 가져오기 성공!')
 
 # 예금 리스트 조회
 @api_view(['GET'])
