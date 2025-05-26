@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'community',
     'map',
     'recommend',
+    'spot',
     'rest_framework',
     'rest_framework.authtoken',
     'dj_rest_auth', # 추가
