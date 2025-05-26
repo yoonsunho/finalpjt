@@ -1,28 +1,38 @@
 <template>
   <div class="recommend-container">
-    <h2>추천 예금 상품</h2>
+    <h1>고객님께 맞는 금융 상품을<br />추천해 드립니다.</h1>
+
     <div v-if="recommendations">
+      <h2>추천 예금 상품</h2>
       <div v-for="deposit in recommendations.deposits" :key="deposit.id" class="product-card">
-        <RouterLink
-          :to="{ name: 'DepositDetailView', params: { id: deposit.id } }"
-          class="product-name"
-        >
-          <h3>{{ deposit.fin_prdt_nm }}</h3>
-        </RouterLink>
-        <p>최고 우대 금리: {{ deposit.max_intr_rate2 }}%</p>
-        <small>추천 이유: {{ deposit.recommend_reason }}</small>
+        <img :src="getBankImage(deposit.kor_co_nm)" class="bank-logo" alt="bank logo" />
+        <div class="product-info">
+          <RouterLink
+            :to="{ name: 'DepositDetailView', params: { id: deposit.id } }"
+            class="product-name"
+          >
+            <h3>{{ deposit.fin_prdt_nm }}</h3>
+          </RouterLink>
+          <h3>{{ deposit.kor_co_nm }}</h3>
+          <p>최고 우대 금리: {{ deposit.max_intr_rate2 }}%</p>
+          <small>추천 이유: {{ deposit.recommend_reason }}</small>
+        </div>
       </div>
 
       <h2>추천 적금 상품</h2>
       <div v-for="saving in recommendations.savings" :key="saving.id" class="product-card">
-        <RouterLink
-          :to="{ name: 'SavingDetailView', params: { id: saving.id } }"
-          class="product-name"
-        >
-          <h3>{{ saving.fin_prdt_nm }}</h3>
-        </RouterLink>
-        <p>최고 우대 금리: {{ saving.max_intr_rate2 }}%</p>
-        <small>추천 이유: {{ saving.recommend_reason }}</small>
+        <img :src="getBankImage(saving.kor_co_nm)" class="bank-logo" alt="bank logo" />
+        <div class="product-info">
+          <RouterLink
+            :to="{ name: 'SavingDetailView', params: { id: saving.id } }"
+            class="product-name"
+          >
+            <h3>{{ saving.fin_prdt_nm }}</h3>
+          </RouterLink>
+          <h3>{{ saving.kor_co_nm }}</h3>
+          <p>최고 우대 금리: {{ saving.max_intr_rate2 }}%</p>
+          <small>추천 이유: {{ saving.recommend_reason }}</small>
+        </div>
       </div>
     </div>
     <p v-else-if="error">{{ error }}</p>
@@ -86,6 +96,25 @@ onMounted(async () => {
     }
   }
 })
+const imageExtensions = ['.svg', '.png', '.jpg']
+const getBankImage = (bankName) => {
+  const formatted = bankName.replace(/\s/g, '').replace(/\(.+?\)/g, '')
+
+  console.log('찾는 은행명:', formatted)
+
+  for (const ext of imageExtensions) {
+    try {
+      const imageUrl = new URL(`/src/assets/images/${formatted}${ext}`, import.meta.url).href
+      console.log('시도하는 파일:', `${formatted}${ext}`)
+      return imageUrl
+    } catch (e) {
+      console.log('파일 없음:', `${formatted}${ext}`)
+      continue
+    }
+  }
+
+  return '' //fallback
+}
 </script>
 
 <style scoped>
@@ -95,30 +124,51 @@ onMounted(async () => {
 .recommend-container {
   padding: 20px;
 }
-
+h1 {
+  font-size: 2rem;
+  font-weight: 600;
+  text-align: center;
+}
+h2 {
+  font-size: 1.5rem;
+  font-weight: 500;
+}
 .product-card {
+  display: flex;
+  align-items: center;
   border: 1px solid #ddd;
   padding: 15px;
   margin: 10px 0;
   border-radius: 8px;
   transition: box-shadow 0.3s;
 }
+
 .product-card:hover {
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
-.product-name {
-  text-decoration: none;
+.bank-logo {
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+  margin-right: 20px;
+  flex-shrink: 0;
 }
+
+.product-info {
+  flex: 1;
+}
+
 .product-name h3 {
   margin: 0 0 10px 0;
   color: #333;
   transition: color 0.2s;
 }
+
 .product-name:hover h3 {
   color: #007bff;
 }
-
+/* 
 .product-card p {
   margin: 5px 0;
   font-weight: bold;
@@ -126,7 +176,7 @@ onMounted(async () => {
 }
 .product-card small {
   color: #666;
-}
+} */
 
 .loading-box {
   display: flex;

@@ -8,22 +8,46 @@
 
     <section ref="products" class="section products">
       <div class="products-text">
+        <br />
+        <br />
         <h2>다양한 금융 상품을 한 눈에 비교해요.</h2>
-        <p>예적금 상품을 모아 볼 수 있어요.</p>
+        <!-- <br /> -->
+        <p>여러 은행의 예적금 상품을 모아 볼 수 있어요.</p>
       </div>
 
       <div class="carousel-row-wrapper">
         <h3 class="carousel-row-title">예금 TOP10</h3>
         <div ref="depositCarousel" class="carousel-row-track">
           <div class="carousel-card" v-for="deposit in topDeposits" :key="'deposit-' + deposit.id">
-            <h3>{{ deposit.fin_prdt_nm }}</h3>
-            <p>{{ deposit.kor_co_nm }}</p>
-            <p>금리: {{ deposit.max_intr_rate2 }}%</p>
+            <div class="carousel-card-header">
+              <img
+                class="bankimage"
+                v-if="getBankImage(deposit.kor_co_nm)"
+                :src="getBankImage(deposit.kor_co_nm)"
+                alt="은행 로고"
+              />
+            </div>
+            <div class="carousel-card-content">
+              <h3>{{ deposit.fin_prdt_nm }}</h3>
+              <p>{{ deposit.kor_co_nm }}</p>
+              <p>금리: {{ deposit.max_intr_rate2 }}%</p>
+            </div>
           </div>
+
           <div class="carousel-card" v-for="deposit in topDeposits" :key="'deposit-' + deposit.id">
-            <h3>{{ deposit.fin_prdt_nm }}</h3>
-            <p>{{ deposit.kor_co_nm }}</p>
-            <p>금리: {{ deposit.max_intr_rate2 }}%</p>
+            <div class="carousel-card-header">
+              <img
+                class="bankimage"
+                v-if="getBankImage(deposit.kor_co_nm)"
+                :src="getBankImage(deposit.kor_co_nm)"
+                alt="은행 로고"
+              />
+            </div>
+            <div class="carousel-card-content">
+              <h3>{{ deposit.fin_prdt_nm }}</h3>
+              <p>{{ deposit.kor_co_nm }}</p>
+              <p>금리: {{ deposit.max_intr_rate2 }}%</p>
+            </div>
           </div>
         </div>
         <div class="gradient-overlay gradient-overlay-left"></div>
@@ -34,14 +58,34 @@
         <h3 class="carousel-row-title">적금 TOP10</h3>
         <div ref="savingCarousel" class="carousel-row-track">
           <div class="carousel-card" v-for="saving in topSavings" :key="'saving-' + saving.id">
-            <h3>{{ saving.fin_prdt_nm }}</h3>
-            <p>{{ saving.kor_co_nm }}</p>
-            <p>금리: {{ saving.max_intr_rate2 }}%</p>
+            <div class="carousel-card-header">
+              <img
+                class="bankimage"
+                v-if="getBankImage(saving.kor_co_nm)"
+                :src="getBankImage(saving.kor_co_nm)"
+                alt="은행 로고"
+              />
+            </div>
+            <div class="carousel-card-content">
+              <h3>{{ saving.fin_prdt_nm }}</h3>
+              <p>{{ saving.kor_co_nm }}</p>
+              <p>금리: {{ saving.max_intr_rate2 }}%</p>
+            </div>
           </div>
           <div class="carousel-card" v-for="saving in topSavings" :key="'saving-' + saving.id">
-            <h3>{{ saving.fin_prdt_nm }}</h3>
-            <p>{{ saving.kor_co_nm }}</p>
-            <p>금리: {{ saving.max_intr_rate2 }}%</p>
+            <div class="carousel-card-header">
+              <img
+                class="bankimage"
+                v-if="getBankImage(saving.kor_co_nm)"
+                :src="getBankImage(saving.kor_co_nm)"
+                alt="은행 로고"
+              />
+            </div>
+            <div class="carousel-card-content">
+              <h3>{{ saving.fin_prdt_nm }}</h3>
+              <p>{{ saving.kor_co_nm }}</p>
+              <p>금리: {{ saving.max_intr_rate2 }}%</p>
+            </div>
           </div>
         </div>
         <div class="gradient-overlay gradient-overlay-left"></div>
@@ -112,6 +156,7 @@
 </template>
 
 <script setup>
+const bankImages = import.meta.glob('@/assets/images/*', { eager: true, import: 'default' })
 import { ref, onMounted } from 'vue'
 import axios from 'axios'
 import gsap from 'gsap'
@@ -147,7 +192,6 @@ onMounted(async () => {
     console.error('인기 상품 불러오기 실패:', err)
   }
 
-  // 2. gsap
   const sections = [products, recommend, community, market, map]
 
   sections.forEach((sectionRef, i) => {
@@ -189,6 +233,11 @@ onMounted(async () => {
     })
   })
 })
+
+function getBankImage(bankName) {
+  const entry = Object.entries(bankImages).find(([path, _]) => path.includes(`/${bankName}.`))
+  return entry ? entry[1] : null
+}
 </script>
 
 <style scoped>
@@ -299,6 +348,9 @@ body {
   background: #fff7ed;
   word-break: keep-all;
   white-space: normal;
+}
+.bankimage {
+  background-color: white;
 }
 
 .final-cta {
@@ -456,26 +508,54 @@ body {
 
 .carousel-card {
   width: 250px;
-  height: 250px;
+  height: 250px; /* 고정 높이 */
   background-color: #e5e7eb;
-  padding: 2rem;
   border-radius: 0.75rem;
-  text-align: center;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
   flex-shrink: 0;
   word-break: keep-all;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
   white-space: normal;
+}
+
+.carousel-card-header {
+  flex: 0 0 50%; /* 높이의 45% */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: white;
+}
+
+.carousel-card-header img {
+  max-height: 125px;
+  max-width: 100%;
+  object-fit: cover;
+  padding: 1rem;
+}
+
+.carousel-card-content {
+  flex: 1; /* 나머지 55% */
+  padding: 1rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  font-size: 0.95rem;
 }
 
 .carousel-row-title {
   text-align: center;
   font-size: 1.5rem;
+  font-weight: 500;
+  margin-bottom: 60px;
 }
 .gradient-overlay {
   position: absolute;
   top: 0;
   bottom: 0;
-  width: 200px; /* 더 넓게 */
+  width: 100px; /* 더 넓게 */
   z-index: 999;
   pointer-events: none;
 }
