@@ -14,7 +14,7 @@ const router = useRouter()
 onMounted(() => {
   setTimeout(() => {
     router.push({ name: 'LoginView' })
-  }, 5000)
+  }, 8000)
 })
 </script>
 
