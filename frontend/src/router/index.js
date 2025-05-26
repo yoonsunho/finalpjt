@@ -7,6 +7,7 @@ import SignUpSuccessView from '@/views/authpages/SignUpSuccessView.vue'
 import LoginView from '@/views/authpages/LoginView.vue'
 import ProfilePage from '@/views/authpages/ProfilePage.vue'
 import ProfileEdit from '@/views/authpages/ProfileEdit.vue'
+import PasswordEdit from '@/views/authpages/PasswordEdit.vue'
 
 import DepositListView from '@/views/deposit/DepositListView.vue'
 import DepositDetailView from '@/views/deposit/DepositDetailView.vue'
@@ -91,6 +92,11 @@ const router = createRouter({
       path: '/profile/edit',
       name: 'ProfileEdit',
       component: ProfileEdit,
+    },
+    {
+      path: '/profile/password',
+      name: 'PasswordEdit',
+      component: PasswordEdit,
     },
     {
       path: '/community/create',
