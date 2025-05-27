@@ -54,4 +54,4 @@ class SavingRoomDetailSerializer(serializers.ModelSerializer):
 class SavingRoomCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = SavingRoom
-        fields = ['name', 'description', 'goal_amount', 'deadline']
+        fields = ['id','name', 'description', 'goal_amount', 'deadline']
