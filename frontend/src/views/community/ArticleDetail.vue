@@ -17,45 +17,65 @@
           {{ store.articleDetail.is_liked ? '💔 좋아요 취소' : '❤️ 좋아요' }}
           {{ store.articleDetail.likes_count }}
         </button>
-        <div v-if="accountStore.token && accountStore.user_id === store.articleDetail.user_id">
+        <!-- 글 작성자만 보이게 -->
+        <div
+          v-if="accountStore.isLogin && accountStore.userInfo.id === store.articleDetail.user_id"
+        >
           <button @click="editArticle">수정</button>
           <button @click="deleteArticle">삭제</button>
         </div>
       </div>
       <hr class="divider" />
+      <!-- 댓글 작성 영역 -->
       <div class="comment">
         <div v-if="accountStore.isLogin">
-          <!-- <textarea v-model="newComment" placeholder="댓글을 작성하세요" />
-          <button @click="createComment">작성</button> -->
           <CommentComponent />
+        </div>
+        <div v-else class="text-sm text-gray-500 mt-2">댓글을 작성하려면 로그인이 필요해요.</div>
+      </div>
+
+      <!-- 댓글 목록은 항상 보여줌 -->
+      <div class="comment-container">
+        <div v-for="comment in store.comments" :key="comment.id" class="border p-2 mb-2">
+          <!-- 수정 중일 때 -->
+          <div v-if="store.editCommentId === comment.id">
+            <input v-model="store.editContent" class="border p-1 w-full" />
+            <button @click="store.updateComment(comment.id)" class="text-blue-600 mr-2">
+              저장
+            </button>
+            <button @click="store.editCommentId = null" class="text-gray-500">취소</button>
+          </div>
+          <!-- 기본 댓글 표시 -->
+          <div v-else>
+            <p>
+              <strong>{{ comment.user }}</strong> {{ comment.content }}
+            </p>
+            <div v-if="accountStore.isLogin && comment.user === accountStore.userInfo.nickname">
+              <button @click="store.startEdit(comment)" class="text-sm text-blue-600 mr-2">
+                수정
+              </button>
+              <button @click="store.deleteComment(comment.id)" class="text-sm text-red-600">
+                삭제
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
   </div>
-  <div class="comment-container">
-    <div v-for="comment in store.comments" :key="comment.id" class="border p-2 mb-2">
-      <!-- 수정 중일 때 -->
-      <div v-if="store.editCommentId === comment.id">
-        <input v-model="store.editContent" class="border p-1 w-full" />
-        <button @click="store.updateComment(comment.id)" class="text-blue-600 mr-2">저장</button>
-        <button @click="store.editCommentId = null" class="text-gray-500">취소</button>
-      </div>
-      <!-- 평소 표시 -->
-      <div v-else>
-        <!-- 디버깅 -->
-        <div class="text-xs text-gray-400 mb-2">
-          로그인상태={{ accountStore.isLogin }}, 댓글작성자={{ comment.user }}, 로그인유저={{
-            accountStore.userInfo.nickname
-          }}
-        </div>
-        <p>{{ comment.user }} {{ comment.content }}</p>
-        <!-- 로그인 상태이고 댓글단 유저가 로그인한 유저이면 -->
-        <div v-if="accountStore.isLogin && comment.user === accountStore.userInfo.nickname">
-          <button @click="store.startEdit(comment)" class="text-sm text-blue-600 mr-2">수정</button>
-          <button @click="store.deleteComment(comment.id)" class="text-sm text-red-600">
-            삭제
-          </button>
-        </div>
+
+  <div v-for="comment in store.comments" :key="comment.id" class="">
+    <!-- 수정 중일 때 -->
+    <div v-if="store.editCommentId === comment.id">
+      <input v-model="store.editContent" class="border p-1 w-full" />
+      <button @click="store.updateComment(comment.id)" class="text-blue-600 mr-2">저장</button>
+      <button @click="store.editCommentId = null" class="text-gray-500">취소</button>
+    </div>
+    <!-- 평소 표시 -->
+    <div v-else>
+      <div v-if="accountStore.isLogin && comment.user === accountStore.userInfo.nickname">
+        <button @click="store.startEdit(comment)" class="text-sm text-blue-600 mr-2">수정</button>
+        <button @click="store.deleteComment(comment.id)" class="text-sm text-red-600">삭제</button>
       </div>
     </div>
   </div>
@@ -88,7 +108,7 @@ const deleteArticle = () => {
       })
       .catch((err) => {
         console.error('삭제 실패:', err)
-        alert('삭제 실패 ㅠㅠ')
+        alert('삭제 실패')
       })
   }
 }
