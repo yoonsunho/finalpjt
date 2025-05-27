@@ -152,7 +152,7 @@
         <div class="participants-grid">
           <div
             v-for="participant in room.participants"
-            :key="participant.user.nickname"
+            :key="participant.id"
             class="participant-card"
           >
             <div class="participant-avatar">
@@ -188,6 +188,7 @@
     </div>
   </div>
 </template>
+
 <script setup>
 import { ref, onMounted, onBeforeUnmount } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
@@ -210,6 +211,7 @@ const error = ref('')
 const isJoining = ref(false)
 const toastMessage = ref('')
 const showToast = ref(false)
+let retryCount = 0
 
 const triggerToast = (message) => {
   toastMessage.value = message
@@ -218,6 +220,7 @@ const triggerToast = (message) => {
     showToast.value = false
   }, 5000)
 }
+
 const formatDate = (dateString) => {
   if (!dateString) return ''
   const date = new Date(dateString)
@@ -228,25 +231,43 @@ const formatDate = (dateString) => {
   })
 }
 
-const checkIfUserJoined = () => {
-  if (!room.value?.participants || !accountStore.userInfo?.nickname) return
-  const isParticipant = room.value.participants.some(
-    (participant) => participant.user.nickname === accountStore.userInfo?.nickname,
-  )
-  if (isParticipant) joined.value = true
+const handleDepositSuccess = () => {
+  updateRoomData()
 }
+
+const checkIfUserJoined = async () => {
+  if (!accountStore.userInfo) {
+    try {
+      await accountStore.fetchUserInfo()
+    } catch {
+      joined.value = false
+      return
+    }
+  }
+
+  const myNickname = accountStore.userInfo?.nickname
+  if (!room.value?.participants || !myNickname) {
+    joined.value = false
+    return
+  }
+
+  joined.value = room.value.participants.some((p) => p.user?.nickname === myNickname)
+
+  if (joined.value && route.params.id && !socket.value) {
+    setTimeout(() => {
+      setupWebSocket()
+    }, 100)
+  }
+}
+
 const buildLogListFromParticipants = () => {
   const logs = []
-
   if (!room.value?.participants) return
 
-  for (const participant of room.value.participants) {
-    if (!participant.deposits) continue // <- deposits 없으면 패스
-    for (const deposit of participant.deposits) {
-      logs.push({
-        ...deposit,
-        nickname: participant.user.nickname,
-      })
+  for (const p of room.value.participants) {
+    if (!p.deposits) continue
+    for (const d of p.deposits) {
+      logs.push({ ...d, nickname: p.user?.nickname || '알 수 없음' })
     }
   }
 
@@ -259,63 +280,75 @@ const updateRoomData = async () => {
       headers: { Authorization: `Token ${accountStore.token}` },
     })
     room.value = res.data
-    checkIfUserJoined()
     buildLogListFromParticipants()
+    await checkIfUserJoined()
   } catch (err) {
-    console.error('Failed to update room data:', err)
+    console.error('방 정보 업데이트 실패:', err)
   }
 }
 
 const fetchRoomDetail = async () => {
+  loading.value = true
+  error.value = ''
   try {
-    loading.value = true
-    error.value = ''
+    if (!route.params.id) throw new Error('방 ID 없음')
+    await accountStore.fetchUserInfo()
     const res = await axios.get(`${API_URL}/savingroom/${route.params.id}/`, {
       headers: { Authorization: `Token ${accountStore.token}` },
     })
     room.value = res.data
-    checkIfUserJoined()
     buildLogListFromParticipants()
-    if (!joined.value) {
-      await tryJoinRoom()
-    } else if (!socket.value) {
-      setupWebSocket()
-    }
+    await checkIfUserJoined()
   } catch (err) {
-    console.error('Failed to fetch room detail:', err)
-    if (err.response) {
-      if (err.response.status === 401) error.value = '로그인이 필요합니다.'
-      else if (err.response.status === 404) error.value = '존재하지 않는 저축방입니다.'
-      else if (err.response.status === 500) error.value = '서버에 일시적인 문제가 발생했습니다.'
-      else error.value = '저축방 정보를 불러오는데 실패했습니다.'
-    } else if (err.request) error.value = '네트워크 연결을 확인해주세요.'
-    else error.value = '알 수 없는 오류가 발생했습니다.'
+    error.value = '방 정보를 불러오지 못했어요!'
+    console.error(err)
   } finally {
     loading.value = false
   }
 }
 
-const tryJoinRoom = async () => {
-  try {
-    await axios.post(
-      `${API_URL}/savingroom/${route.params.id}/join/`,
-      {},
-      {
-        headers: { Authorization: `Token ${accountStore.token}` },
-      },
-    )
-    joined.value = true
-    setupWebSocket()
-  } catch (err) {
-    if (err.response?.status === 400 && err.response?.data?.detail === '이미 참가한 방입니다.') {
-      joined.value = true
-      setupWebSocket()
+const setupWebSocket = () => {
+  const roomId = route.params.id
+  if (!roomId || !joined.value || isNaN(parseInt(roomId))) return
+
+  if (socket.value) {
+    socket.value.close()
+    socket.value = null
+  }
+
+  const ws = new WebSocket(`ws://localhost:8000/ws/savings/${roomId}/?token=${accountStore.token}`)
+
+  ws.onopen = () => {
+    retryCount = 0
+    console.log('WebSocket 연결 성공')
+  }
+
+  ws.onmessage = (e) => {
+    const data = JSON.parse(e.data)
+    if (data.error) {
+      triggerToast(data.error)
+    } else {
+      updateRoomData()
     }
   }
+
+  ws.onclose = (e) => {
+    socket.value = null
+    if (joined.value && e.code !== 1000 && e.code !== 1001 && retryCount < 5) {
+      retryCount++
+      setTimeout(() => setupWebSocket(), 3000)
+    }
+  }
+
+  ws.onerror = (e) => {
+    console.error('WebSocket 에러', e)
+  }
+
+  socket.value = ws
 }
 
 const joinRoom = async () => {
-  if (isJoining.value) return
+  if (isJoining.value || joined.value) return
   try {
     isJoining.value = true
     await axios.post(
@@ -328,49 +361,29 @@ const joinRoom = async () => {
     joined.value = true
     await updateRoomData()
     setupWebSocket()
+    triggerToast('저축방에 참가했습니다!')
   } catch (err) {
-    let errorMessage = '참가에 실패했습니다.'
-    if (err.response?.status === 400) {
-      errorMessage = '이미 참가한 방입니다.'
+    if (err.response?.data?.detail === '이미 참가한 방입니다.') {
       joined.value = true
       await updateRoomData()
       setupWebSocket()
-    } else if (err.response?.status === 401) {
-      errorMessage = '로그인이 필요합니다.'
+      triggerToast('이미 참가한 방입니다.')
+    } else {
+      triggerToast('참가에 실패했습니다.')
     }
-    if (err.response?.status !== 400) alert(errorMessage)
   } finally {
     isJoining.value = false
   }
 }
 
-const setupWebSocket = () => {
-  if (socket.value || !joined.value) return
-  const token = accountStore.token
-  const ws = new WebSocket(`ws://localhost:8000/ws/savings/${route.params.id}/?token=${token}`)
-  ws.onopen = () => console.log('WebSocket connected')
-  ws.onmessage = (e) => {
-    const data = JSON.parse(e.data)
-    const exists = logList.value.some((log) => log.id === data.id)
-    if (!exists) {
-      updateRoomData()
-    }
-  }
-  ws.onclose = () => {
-    console.log('WebSocket disconnected')
-    socket.value = null
-  }
-  ws.onerror = (error) => console.error('WebSocket error:', error)
-  socket.value = ws
-}
-
 const goBack = () => router.back()
 
-onMounted(fetchRoomDetail)
+onMounted(() => {
+  fetchRoomDetail()
+})
 
 onBeforeUnmount(() => {
   if (socket.value) socket.value.close()
-  socket.value = null
 })
 </script>
 
