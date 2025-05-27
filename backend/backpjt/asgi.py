@@ -1,18 +1,21 @@
 import os
 from channels.routing import ProtocolTypeRouter, URLRouter
-from django.core.asgi import get_asgi_application
 from channels.auth import AuthMiddlewareStack
+from django.core.asgi import get_asgi_application
 
-# ✅ 1. 먼저 Django 앱 초기화
+# ✅ Set Django settings first
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'backpjt.settings')
+
+# ✅ Initialize Django BEFORE importing anything that uses models
 django_asgi_app = get_asgi_application()
 
-# ✅ 2. 이후 라우팅 임포트
-from savingroom import routing  # 모델 임포트는 초기화 후에!
+# ✅ Now it's safe to import modules that use Django models
+from savingroom.routing import websocket_urlpatterns
+from savingroom.middleware import TokenAuthMiddleware
 
 application = ProtocolTypeRouter({
     "http": django_asgi_app,
-    "websocket": AuthMiddlewareStack(
-        URLRouter(routing.websocket_urlpatterns)
-    ),
+    "websocket": TokenAuthMiddleware(
+        URLRouter(websocket_urlpatterns)
+    )
 })
