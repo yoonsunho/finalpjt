@@ -54,6 +54,10 @@
               <span class="value">{{ room.goal_amount?.toLocaleString?.() }}원</span>
             </div>
             <div class="goal-item">
+              <span class="label">현재 모은 금액</span>
+              <span class="value">{{ room.total_saved?.toLocaleString?.() }}원</span>
+            </div>
+            <div class="goal-item">
               <span class="label">현재 달성률</span>
               <span class="value achievement-rate">{{ room.achievement_rate }}%</span>
             </div>
@@ -118,7 +122,7 @@
           </svg>
           <h2>저축하기</h2>
         </div>
-        <SavingInput :roomId="room.id" :socket="socket" />
+        <SavingInput :roomId="room.id" :socket="socket" :achievementRate="room.achievement_rate" />
       </div>
 
       <div class="participants-section">

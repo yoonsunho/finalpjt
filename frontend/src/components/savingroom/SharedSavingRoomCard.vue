@@ -4,7 +4,7 @@
     <p>목표: {{ room.goal_amount.toLocaleString() }}원</p>
     <p>달성률: {{ room.achievement_rate }}%</p>
     <p class="creator">
-      <!-- 방장: <strong>{{ room.created_by?.nickname }}</strong> -->
+      방장: <strong>{{ room.created_by }}</strong>
     </p>
   </div>
 </template>

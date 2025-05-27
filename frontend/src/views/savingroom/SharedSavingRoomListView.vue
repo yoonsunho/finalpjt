@@ -20,6 +20,14 @@
       </button>
     </div>
 
+    <!-- 검색창 -->
+    <form class="search-bar" @submit.prevent="applyFilter">
+      <input v-model="filters.name" type="text" placeholder="방 제목" />
+      <input v-model="filters.description" type="text" placeholder="방 설명" />
+      <input v-model="filters.owner" type="text" placeholder="방장 닉네임" />
+      <button type="submit" class="btn-search">검색</button>
+    </form>
+
     <div v-if="loading" class="loading">
       <div class="spinner"></div>
       <p>저축방을 불러오는 중...</p>
@@ -32,7 +40,7 @@
       <button @click="fetchRooms" class="btn-retry">다시 시도</button>
     </div>
 
-    <div v-else-if="rooms.length === 0" class="empty">
+    <div v-else-if="filteredRooms.length === 0" class="empty">
       <div class="empty-illustration">
         <svg
           width="120"
@@ -47,8 +55,8 @@
           <polyline points="7,3 7,8 15,8" />
         </svg>
       </div>
-      <h2>아직 저축방이 없어요</h2>
-      <p>첫 번째 저축방을 만들어서 친구들과 함께 저축을 시작해보세요!</p>
+      <h2>조건에 맞는 저축방이 없어요</h2>
+      <p>검색어를 다시 입력하거나 새로운 방을 만들어보세요!</p>
       <button @click="goToCreate" class="btn-create-empty">
         <svg
           width="20"
@@ -65,19 +73,13 @@
     </div>
 
     <div v-else class="content">
-      <div class="stats">
-        <div class="stat-item">
-          <span class="stat-number">{{ rooms.length }}</span>
-          <span class="stat-label">참여 중인 저축방</span>
-        </div>
-        <div class="stat-item">
-          <span class="stat-number">{{ activeRoomsCount }}</span>
-          <span class="stat-label">활성 저축방</span>
-        </div>
-      </div>
-
       <div class="room-grid">
-        <div v-for="room in rooms" :key="room.id" class="room-item" @click="goToRoom(room.id)">
+        <div
+          v-for="room in filteredRooms"
+          :key="room.id"
+          class="room-item"
+          @click="goToRoom(room.id)"
+        >
           <SharedSavingRoomCard :room="room" />
         </div>
       </div>
@@ -151,13 +153,67 @@ const fetchRooms = async () => {
     loading.value = false
   }
 }
+const filters = ref({
+  name: '',
+  description: '',
+  owner: '',
+})
 
-onMounted(() => {
-  fetchRooms()
+const filteredRooms = ref([])
+const applyFilter = () => {
+  const { name, description, owner } = filters.value
+  filteredRooms.value = rooms.value.filter((room) => {
+    const title = room.name?.toLowerCase() || ''
+    const desc = room.description?.toLowerCase() || ''
+    const nickname = room.created_by?.toLowerCase() || ''
+
+    return (
+      title.includes(name.trim().toLowerCase()) &&
+      desc.includes(description.trim().toLowerCase()) &&
+      nickname.includes(owner.trim().toLowerCase())
+    )
+  })
+}
+
+onMounted(async () => {
+  await fetchRooms()
+  filteredRooms.value = rooms.value // 처음엔 전체 보여주기
 })
 </script>
 
 <style scoped>
+.search-bar {
+  max-width: 800px;
+  margin: 0 auto 32px auto;
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.search-bar input {
+  padding: 10px 16px;
+  font-size: 14px;
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  flex: 1 1 200px;
+}
+
+.btn-search {
+  background: #3b82f6;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-search:hover {
+  background: #2563eb;
+}
 .room-list {
   max-width: 1400px;
   margin: 0 auto;
