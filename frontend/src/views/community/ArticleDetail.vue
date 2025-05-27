@@ -19,7 +19,7 @@
         </button>
         <!-- 글 작성자만 보이게 -->
         <div
-          v-if="accountStore.isLogin && accountStore.userInfo.id === store.articleDetail.user_id"
+          v-if="accountStore.isLogin && accountStore.userInfo.nickname === store.articleDetail.user"
         >
           <button @click="editArticle">수정</button>
           <button @click="deleteArticle">삭제</button>
