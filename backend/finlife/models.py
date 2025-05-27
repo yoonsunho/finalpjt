@@ -2,6 +2,8 @@ from django.db import models
 from django.conf import settings
 from django.db.models import Max
 
+from django.utils import timezone
+
 # Create your models here.
 # 예금
 class DepositProducts(models.Model):
@@ -89,7 +91,7 @@ class SavingOptions(models.Model):
 class DepositInterest(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     product = models.ForeignKey(DepositProducts, on_delete=models.CASCADE)
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(default=timezone.now)
     
     class Meta:
         unique_together = ('user', 'product')  # 중복 찜하기 방지
@@ -98,7 +100,7 @@ class DepositInterest(models.Model):
 class SavingInterest(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     product = models.ForeignKey(SavingProducts, on_delete=models.CASCADE)
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(default=timezone.now)
     
     class Meta:
         unique_together = ('user', 'product')
@@ -108,7 +110,7 @@ class SavingInterest(models.Model):
 class DepositJoin(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     product = models.ForeignKey(DepositProducts, on_delete=models.CASCADE)
-    joined_at = models.DateTimeField(auto_now_add=True)
+    joined_at = models.DateTimeField(default=timezone.now)
     
     class Meta:
         unique_together = ('user', 'product')  # 중복 찜하기 방지
@@ -117,7 +119,7 @@ class DepositJoin(models.Model):
 class SavingJoin(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     product = models.ForeignKey(SavingProducts, on_delete=models.CASCADE)
-    joined_at = models.DateTimeField(auto_now_add=True)
+    joined_at = models.DateTimeField(default=timezone.now)
     
     class Meta:
         unique_together = ('user', 'product')

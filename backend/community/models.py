@@ -59,7 +59,7 @@ class Like(models.Model):
         on_delete=models.CASCADE,
         related_name='likes'
     )
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(default=timezone.now)
 
     class Meta:
         unique_together = ('user', 'article')  # 한 게시글에 한 번만 좋아요 가능
