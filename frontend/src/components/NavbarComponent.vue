@@ -69,30 +69,22 @@
 
           <li class="nav-item">
             <button class="nav-link">
-              <RouterLink :to="{ name: 'SharedSavingRoomListView', params: { category: 'review' } }"
-                ><p>공유저축</p></RouterLink
-              >
+              <RouterLink :to="{ name: 'SharedSavingRoomListView' }"><p>공유저축</p></RouterLink>
             </button>
           </li>
           <li class="nav-item">
             <button class="nav-link">
-              <RouterLink :to="{ name: 'SharedSavingRoomListView', params: { category: 'review' } }"
-                ><p>주식 정보</p></RouterLink
-              >
+              <RouterLink :to="{ name: 'StockInfoView' }"><p>주식 정보</p></RouterLink>
             </button>
           </li>
           <li class="nav-item">
             <button class="nav-link">
-              <RouterLink :to="{ name: 'SpotPage', params: { category: 'review' } }"
-                ><p>현물 시세</p></RouterLink
-              >
+              <RouterLink :to="{ name: 'SpotPage' }"><p>현물 시세</p></RouterLink>
             </button>
           </li>
           <li class="nav-item">
             <button class="nav-link">
-              <RouterLink :to="{ name: 'MapPage', params: { category: 'review' } }"
-                ><p>지도</p></RouterLink
-              >
+              <RouterLink :to="{ name: 'MapPage' }"><p>지도</p></RouterLink>
             </button>
           </li>
           <!-- <li

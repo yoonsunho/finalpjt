@@ -26,6 +26,8 @@ import SharedSavingRoomDetailView from '@/views/savingroom/SharedSavingRoomDetai
 import SharedSavingRoomListView from '@/views/savingroom/SharedSavingRoomListView.vue'
 import SharedSavingRoomCreateView from '@/views/savingroom/SharedSavingRoomCreateView.vue'
 
+import StockInfoView from '@/stockinfo/StockInfoView.vue'
+
 import EtcPage from '@/views/etcpages/EtcPage.vue'
 import SpotPage from '@/views/etcpages/SpotPage.vue'
 import MapPage from '@/views/etcpages/MapPage.vue'
@@ -127,6 +129,11 @@ const router = createRouter({
       path: '/savingroom/create',
       name: 'SharedSavingRoomCreateView',
       component: SharedSavingRoomCreateView,
+    },
+    {
+      path: '/stockinfo',
+      name: 'StockInfoView',
+      component: StockInfoView,
     },
     {
       path: '/spot',
