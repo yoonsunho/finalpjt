@@ -157,10 +157,10 @@
 
 <script setup>
 const bankImages = import.meta.glob('@/assets/images/*', { eager: true, import: 'default' })
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, nextTick } from 'vue'
 import axios from 'axios'
 import gsap from 'gsap'
-import ScrollTrigger from 'gsap/ScrollTrigger'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { RouterLink } from 'vue-router'
 
 gsap.registerPlugin(ScrollTrigger)
@@ -179,22 +179,66 @@ const depositCarousel = ref(null)
 const savingCarousel = ref(null)
 
 onMounted(async () => {
-  // 1. 인기 예금/적금 불러오기
   try {
     const [depositRes, savingRes] = await Promise.all([
       axios.get(`${API_URL}/finlife/deposit/`, { params: { ordering: '-joined_count' } }),
       axios.get(`${API_URL}/finlife/saving/`, { params: { ordering: '-joined_count' } }),
     ])
-
     topDeposits.value = depositRes.data.slice(0, 10)
     topSavings.value = savingRes.data.slice(0, 10)
   } catch (err) {
     console.error('인기 상품 불러오기 실패:', err)
   }
 
-  const sections = [products, recommend, community, market, map]
-})
+  await nextTick()
 
+  const sections = [products, recommend, community, market, map]
+  // sections.forEach((sectionRef, i) => {
+  //   gsap.fromTo(
+  //     sectionRef.value,
+  //     { opacity: 0, y: 100, scale: 0.95 },
+  //     {
+  //       scrollTrigger: {
+  //         trigger: sectionRef.value,
+  //         start: 'top 80%',
+  //         toggleActions: 'play none none none',
+  //       },
+  //       opacity: 1,
+  //       y: 0,
+  //       scale: 1,
+  //       duration: 0.8,
+  //       ease: 'power3.out',
+  //       delay: i * 0.15,
+  //     },
+  //   )
+  // })
+
+  if (depositCarousel.value) {
+    const width = depositCarousel.value.scrollWidth
+    gsap.to(depositCarousel.value, {
+      x: `-50%`,
+      ease: 'none',
+      duration: 60,
+      repeat: -1,
+      modifiers: {
+        x: gsap.utils.unitize((x) => parseFloat(x) % width),
+      },
+    })
+  }
+
+  if (savingCarousel.value) {
+    const width = savingCarousel.value.scrollWidth
+    gsap.to(savingCarousel.value, {
+      x: `-50%`,
+      ease: 'none',
+      duration: 60,
+      repeat: -1,
+      modifiers: {
+        x: gsap.utils.unitize((x) => parseFloat(x) % width),
+      },
+    })
+  }
+})
 function getBankImage(bankName) {
   const entry = Object.entries(bankImages).find(([path, _]) => path.includes(`/${bankName}.`))
   return entry ? entry[1] : null
@@ -231,6 +275,7 @@ h2 {
 .section.products {
   flex-direction: column;
   box-sizing: border-box;
+  margin-bottom: 150px;
   /* padding: none !important; */
 }
 
