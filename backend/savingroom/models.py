@@ -4,7 +4,7 @@ from django.conf import settings  # 이걸 추가!
 # User = settings.AUTH_USER_MODEL
 
 class SavingRoom(models.Model):
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100,unique=True)
     description = models.TextField(blank=True)
     goal_amount = models.PositiveIntegerField()
     deadline = models.DateField(null=True, blank=True)
@@ -13,6 +13,8 @@ class SavingRoom(models.Model):
         on_delete=models.CASCADE, 
         related_name='created_rooms')
     created_at = models.DateTimeField(auto_now_add=True)
+
+        
 
     def total_saved(self):
         return sum([p.total_saved_amount() for p in self.participants.all()])

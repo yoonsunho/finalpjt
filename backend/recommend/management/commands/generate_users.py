@@ -5,6 +5,7 @@ from django.utils import timezone
 from accounts.models import CustomUser  
 from finlife.models import DepositProducts, SavingProducts, DepositInterest, DepositJoin, SavingInterest, SavingJoin
 from community.models import Article, Comment, Like
+from savingroom.models import SavingRoom, SavingParticipant, SavingDeposit
 
 class Command(BaseCommand):
     help = '전체 더미 데이터 생성 (유저+예적금+커뮤니티)'
@@ -113,12 +114,63 @@ class Command(BaseCommand):
                 Like.objects.get_or_create(user=liker, article=article)
 
             self.stdout.write(f'[댓글/좋아요] {idx+1}/{len(articles)} 처리 중...', ending='\r')
+            
+        # 3. SavingRoom, SavingParticipant, SavingDeposit 더미 생성 추가
+        self.stdout.write('\n[저축방] 데이터 생성 시작...')
+        for room_num in range(20):
+            creator = random.choice(all_users)
+            goal_amount = random.randint(10, 100) * 100000  # 10만원 단위
+            
+            room = SavingRoom.objects.create(
+                name=f"{creator.nickname}의 저축방 {room_num+1}",
+                description=f"{creator.nickname}님과 함께 목표를 향해 저축하는 방입니다.",
+                goal_amount=goal_amount,
+                deadline=fake.date_between(start_date='+30d', end_date='+1y'),
+                created_by=creator,
+                created_at=timezone.now()
+            )
+
+            participants = random.sample(all_users, k=random.randint(2, 10))
+            if creator not in participants:
+                participants.append(creator)
+                
+            # ✅ 방 전체 입금 총액 추적 (목표금액을 넘지 않도록)
+            total_deposited = 0
+
+            for user in participants:
+                participant = SavingParticipant.objects.create(
+                    room=room,
+                    user=user,
+                    joined_at=timezone.now()
+                )
+                
+                # 입금 횟수 (1~5회) & 금액 제한
+                for _ in range(random.randint(1, 5)):
+                    
+                    # 남은 금액 계산
+                    remaining = goal_amount - total_deposited
+                    if remaining <= 0:
+                        break
+                    # 1만원 ~ min(50만원, 남은 금액)
+                    max_amount = min(500000, remaining)
+                    amount = random.randrange(10000, max_amount + 1, 10000)  # 1만원 단위
+                    
+                    SavingDeposit.objects.create(
+                        participant=participant,
+                        amount=amount,
+                        memo=fake.word(ext_word_list=['월급', '용돈', '절약', '보너스', '용돈저축']),
+                        created_at=timezone.now()
+                    )
+                    total_deposited += amount
+                    
+            self.stdout.write(f'[저축방] {room_num+1}/20 생성 (목표: {goal_amount:,}원, 모금: {total_deposited:,}원)', ending='\r')
 
         self.stdout.write('\n')
         self.stdout.write(self.style.SUCCESS(
-            f'✅ 완료! 유저 {total_users}명 + 예적금 찜/가입 + 카테고리별 게시글 15개씩 + 댓글/좋아요 생성'
+            f'✅ 완료! 유저 {total_users}명 + 예적금 찜/가입 + 커뮤니티 게시글 + 저축방 20개 생성'
         ))
 
+    # 커뮤니티 게시글
     def generate_korean_title(self, category, product=None):
         fake = Faker('ko_KR')
         title = ""
