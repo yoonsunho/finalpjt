@@ -4,7 +4,7 @@
       <div class="nav-brand">
         <RouterLink :to="{ name: 'MainPage' }">
           <!-- <img src="" alt="선호바보개_로고" class="nav-logo"/> -->
-          <p class="logo-title">sunho.</p>
+          <p class="logo-title">parkyoohyun</p>
         </RouterLink>
       </div>
 
