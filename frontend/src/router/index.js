@@ -22,6 +22,10 @@ import CommunityPage from '@/views/community/CommunityPage.vue'
 import ArticleDetail from '@/views/community/ArticleDetail.vue'
 import CreateArticle from '@/views/community/CreateArticle.vue'
 
+import SharedSavingRoomDetailView from '@/views/savingroom/SharedSavingRoomDetailView.vue'
+import SharedSavingRoomListView from '@/views/savingroom/SharedSavingRoomListView.vue'
+import SharedSavingRoomCreateView from '@/views/savingroom/SharedSavingRoomCreateView.vue'
+
 import EtcPage from '@/views/etcpages/EtcPage.vue'
 import SpotPage from '@/views/etcpages/SpotPage.vue'
 import MapPage from '@/views/etcpages/MapPage.vue'
@@ -109,11 +113,20 @@ const router = createRouter({
       name: 'CommunityPage',
       component: CommunityPage,
     },
-
     {
-      path: '/etc',
-      name: 'EtcPage',
-      component: EtcPage,
+      path: '/savingroom/',
+      name: 'SharedSavingRoomListView',
+      component: SharedSavingRoomListView,
+    },
+    {
+      path: '/savingroom/room/:id',
+      name: 'SharedSavingRoomDetailView',
+      component: SharedSavingRoomDetailView,
+    },
+    {
+      path: '/savingroom/create',
+      name: 'SharedSavingRoomCreateView',
+      component: SharedSavingRoomCreateView,
     },
     {
       path: '/spot',
@@ -130,6 +143,11 @@ const router = createRouter({
       name: 'GoogleAdditionalInfoView',
       component: GoogleAdditionalInfoView,
     },
+    // {
+    //   path: '/:pathMatch(.*)*',
+    //   name: 'NotFound',
+    //   component: NotFoundView,
+    // },
   ],
 })
 

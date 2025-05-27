@@ -67,24 +67,52 @@
             </ul>
           </li>
 
-          <li
+          <li class="nav-item">
+            <button class="nav-link">
+              <RouterLink :to="{ name: 'SharedSavingRoomListView', params: { category: 'review' } }"
+                ><p>공유저축</p></RouterLink
+              >
+            </button>
+          </li>
+          <li class="nav-item">
+            <button class="nav-link">
+              <RouterLink :to="{ name: 'SharedSavingRoomListView', params: { category: 'review' } }"
+                ><p>주식 정보</p></RouterLink
+              >
+            </button>
+          </li>
+          <li class="nav-item">
+            <button class="nav-link">
+              <RouterLink :to="{ name: 'SpotPage', params: { category: 'review' } }"
+                ><p>현물 시세</p></RouterLink
+              >
+            </button>
+          </li>
+          <li class="nav-item">
+            <button class="nav-link">
+              <RouterLink :to="{ name: 'MapPage', params: { category: 'review' } }"
+                ><p>지도</p></RouterLink
+              >
+            </button>
+          </li>
+          <!-- <li
             class="nav-item dropdown"
             @mouseenter="openDropdown('EtcPage')"
             @mouseleave="closeDropdown"
-          >
-            <button class="nav-link dropdown-toggle" @click="toggleDropdown('EtcPage')">
-              <!-- <RouterLink :to="{ name: 'EtcPage' }">기타</RouterLink> -->
-              <p>기타</p>
-            </button>
-            <ul :class="['dropdown-menu', { active: activeDropdown === 'EtcPage' }]">
-              <li>
-                <RouterLink :to="{ name: 'SpotPage' }" class="dropdown-item">환율</RouterLink>
-              </li>
-              <li>
-                <RouterLink :to="{ name: 'MapPage' }" class="dropdown-item">지도</RouterLink>
-              </li>
-            </ul>
-          </li>
+          > -->
+          <!-- <button class="nav-link dropdown-toggle" @click="toggleDropdown('EtcPage')"> -->
+          <!-- <RouterLink :to="{ name: 'EtcPage' }">기타</RouterLink> -->
+          <!-- <p>기타</p> -->
+          <!-- </button> -->
+          <!-- <ul :class="['dropdown-menu', { active: activeDropdown === 'EtcPage' }]"> -->
+          <!-- <li> -->
+          <!-- <RouterLink :to="{ name: 'SpotPage' }" class="dropdown-item">환율</RouterLink> -->
+          <!-- </li> -->
+          <!-- <li> -->
+          <!-- <RouterLink :to="{ name: 'MapPage' }" class="dropdown-item">지도</RouterLink> -->
+          <!-- </li> -->
+          <!-- </ul> -->
+          <!-- </li> -->
         </ul>
 
         <ul class="auth-links">
