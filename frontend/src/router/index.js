@@ -26,8 +26,8 @@ import SharedSavingRoomDetailView from '@/views/savingroom/SharedSavingRoomDetai
 import SharedSavingRoomListView from '@/views/savingroom/SharedSavingRoomListView.vue'
 import SharedSavingRoomCreateView from '@/views/savingroom/SharedSavingRoomCreateView.vue'
 
-import StockInfoView from '@/stockinfo/StockInfoView.vue'
-import StockInfoDetailView from '@/stockinfo/StockInfoDetailView.vue'
+import StockInfoView from '@/views/stockinfo/StockInfoView.vue'
+import StockInfoDetailView from '@/views/stockinfo/StockInfoDetailView.vue'
 
 import EtcPage from '@/views/etcpages/EtcPage.vue'
 import SpotPage from '@/views/etcpages/SpotPage.vue'
