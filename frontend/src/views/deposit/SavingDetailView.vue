@@ -95,7 +95,7 @@ const doCancel = async () => {
 
 const toggleLike = async () => {
   try {
-    const result = await store.toggleLike(productId)
+    const result = await savingStore.toggleLike(productId)
     console.log('적금 찜 처리:', result)
   } catch (err) {
     alert('찜 처리 중 오류 발생!')

@@ -85,18 +85,17 @@ const getMyInterests = async () => {
 // 찜 해제
 const removeLike = async (type, productId) => {
   try {
+    let result
     if (type === 'deposit') {
-      await depositStore.toggleLike(productId)
-      depositInterests.value = depositInterests.value.filter((item) => item.product !== productId)
+      result = await depositStore.toggleLike(productId)
+      if (result.action === 'removed') {
+        depositInterests.value = depositInterests.value.filter((item) => item.product !== productId)
+      }
     } else {
-      await axios.post(
-        `${API_URL}/finlife/saving/${productId}/interest/`,
-        {},
-        {
-          headers: { Authorization: `Token ${accountStore.token}` },
-        },
-      )
-      savingInterests.value = savingInterests.value.filter((item) => item.product !== productId)
+      result = await savingStore.toggleLike(productId)
+      if (result.action === 'removed') {
+        savingInterests.value = savingInterests.value.filter((item) => item.product !== productId)
+      }
     }
   } catch (error) {
     console.error('찜 해제 실패:', error)

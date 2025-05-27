@@ -34,6 +34,7 @@ export const useSavingStore = defineStore(
         .then((response) => {
           if (response.data.action === 'added') {
             likedProducts.value.push(id)
+            console.log(likedProducts.value)
           } else if (response.data.action === 'removed') {
             likedProducts.value = likedProducts.value.filter((productId) => productId !== id)
           }
