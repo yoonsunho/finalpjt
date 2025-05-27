@@ -95,7 +95,7 @@
 import { ref, computed } from 'vue'
 
 const props = defineProps({
-  roomId: String,
+  roomId: [String, Number],
   socket: Object,
   achievementRate: { type: Number, default: 0 },
   totalSaved: { type: Number, default: 0 },

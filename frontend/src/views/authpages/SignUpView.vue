@@ -187,13 +187,12 @@ import gsap from 'gsap'
 import { useAccountStore } from '@/stores/user'
 import { useRouter, RouterLink } from 'vue-router'
 import GoogleLoginButton from '@/components/GoogleLoginButton.vue'
+
 const router = useRouter()
 const accountStore = useAccountStore()
 const { ACCOUNT_API_URL } = accountStore
-
 const step = ref(1)
 const formContainer = ref(null)
-
 const email = ref('')
 const nickname = ref('')
 const password1 = ref('')
@@ -204,13 +203,11 @@ const wealth = ref('')
 const tendency = ref('')
 const deposit_amount = ref('')
 const deposit_period = ref('')
-
 const errors = ref({})
 const emailCheckMessage = ref('')
 const isEmailAvailable = ref(false)
 const nicknameCheckMessage = ref('')
 const isNicknameAvailable = ref(false)
-
 const animateStepChange = () => {
   if (!formContainer.value) return
   gsap.fromTo(
@@ -219,31 +216,51 @@ const animateStepChange = () => {
     { opacity: 1, x: 0, duration: 0.5, ease: 'power2.out' },
   )
 }
+
 watch(step, () => nextTick(animateStepChange))
+
+const goToStep1 = () => {
+  step.value = 1
+}
 
 const goToStep2 = () => {
   errors.value = {}
+
+  // 모든 필드 확인
   if (!email.value || !nickname.value || !password1.value || !password2.value) {
-    errors.value.email = '모든 필드를 입력해주세요.'
+    if (!email.value) errors.value.email = '이메일을 입력해주세요.'
+    if (!nickname.value) errors.value.nickname = '닉네임을 입력해주세요.'
+    if (!password1.value) errors.value.password1 = '비밀번호를 입력해주세요.'
+    if (!password2.value) errors.value.password2 = '비밀번호 확인을 입력해주세요.'
     return
   }
+
+  // 이메일 중복 확인 여부
   if (!isEmailAvailable.value) {
     errors.value.email = '이메일 중복 확인을 해주세요.'
     return
   }
+
+  // 닉네임 중복 확인 여부
   if (!isNicknameAvailable.value) {
     errors.value.nickname = '닉네임 중복 확인을 해주세요.'
     return
   }
-  if (password1.value !== password2.value) {
-    errors.value.password2 = '비밀번호가 일치하지 않아요.'
+
+  // 비밀번호 유효성 검사
+  const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*()\-_=+{};:,<.>]).{8,}$/
+  if (!passwordRegex.test(password1.value)) {
+    errors.value.password1 = '비밀번호는 8자 이상, 숫자/영문/특수문자를 모두 포함해야 합니다.'
     return
   }
-  step.value = 2
-}
 
-const goToStep1 = () => {
-  step.value = 1
+  // 비밀번호 일치 여부
+  if (password1.value !== password2.value) {
+    errors.value.password2 = '비밀번호가 일치하지 않습니다.'
+    return
+  }
+
+  step.value = 2
 }
 
 const checkEmailDuplicate = async () => {
@@ -265,16 +282,30 @@ const checkEmailDuplicate = async () => {
 }
 
 const checkNicknameDuplicate = async () => {
-  const res = await fetch(`${ACCOUNT_API_URL}/check-nickname/`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ nickname: nickname.value }),
-  })
-  const data = await res.json()
-  isNicknameAvailable.value = data.available
-  nicknameCheckMessage.value = data.available
-    ? '사용 가능한 닉네임입니다.'
-    : '이미 사용 중인 닉네임입니다.'
+  // 닉네임이 공백이거나 비어있는지 확인
+  if (!nickname.value || nickname.value.trim() === '') {
+    errors.value.nickname = '닉네임을 입력해주세요.'
+    nicknameCheckMessage.value = ''
+    isNicknameAvailable.value = false
+    return
+  }
+
+  try {
+    const res = await fetch(`${ACCOUNT_API_URL}/check-nickname/`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ nickname: nickname.value }),
+    })
+    const data = await res.json()
+    isNicknameAvailable.value = data.available
+    nicknameCheckMessage.value = data.available
+      ? '사용 가능한 닉네임입니다.'
+      : '이미 사용 중인 닉네임입니다.'
+  } catch (error) {
+    errors.value.nickname = '닉네임 확인 중 오류가 발생했습니다.'
+    nicknameCheckMessage.value = ''
+    isNicknameAvailable.value = false
+  }
 }
 
 const onSignUp = async () => {

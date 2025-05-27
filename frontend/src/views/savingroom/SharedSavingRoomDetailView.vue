@@ -208,7 +208,16 @@ const joined = ref(false)
 const loading = ref(false)
 const error = ref('')
 const isJoining = ref(false)
+const toastMessage = ref('')
+const showToast = ref(false)
 
+const triggerToast = (message) => {
+  toastMessage.value = message
+  showToast.value = true
+  setTimeout(() => {
+    showToast.value = false
+  }, 5000)
+}
 const formatDate = (dateString) => {
   if (!dateString) return ''
   const date = new Date(dateString)

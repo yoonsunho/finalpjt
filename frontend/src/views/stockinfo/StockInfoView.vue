@@ -1,138 +1,505 @@
 <template>
+  <div class="container">
     <div class="search-container">
-        <input type="text"
-        v-model="searchQuery"
-        placeholder="검색어를 입력하세요."
-        @keyup.enter = 'searchVideos'>
-        <button @click="searchVideos">검색</button>
+      <div class="search-box">
+        <input
+          type="text"
+          ref="searchInput"
+          v-model="searchQuery"
+          placeholder="YouTube 동영상을 검색해보세요"
+          @keyup.enter="searchVideos"
+          class="search-input"
+        />
+        <button @click="searchVideos" class="search-button">
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <circle cx="11" cy="11" r="8"></circle>
+            <path d="m21 21-4.35-4.35"></path>
+          </svg>
+          검색
+        </button>
+      </div>
     </div>
-    
-    <!-- 검색 결과 표시 -->
-    <div v-if="loading" class="loading">검색 중..</div>
-    <div v-else-if="error" class="error">{{ error }}</div>
-    <div v-else class="results">
-        <div v-for="video in videos">
-            <RouterLink :to="{name:'StockInfoDetailView', params:{id:video.id.videoId}}">
-                <img :src="video.snippet.thumbnails.medium.url" :alt="video.snippet.title">
-                <div class="video-info">
-                    <h4>{{ video.snippet.title }}</h4>
-                    <p>{{ video.snippet.channelTitle }}</p>
-                </div>
-            </RouterLink>
+
+    <div class="content">
+      <div v-if="loading" class="status-message">
+        <div class="spinner"></div>
+        <p>검색 중입니다...</p>
+      </div>
+
+      <div v-else-if="error" class="status-message error-state">
+        <div class="error-icon">⚠️</div>
+        <p>{{ error }}</p>
+        <button @click="searchVideos" class="retry-button">다시 시도</button>
+      </div>
+
+      <div v-else-if="!hasSearched" class="status-message welcome-state">
+        <div class="search-icon">🔍</div>
+        <h3>영상을 찾아보세요</h3>
+        <p>관심 있는 주제나 키워드를 검색해보세요</p>
+      </div>
+
+      <div v-else-if="videos.length === 0" class="status-message no-results">
+        <div class="empty-icon">📭</div>
+        <h3>검색 결과가 없습니다</h3>
+        <p>"{{ lastSearchQuery }}"에 대한 결과를 찾을 수 없습니다</p>
+      </div>
+
+      <div v-else class="results">
+        <div class="results-header">
+          <!-- <h3>검색 결과 ({{ videos.length }}개)</h3> -->
+
+          <h3>검색 결과</h3>
+          <p>"{{ lastSearchQuery }}"에 대한 결과</p>
         </div>
+
+        <div class="video-grid">
+          <div v-for="video in videos" :key="video.id.videoId" class="video-item">
+            <RouterLink
+              :to="{ name: 'StockInfoDetailView', params: { id: video.id.videoId } }"
+              class="video-link"
+            >
+              <div class="thumbnail-container">
+                <img
+                  :src="video.snippet.thumbnails.medium.url"
+                  :alt="video.snippet.title"
+                  class="thumbnail"
+                />
+                <div class="play-overlay">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="white">
+                    <polygon points="5,3 5,21 19,12"></polygon>
+                  </svg>
+                </div>
+              </div>
+
+              <div class="video-info">
+                <h4 class="video-title">{{ video.snippet.title }}</h4>
+                <p class="channel-name">{{ video.snippet.channelTitle }}</p>
+                <p class="upload-date">{{ formatDate(video.snippet.publishedAt) }}</p>
+              </div>
+            </RouterLink>
+          </div>
+        </div>
+      </div>
     </div>
+  </div>
 </template>
 
 <script setup>
-    import {ref, onMounted} from 'vue'
-    import { useRoute ,RouterLink} from 'vue-router'
-    
-    const API_KEY = import.meta.env.VITE_YOUTUBE_API_KEY
-    const searchQuery = ref('')
-    const videos = ref([])
-    const loading = ref(false)
-    const error = ref(null)
+defineOptions({ name: 'StockInfoView' })
+import { ref, onMounted } from 'vue'
+import { useRoute, useRouter, RouterLink } from 'vue-router'
 
-    //동영상 검색
-    const searchVideos  = () => {
-    if (!searchQuery.value.trim()) return;
+const API_KEY = import.meta.env.VITE_YOUTUBE_API_KEY
+const searchQuery = ref('')
+const videos = ref([])
+const loading = ref(false)
+const error = ref(null)
+const hasSearched = ref(false)
+const lastSearchQuery = ref('')
+const route = useRoute()
+const router = useRouter()
+const searchInput = ref(null)
 
-    loading.value = true;
-    error.value = null;
+onMounted(() => {
+  searchInput.value?.focus()
 
-    const params = new URLSearchParams({
-        part: 'snippet',
-        maxResults: 10,
-        q: searchQuery.value,
-        type: 'video',
-        key: API_KEY
+  // 마운트 시 쿼리에서 검색어 복원
+  const queryFromRoute = route.query.q
+  if (queryFromRoute) {
+    searchQuery.value = queryFromRoute
+    searchVideos()
+  }
+})
+
+// 날짜 포맷팅 함수
+const formatDate = (dateString) => {
+  const date = new Date(dateString)
+  const now = new Date()
+  const diffTime = Math.abs(now - date)
+  const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24))
+
+  if (diffDays === 0) return '오늘'
+  if (diffDays === 1) return '1일 전'
+  if (diffDays < 7) return `${diffDays}일 전`
+  if (diffDays < 30) return `${Math.floor(diffDays / 7)}주 전`
+  if (diffDays < 365) return `${Math.floor(diffDays / 30)}개월 전`
+  return `${Math.floor(diffDays / 365)}년 전`
+}
+
+// 동영상 검색
+const searchVideos = () => {
+  if (!searchQuery.value.trim()) return
+
+  // 쿼리로 검색어 반영
+  router.replace({ query: { q: searchQuery.value } })
+
+  loading.value = true
+  error.value = null
+  hasSearched.value = true
+  lastSearchQuery.value = searchQuery.value
+
+  const params = new URLSearchParams({
+    part: 'snippet',
+    maxResults: 50,
+    q: searchQuery.value,
+    type: 'video',
+    key: API_KEY,
+  })
+
+  fetch(`https://www.googleapis.com/youtube/v3/search?${params}`)
+    .then((response) => {
+      if (!response.ok) throw new Error('API 요청에 실패했습니다')
+      return response.json()
     })
-
-    fetch(`https://www.googleapis.com/youtube/v3/search?${params}`)
-        .then(response => {
-            if (!response.ok) throw new Error('API 요청 실패');
-            return response.json();
-        })
-        .then(data => {
-            videos.value = data.items;
-            loading.value = false;
-        })
-        .catch(err => {
-            console.error('API 요청 오류:', err);
-            error.value = '동영상을 불러오는 중 오류가 발생했습니다.';
-            loading.value = false;
-        });
-    }
-    
+    .then((data) => {
+      videos.value = data.items || []
+      loading.value = false
+    })
+    .catch((err) => {
+      console.error('API 요청 오류:', err)
+      error.value = '동영상을 불러오는 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.'
+      loading.value = false
+    })
+}
 </script>
 
 <style scoped>
+.container {
+  min-height: 100vh;
+
+  padding: 20px;
+}
 
 .search-container {
-    margin-bottom: 20px;
-    display: flex;
+  display: flex;
+  justify-content: center;
+  margin-bottom: 40px;
+  padding-top: 40px;
 }
 
-input {
-    padding: 8px;
-    width: 300px;
-    margin-right: 10px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
+.search-box {
+  display: flex;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 50px;
+  padding: 8px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(10px);
+  max-width: 600px;
+  width: 100%;
 }
 
-button {
-    padding: 8px 16px;
-    background-color: #FF0000;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
+.search-input {
+  flex: 1;
+  padding: 16px 24px;
+  border: none;
+  background: transparent;
+  font-size: 16px;
+  outline: none;
+  color: #333;
 }
 
-button:hover {
-    background-color: #CC0000;
+.search-input::placeholder {
+  color: #888;
+}
+.search-input:focus {
+  outline: none;
+  border: 2px solid dodgerblue;
+  border-radius: 50px;
+}
+.search-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 16px 24px;
+  background: dodgerblue;
+  /* background: linear-gradient(135deg, #ff5252, #e91e63); */
+  color: white;
+  border: none;
+  border-radius: 50px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  white-space: nowrap;
 }
 
+.search-button:hover {
+  /* background: linear-gradient(135deg, #ff5252, #e91e63); */
+
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(255, 107, 107, 0.4);
+}
+
+.content {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.status-message {
+  text-align: center;
+  padding: 60px 20px;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 20px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(10px);
+}
+
+.welcome-state .search-icon {
+  font-size: 48px;
+  margin-bottom: 20px;
+}
+
+.welcome-state h3 {
+  font-size: 28px;
+  color: #333;
+  margin-bottom: 12px;
+  font-weight: 600;
+}
+
+.welcome-state p {
+  font-size: 16px;
+  color: #666;
+  margin: 0;
+}
+
+.error-state .error-icon {
+  font-size: 48px;
+  margin-bottom: 20px;
+}
+
+.error-state p {
+  color: #e74c3c;
+  font-size: 16px;
+  margin-bottom: 20px;
+}
+
+.retry-button {
+  padding: 12px 24px;
+  background: #3498db;
+  color: white;
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.3s;
+}
+
+.retry-button:hover {
+  background: #2980b9;
+}
+
+.no-results .empty-icon {
+  font-size: 48px;
+  margin-bottom: 20px;
+}
+
+.no-results h3 {
+  font-size: 24px;
+  color: #333;
+  margin-bottom: 12px;
+}
+
+.no-results p {
+  color: #666;
+  font-size: 16px;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #3498db;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 20px;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
 
 .results {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 20px;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 20px;
+  padding: 30px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(10px);
+}
+
+.results-header {
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+.results-header h3 {
+  font-size: 24px;
+  color: #333;
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+
+.results-header p {
+  color: #666;
+  font-size: 14px;
+  margin: 0;
+}
+
+.video-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 24px;
 }
 
 .video-item {
-    border: 1px solid #eee;
-    border-radius: 4px;
-    overflow: hidden;
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
 }
 
-.video-item img {
-    width: 100%;
-    height: auto;
+.video-item:hover {
+  transform: translateY(-4px);
+}
+
+.video-link {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  background: white;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+}
+
+.video-link:hover {
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+}
+
+.thumbnail-container {
+  position: relative;
+  width: 100%;
+  padding-bottom: 56.25%; /* 16:9 비율 */
+  overflow: hidden;
+}
+
+.thumbnail {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.video-link:hover .thumbnail {
+  transform: scale(1.05);
+}
+
+.play-overlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(0, 0, 0, 0.7);
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.video-link:hover .play-overlay {
+  opacity: 1;
 }
 
 .video-info {
+  padding: 20px;
+}
+
+.video-title {
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.4;
+  margin-bottom: 12px;
+  color: #333;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.channel-name {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 6px;
+  font-weight: 500;
+}
+
+.upload-date {
+  font-size: 12px;
+  color: #999;
+  margin: 0;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+  .container {
     padding: 10px;
+  }
+
+  .search-container {
+    padding-top: 20px;
+    margin-bottom: 30px;
+  }
+
+  .search-box {
+    flex-direction: column;
+    gap: 8px;
+    border-radius: 16px;
+    padding: 16px;
+  }
+
+  .search-button {
+    border-radius: 12px;
+    justify-content: center;
+  }
+
+  .video-grid {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+  }
+
+  .status-message {
+    padding: 40px 20px;
+  }
+
+  .welcome-state h3 {
+    font-size: 24px;
+  }
 }
 
-.video-info h4 {
-    margin: 0 0 8px 0;
-    font-size: 16px;
-}
+@media (max-width: 480px) {
+  .video-grid {
+    grid-template-columns: 1fr;
+  }
 
-.video-info p {
-    margin: 0;
-    color: #666;
-    font-size: 14px;
-}
-
-.loading, .error {
-    text-align: center;
-    padding: 20px;
-}
-
-.error {
-    color: red;
+  .search-input {
+    font-size: 16px; /* iOS 줌 방지 */
+  }
 }
 </style>
