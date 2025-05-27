@@ -4,7 +4,10 @@
       <div class="nav-brand">
         <RouterLink :to="{ name: 'MainPage' }">
           <!-- <img src="" alt="선호바보개_로고" class="nav-logo"/> -->
-          <p class="logo-title">parkyoohyun</p>
+          <p class="logo-title">
+            <span class="blue">m</span><span class="black">o</span><span class="blue">m</span
+            ><span class="black">o</span>
+          </p>
         </RouterLink>
       </div>
 
@@ -145,7 +148,7 @@ const { logOut } = accountStore
 
 const isMenuOpen = ref(false)
 const activeDropdown = ref(null)
-const isDesktop = ref(window.innerWidth > 768)
+const isDesktop = ref(window.innerWidth > 1000)
 
 const router = useRouter()
 
@@ -186,7 +189,7 @@ const toggleDropdown = (menu) => {
 
 // 반응형상태인지 체크
 const checkViewport = () => {
-  isDesktop.value = window.innerWidth > 768
+  isDesktop.value = window.innerWidth > 1000
   if (isDesktop.value) {
     resetMenuState()
   }
@@ -204,6 +207,13 @@ onMounted(() => {
 <style scoped>
 * {
   font-family: Pretendard;
+}
+.blue {
+  color: dodgerblue;
+}
+
+.black {
+  color: black;
 }
 .navbar {
   width: 100%;
@@ -237,8 +247,10 @@ onMounted(() => {
 
 .logo-title {
   font-weight: 900;
-  /* 800 ? */
   font-size: 1.5rem;
+  line-height: 1;
+  transform: scaleY(0.9);
+  display: inline-block;
 }
 .brand-text {
   font-size: 1.25rem;
@@ -269,7 +281,7 @@ onMounted(() => {
   list-style: none;
   margin: 0;
   padding: 0;
-  gap: 1rem;
+  gap: 0.8rem;
 }
 
 .nav-list {
@@ -368,7 +380,7 @@ onMounted(() => {
   color: #2574e6;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1000px) {
   .container {
     flex-wrap: wrap;
   }

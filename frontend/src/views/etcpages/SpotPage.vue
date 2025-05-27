@@ -1,14 +1,11 @@
 <template>
   <div class="spot-page">
     <div class="controls">
-      <!-- 자산 선택 버튼 -->
       <button :class="{ active: asset === 'gold' }" @click="selectAsset('gold')">금</button>
       <button :class="{ active: asset === 'silver' }" @click="selectAsset('silver')">은</button>
-
-      <!-- 날짜 선택 -->
       <input type="date" v-model="startDate" placeholder="시작일" />
       <input type="date" v-model="endDate" placeholder="종료일" />
-      <button @click="getSpotData">조회</button>
+      <button @click="getSpotData" :disabled="!startDate || !endDate">조회</button>
     </div>
 
     <!-- 에러 메시지 -->
@@ -23,7 +20,6 @@
     </div>
   </div>
 </template>
-
 <script setup>
 import { ref, onMounted } from 'vue'
 import axios from 'axios'
@@ -111,7 +107,11 @@ onMounted(() => {
   background-color: #333;
   color: #fff;
 }
-
+.controls button:disabled {
+  background-color: #ccc;
+  color: #666;
+  cursor: not-allowed;
+}
 .controls input[type='date'] {
   padding: 6px 12px;
   border: 1px solid #ccc;

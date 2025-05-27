@@ -182,7 +182,34 @@ export const useArticleStore = defineStore('article', () => {
       })
       .catch((err) => console.error('댓글 삭제 실패:', err))
   }
+  const popularArticlesByCategory = ref({})
 
+  const getPopularArticlesByCategory = async () => {
+    const categories = ['REVIEW', 'TIP', 'FREE']
+    const result = {}
+
+    try {
+      const requests = categories.map((category) =>
+        axios.get(`${API_URL}/community/`, {
+          params: {
+            category: category,
+            ordering: 'popular',
+            limit: 10,
+          },
+        }),
+      )
+
+      const responses = await Promise.all(requests)
+
+      categories.forEach((category, i) => {
+        result[category] = responses[i].data
+      })
+
+      popularArticlesByCategory.value = result
+    } catch (err) {
+      console.error('인기 글 불러오기 실패:', err)
+    }
+  }
   return {
     articles,
     articleDetail,
@@ -203,5 +230,7 @@ export const useArticleStore = defineStore('article', () => {
     startEdit,
     updateComment,
     deleteComment,
+    popularArticlesByCategory,
+    getPopularArticlesByCategory,
   }
 })

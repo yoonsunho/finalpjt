@@ -105,29 +105,25 @@
     <!-- 커뮤니티 -->
     <section ref="community" class="section community">
       <h2>혼자보다 함께 더 똑똑한 금융 생활!</h2>
-      <div class="community-container">
-        <div class="community-card">
-          <div class="community-title">안녕하세요</div>
-          <div class="community-tags">
-            <span class="community-tag">#자유게시판</span>
-          </div>
-          <div class="community-extra">뚱인데요</div>
-        </div>
-        <div class="community-card">
-          <div class="community-title">등촌칼국수를 드셔 보신 적이 있으신가요?</div>
-          <div class="community-tags">
-            <span class="community-tag">#절약 꿀팁</span>
-          </div>
-          <div class="community-extra">와 진짜 너무 맛있던데요??</div>
-        </div>
-        <div class="community-card">
-          <div class="community-title">뼈찜이 먹고싶은 하루네요..</div>
-          <div class="community-tags">
-            <span class="community-tag">#적금 후기</span>
-          </div>
-          <div class="community-extra">
-            뼈찜이 너무 인기가 많아서 아쉽습니다<br />
-            언제쯤 먹어볼 수 있을까요?
+      <div
+        v-for="(articles, category) in store.popularArticlesByCategory"
+        :key="category"
+        class="category-block"
+      >
+        <h3 class="category-header"># {{ categoryLabels[category] || category }}</h3>
+        <div class="community-container">
+          <div v-for="article in articles" :key="article.id" class="community-card">
+            <div class="community-title">{{ article.title }}</div>
+            <div class="community-tags">
+              <span class="community-tag"
+                >#{{ categoryLabels[article.category] || article.category }}</span
+              >
+            </div>
+            <div class="community-extra">
+              <strong>{{ article.user }}</strong
+              ><br />
+              {{ truncateContent(article.content, 3) }}
+            </div>
           </div>
         </div>
       </div>
@@ -154,14 +150,16 @@
     </section>
   </div>
 </template>
-
 <script setup>
-const bankImages = import.meta.glob('@/assets/images/*', { eager: true, import: 'default' })
 import { ref, onMounted, nextTick } from 'vue'
 import axios from 'axios'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { RouterLink } from 'vue-router'
+import { useArticleStore } from '@/stores/article'
+
+const bankImages = import.meta.glob('@/assets/images/*', { eager: true, import: 'default' })
+const store = useArticleStore()
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -178,6 +176,29 @@ const topSavings = ref([])
 const depositCarousel = ref(null)
 const savingCarousel = ref(null)
 
+const categoryLabels = {
+  REVIEW: '예적금 후기',
+  TIP: '절약 꿀팁',
+  FREE: '자유게시판',
+}
+
+function truncateContent(text, lines = 3) {
+  const words = text.split('\n')
+  if (words.length <= lines) return text
+  return words.slice(0, lines).join('\n') + '...'
+}
+
+function getBankImage(bankName) {
+  const entry = Object.entries(bankImages).find(([path, _]) => path.includes(`/${bankName}.`))
+  return entry ? entry[1] : null
+}
+
+// onMounted 1: 인기 글 불러오기
+onMounted(() => {
+  store.getPopularArticlesByCategory()
+})
+
+// onMounted 2: 예/적금 불러오기 + carousel 애니메이션
 onMounted(async () => {
   try {
     const [depositRes, savingRes] = await Promise.all([
@@ -239,10 +260,6 @@ onMounted(async () => {
     })
   }
 })
-function getBankImage(bankName) {
-  const entry = Object.entries(bankImages).find(([path, _]) => path.includes(`/${bankName}.`))
-  return entry ? entry[1] : null
-}
 </script>
 
 <style scoped>
@@ -604,5 +621,10 @@ h2 {
 .gradient-overlay-right {
   right: 0;
   background: linear-gradient(to left, #ffffff, rgba(255, 255, 255, 0));
+}
+.category-header {
+  font-size: 1.25rem;
+  font-weight: bold;
+  margin: 2rem 0 1rem;
 }
 </style>

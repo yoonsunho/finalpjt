@@ -15,6 +15,9 @@
       <button @click="activeTab = '가입한 상품'" :class="{ active: activeTab === '가입한 상품' }">
         가입한 상품
       </button>
+      <button @click="activeTab = '공동저축방'" :class="{ active: activeTab === '공동저축방' }">
+        공동저축방
+      </button>
     </div>
 
     <div class="profile-tab-content">
@@ -27,6 +30,9 @@
       <div v-if="activeTab === '가입한 상품'">
         <MyJoins />
       </div>
+      <div v-if="activeTab === '공동저축방'">
+        <MySavingRooms />
+      </div>
     </div>
   </div>
 </template>
@@ -37,6 +43,7 @@ import { ref, computed } from 'vue'
 import { useAccountStore } from '@/stores/user'
 import MyInterests from '@/components/product/MyInterests.vue'
 import MyJoins from '@/components/product/MyJoins.vue'
+import MySavingRooms from '@/components/savingroom/MySavingRooms.vue'
 const accountStore = useAccountStore()
 const user = computed(() => accountStore.userInfo)
 const activeTab = ref('회원정보') // 초기메뉴

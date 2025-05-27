@@ -5,7 +5,8 @@
         <h1>공동 저축방 리스트</h1>
         <p class="subtitle">친구들과 함께 목표를 달성해보세요</p>
       </div>
-      <button @click="goToCreate" class="btn-create">
+      <!-- 방 만들기 버튼 (로그인한 경우에만 표시) -->
+      <button v-if="accountStore.isLogin" @click="goToCreate" class="btn-create">
         <svg
           width="20"
           height="20"
@@ -20,10 +21,9 @@
       </button>
     </div>
 
-    <!-- 검색창 -->
-    <form class="search-bar" @submit.prevent="applyFilter">
+    <!-- 검색창 (로그인 상태에서만 표시) -->
+    <form class="search-bar" v-if="accountStore.isLogin" @submit.prevent="applyFilter">
       <input v-model="filters.name" type="text" placeholder="방 제목" />
-
       <input v-model="filters.owner" type="text" placeholder="방장 닉네임" />
       <button type="submit" class="btn-search">검색</button>
     </form>
@@ -31,6 +31,18 @@
     <div v-if="loading" class="loading">
       <div class="spinner"></div>
       <p>저축방을 불러오는 중...</p>
+    </div>
+    <div v-else-if="!accountStore.isLogin" class="blur-wrapper">
+      <div class="blur-list room-grid">
+        <div v-for="n in 6" :key="n" class="room-item blur-list-item" style="height: 200px"></div>
+      </div>
+
+      <div class="blur-overlay"></div>
+
+      <div class="blur-message">
+        <p>저축방 목록은 로그인 후 확인할 수 있어요.</p>
+        <RouterLink to="/login" class="btn-login">로그인하러 가기</RouterLink>
+      </div>
     </div>
 
     <div v-else-if="error" class="error">
@@ -73,9 +85,19 @@
     </div>
 
     <div v-else class="content">
+      <!-- 탭을 content보다 먼저 렌더링되게 위로 올림 -->
+      <div class="tabs" v-if="accountStore.isLogin">
+        <button :class="{ active: activeTab === 'incomplete' }" @click="activeTab = 'incomplete'">
+          미완료방
+        </button>
+        <button :class="{ active: activeTab === 'complete' }" @click="activeTab = 'complete'">
+          완료방
+        </button>
+      </div>
+
       <div class="room-grid">
         <div
-          v-for="room in filteredRooms"
+          v-for="room in filteredRoomsByTab"
           :key="room.id"
           class="room-item"
           @click="goToRoom(room.id)"
@@ -94,14 +116,19 @@ import SharedSavingRoomCard from '@/components/savingroom/SharedSavingRoomCard.v
 import axios from 'axios'
 
 import { useAccountStore } from '@/stores/user'
-
+const activeTab = ref('incomplete') // 'complete' 또는 'incomplete'
+const filteredRoomsByTab = computed(() => {
+  return filteredRooms.value.filter((room) =>
+    activeTab.value === 'complete' ? room.achievement_rate >= 100 : room.achievement_rate < 100,
+  )
+})
 const accountStore = useAccountStore()
 const API_URL = 'http://127.0.0.1:8000'
 const rooms = ref([])
 const loading = ref(false)
 const error = ref('')
 const router = useRouter()
-
+const isLogin = computed(() => accountStore.isLogin)
 const activeRoomsCount = computed(() => {
   if (!rooms.value || !Array.isArray(rooms.value)) return 0
   return rooms.value.filter((room) => room.status === 'active' || room.is_active).length
@@ -463,6 +490,98 @@ onMounted(async () => {
 
 .room-item:hover {
   transform: translateY(-4px);
+}
+.blur-wrapper {
+  position: relative;
+  width: 100%;
+  height: 500px;
+  overflow: hidden;
+  border-radius: 20px;
+  background: white;
+}
+.blur-overlay {
+  position: absolute;
+  inset: 0;
+  backdrop-filter: blur(6px);
+  background-color: rgba(255, 255, 255, 0.7);
+  z-index: 2;
+}
+
+.blur-message {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 3;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  color: #1e293b;
+}
+
+.blur-message h2 {
+  font-size: 28px;
+  margin-bottom: 16px;
+}
+
+.blur-message p {
+  font-size: 16px;
+  margin-bottom: 24px;
+  color: #475569;
+}
+.blur-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 24px;
+  position: relative;
+  z-index: 1;
+  padding: 24px;
+}
+
+.blur-list-item {
+  background-color: rgb(176, 216, 255);
+  border-radius: 16px;
+  border: 1px solid dodgerblue;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  height: 200px;
+}
+
+.btn-login {
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+  color: white;
+  padding: 12px 24px;
+  font-size: 14px;
+  border-radius: 8px;
+  font-weight: 600;
+  text-decoration: none;
+  display: inline-block;
+  transition: all 0.3s ease;
+}
+
+.btn-login:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(59, 130, 246, 0.3);
+}
+.tabs {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.tabs button {
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  border: none;
+  border-radius: 10px;
+  background: #e2e8f0;
+  color: #334155;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.tabs button.active {
+  background: #3b82f6;
+  color: white;
 }
 
 /* 반응형 디자인 */
