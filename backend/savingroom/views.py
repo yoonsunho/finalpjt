@@ -32,7 +32,12 @@ def room_list(request):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def room_detail(request, room_id):
-    room = get_object_or_404(SavingRoom, id=room_id)
+
+    room = get_object_or_404(
+        SavingRoom.objects.prefetch_related('participants__deposits'), 
+        id=room_id
+    )
+    
     serializer = SavingRoomDetailSerializer(room)
     return Response(serializer.data)
 

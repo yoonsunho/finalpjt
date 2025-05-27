@@ -17,10 +17,11 @@ class SavingDepositSerializer(serializers.ModelSerializer):
 class SavingParticipantSerializer(serializers.ModelSerializer):
     user = UserSerializer()
     total_saved = serializers.SerializerMethodField()
+    deposits = SavingDepositSerializer(many=True, read_only = True)
 
     class Meta:
         model = SavingParticipant
-        fields = ['id', 'user', 'joined_at', 'total_saved']
+        fields = ['id', 'user', 'joined_at', 'total_saved','deposits']
 
     def get_total_saved(self, obj):
         return obj.total_saved_amount()
