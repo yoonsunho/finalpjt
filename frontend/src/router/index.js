@@ -122,7 +122,7 @@ const router = createRouter({
       component: SharedSavingRoomListView,
     },
     {
-      path: '/savingroom/room/:id',
+      path: '/savingroom/:id',
       name: 'SharedSavingRoomDetailView',
       component: SharedSavingRoomDetailView,
     },

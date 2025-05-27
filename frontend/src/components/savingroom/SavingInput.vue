@@ -1,9 +1,20 @@
 <template>
   <form @submit.prevent="submitDeposit">
-    <input type="number" v-model="amount" placeholder="금액" required />
-    <input type="text" v-model="memo" placeholder="메모 (선택)" />
-    <button type="submit" :disabled="isSubmitting">
-      {{ isSubmitting ? '입금 중...' : '입금' }}
+    <input
+      type="number"
+      v-model="amount"
+      placeholder="금액"
+      required
+      :disabled="isSubmitting || achievementRate >= 100"
+    />
+    <input
+      type="text"
+      v-model="memo"
+      placeholder="메모 (선택)"
+      :disabled="isSubmitting || achievementRate >= 100"
+    />
+    <button type="submit" :disabled="isSubmitting || achievementRate >= 100">
+      {{ achievementRate >= 100 ? '입금 불가 (목표 달성!)' : isSubmitting ? '입금 중...' : '입금' }}
     </button>
   </form>
 </template>
@@ -11,8 +22,7 @@
 <script setup>
 import { ref } from 'vue'
 
-const props = defineProps(['roomId', 'socket'])
-const emit = defineEmits(['saving-completed'])
+const props = defineProps(['roomId', 'socket', 'achievementRate'])
 
 const amount = ref('')
 const memo = ref('')
@@ -23,7 +33,7 @@ const submitDeposit = async () => {
     return alert('웹소켓 연결 안됨 ㅠㅠ')
   }
 
-  if (isSubmitting.value) return
+  if (isSubmitting.value || props.achievementRate >= 100) return
 
   try {
     isSubmitting.value = true
@@ -38,12 +48,6 @@ const submitDeposit = async () => {
     // 입력 필드 초기화
     amount.value = ''
     memo.value = ''
-
-    // 저축 완료 이벤트 emit
-    setTimeout(() => {
-      emit('saving-completed')
-      console.log('Saving completed event emitted')
-    }, 500) // WebSocket 메시지 처리 시간을 고려한 지연
   } catch (error) {
     console.error('저축 입력 오류:', error)
     alert('저축 입력 중 오류가 발생했습니다.')
@@ -52,49 +56,29 @@ const submitDeposit = async () => {
   }
 }
 </script>
-
 <style scoped>
-form {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  max-width: 400px;
+.goal-complete {
+  background: linear-gradient(135deg, #d1fae5, #a7f3d0);
+  border: 2px solid #10b981;
+  text-align: center;
+  border-radius: 20px;
+  padding: 32px;
+  box-shadow: 0 4px 20px rgba(16, 185, 129, 0.15);
 }
 
-input {
-  padding: 12px 16px;
-  border: 2px solid #e2e8f0;
-  border-radius: 8px;
+.goal-complete .section-header svg {
+  color: #059669;
+}
+
+.goal-complete h2 {
+  font-size: 24px;
+  color: #065f46;
+  margin-bottom: 12px;
+}
+
+.complete-message {
   font-size: 16px;
-  transition: border-color 0.3s ease;
-}
-
-input:focus {
-  outline: none;
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-}
-
-button {
-  background: linear-gradient(135deg, #10b981, #059669);
-  color: white;
-  border: none;
-  padding: 12px 24px;
-  border-radius: 8px;
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-button:hover:not(:disabled) {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
-}
-
-button:disabled {
-  opacity: 0.7;
-  cursor: not-allowed;
-  transform: none;
+  font-weight: 500;
+  color: #065f46;
 }
 </style>

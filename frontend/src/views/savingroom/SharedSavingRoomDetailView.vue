@@ -1,5 +1,5 @@
 <template>
-  <div class="room-detail">
+  <div v-if="room" class="room-detail">
     <div class="header">
       <button @click="goBack" class="btn-back">
         <svg
@@ -14,8 +14,8 @@
         </svg>
       </button>
       <div class="header-content">
-        <h1 v-if="room">{{ room.name }}</h1>
-        <p v-if="room" class="subtitle">{{ room.description }}</p>
+        <h1>{{ room.name }}</h1>
+        <p class="subtitle">{{ room.description }}</p>
       </div>
     </div>
 
@@ -31,8 +31,7 @@
       <button @click="fetchRoomDetail" class="btn-retry">다시 시도</button>
     </div>
 
-    <div v-else-if="room" class="content">
-      <!-- 목표 정보 섹션 -->
+    <div v-else class="content">
       <div class="goal-section">
         <div class="goal-card">
           <div class="goal-header">
@@ -72,7 +71,6 @@
         </div>
       </div>
 
-      <!-- 참가 버튼 -->
       <div v-if="!joined" class="join-section">
         <button @click="joinRoom" :disabled="isJoining" class="btn-join">
           <svg
@@ -105,7 +103,6 @@
         </button>
       </div>
 
-      <!-- 저축 입력 섹션 -->
       <div v-if="joined" class="saving-section">
         <div class="section-header">
           <svg
@@ -121,10 +118,9 @@
           </svg>
           <h2>저축하기</h2>
         </div>
-        <SavingInput :roomId="room.id" :socket="socket" @saving-completed="refreshLogs" />
+        <SavingInput :roomId="room.id" :socket="socket" />
       </div>
 
-      <!-- 참가자 목록 섹션 -->
       <div class="participants-section">
         <div class="section-header">
           <svg
@@ -159,7 +155,6 @@
         </div>
       </div>
 
-      <!-- 저축 로그 섹션 -->
       <div v-if="joined" class="log-section">
         <div class="section-header">
           <svg
@@ -176,29 +171,14 @@
             <line x1="16" y1="17" x2="8" y2="17" />
           </svg>
           <h2>저축 기록</h2>
-          <button @click="refreshLogs" class="btn-refresh">
-            <svg
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-            >
-              <polyline points="23 4 23 10 17 10"></polyline>
-              <polyline points="1 20 1 14 7 14"></polyline>
-              <path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"></path>
-            </svg>
-          </button>
         </div>
         <SavingLog :logList="logList" />
       </div>
     </div>
   </div>
 </template>
-
 <script setup>
-import { ref, onMounted, onBeforeUnmount, watch } from 'vue'
+import { ref, onMounted, onBeforeUnmount } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useAccountStore } from '@/stores/user'
 import axios from 'axios'
@@ -228,32 +208,39 @@ const formatDate = (dateString) => {
   })
 }
 
-// 현재 사용자가 이미 참가자인지 확인하는 함수
 const checkIfUserJoined = () => {
   if (!room.value?.participants || !accountStore.user?.id) return
-
   const isParticipant = room.value.participants.some(
     (participant) => participant.user.id === accountStore.user.id,
   )
+  if (isParticipant) joined.value = true
+}
+const buildLogListFromParticipants = () => {
+  const logs = []
 
-  if (isParticipant) {
-    joined.value = true
+  if (!room.value?.participants) return
+
+  for (const participant of room.value.participants) {
+    if (!participant.deposits) continue // <- deposits 없으면 패스
+    for (const deposit of participant.deposits) {
+      logs.push({
+        ...deposit,
+        nickname: participant.user.nickname,
+      })
+    }
   }
+
+  logList.value = logs.sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
 }
 
-// 방 데이터만 업데이트하는 함수 (참가 로직 없음)
 const updateRoomData = async () => {
   try {
     const res = await axios.get(`${API_URL}/savingroom/${route.params.id}/`, {
-      headers: {
-        Authorization: `Token ${accountStore.token}`,
-      },
+      headers: { Authorization: `Token ${accountStore.token}` },
     })
     room.value = res.data
-    console.log('Room data updated:', res.data)
-
-    // 참가 상태 재확인
     checkIfUserJoined()
+    buildLogListFromParticipants()
   } catch (err) {
     console.error('Failed to update room data:', err)
   }
@@ -263,71 +250,29 @@ const fetchRoomDetail = async () => {
   try {
     loading.value = true
     error.value = ''
-
-    // API 엔드포인트 통일 - /savingroom/ 사용
     const res = await axios.get(`${API_URL}/savingroom/${route.params.id}/`, {
-      headers: {
-        Authorization: `Token ${accountStore.token}`,
-      },
+      headers: { Authorization: `Token ${accountStore.token}` },
     })
     room.value = res.data
-    console.log('room data:', res.data)
-
-    // 사용자가 이미 참가자인지 확인
     checkIfUserJoined()
-
-    // 참가하지 않은 경우에만 참가 시도
+    buildLogListFromParticipants()
     if (!joined.value) {
       await tryJoinRoom()
     } else if (!socket.value) {
-      // 이미 참가했지만 WebSocket이 연결되지 않은 경우 연결
       setupWebSocket()
     }
   } catch (err) {
     console.error('Failed to fetch room detail:', err)
-
     if (err.response) {
-      if (err.response.status === 401) {
-        error.value = '로그인이 필요합니다.'
-      } else if (err.response.status === 404) {
-        error.value = '존재하지 않는 저축방입니다.'
-      } else if (err.response.status === 500) {
-        error.value = '서버에 일시적인 문제가 발생했습니다.'
-      } else {
-        error.value = '저축방 정보를 불러오는데 실패했습니다.'
-      }
-    } else if (err.request) {
-      error.value = '네트워크 연결을 확인해주세요.'
-    } else {
-      error.value = '알 수 없는 오류가 발생했습니다.'
-    }
+      if (err.response.status === 401) error.value = '로그인이 필요합니다.'
+      else if (err.response.status === 404) error.value = '존재하지 않는 저축방입니다.'
+      else if (err.response.status === 500) error.value = '서버에 일시적인 문제가 발생했습니다.'
+      else error.value = '저축방 정보를 불러오는데 실패했습니다.'
+    } else if (err.request) error.value = '네트워크 연결을 확인해주세요.'
+    else error.value = '알 수 없는 오류가 발생했습니다.'
   } finally {
     loading.value = false
   }
-}
-
-const fetchSavingLogs = async () => {
-  try {
-    const res = await axios.get(`${API_URL}/savingroom/${route.params.id}/logs/`, {
-      headers: {
-        Authorization: `Token ${accountStore.token}`,
-      },
-    })
-    logList.value = res.data
-    console.log('Saving logs fetched:', res.data)
-  } catch (err) {
-    console.error('저축 기록 불러오기 실패:', err)
-    // 권한 문제가 아닌 경우에만 에러 처리
-    if (err.response?.status !== 403) {
-      console.error('Failed to fetch saving logs:', err)
-    }
-  }
-}
-
-// 로그 새로고침 함수
-const refreshLogs = async () => {
-  console.log('Refreshing logs...')
-  await fetchSavingLogs()
 }
 
 const tryJoinRoom = async () => {
@@ -336,15 +281,12 @@ const tryJoinRoom = async () => {
       `${API_URL}/savingroom/${route.params.id}/join/`,
       {},
       {
-        headers: {
-          Authorization: `Token ${accountStore.token}`,
-        },
+        headers: { Authorization: `Token ${accountStore.token}` },
       },
     )
     joined.value = true
     setupWebSocket()
   } catch (err) {
-    console.error('tryJoinRoom error:', err.response?.data)
     if (err.response?.status === 400 && err.response?.data?.detail === '이미 참가한 방입니다.') {
       joined.value = true
       setupWebSocket()
@@ -354,108 +296,61 @@ const tryJoinRoom = async () => {
 
 const joinRoom = async () => {
   if (isJoining.value) return
-
   try {
     isJoining.value = true
     await axios.post(
       `${API_URL}/savingroom/${room.value.id}/join/`,
       {},
       {
-        headers: {
-          Authorization: `Token ${accountStore.token}`,
-        },
+        headers: { Authorization: `Token ${accountStore.token}` },
       },
     )
     joined.value = true
-
-    // 참가 후 순차적으로 데이터 업데이트
     await updateRoomData()
-    await fetchSavingLogs()
-
-    // WebSocket 연결
     setupWebSocket()
   } catch (err) {
-    console.error('Join room error:', err)
-
     let errorMessage = '참가에 실패했습니다.'
     if (err.response?.status === 400) {
       errorMessage = '이미 참가한 방입니다.'
       joined.value = true
-      // 이미 참가한 경우에도 데이터 다시 로드
       await updateRoomData()
-      await fetchSavingLogs()
       setupWebSocket()
     } else if (err.response?.status === 401) {
       errorMessage = '로그인이 필요합니다.'
     }
-
-    if (err.response?.status !== 400) {
-      alert(errorMessage)
-    }
+    if (err.response?.status !== 400) alert(errorMessage)
   } finally {
     isJoining.value = false
   }
 }
 
 const setupWebSocket = () => {
-  // 중복 연결 방지
   if (socket.value || !joined.value) return
-
   const token = accountStore.token
   const ws = new WebSocket(`ws://localhost:8000/ws/savings/${route.params.id}/?token=${token}`)
-
-  ws.onopen = () => {
-    console.log('WebSocket connected')
-  }
-
-  ws.onmessage = async (e) => {
+  ws.onopen = () => console.log('WebSocket connected')
+  ws.onmessage = (e) => {
     const data = JSON.parse(e.data)
-    console.log('WebSocket message received:', data)
-
-    // 로그 데이터 업데이트 (중복 체크 개선)
-    if (data.id && !logList.value.some((log) => log.id === data.id)) {
-      logList.value = [data, ...logList.value]
-      console.log('New log added to list:', data)
+    const exists = logList.value.some((log) => log.id === data.id)
+    if (!exists) {
+      updateRoomData()
     }
-
-    // 방 데이터 업데이트 (약간의 지연을 두어 서버 업데이트 완료 후 호출)
-    setTimeout(async () => {
-      await updateRoomData()
-    }, 100)
   }
-
   ws.onclose = () => {
     console.log('WebSocket disconnected')
     socket.value = null
   }
-
-  ws.onerror = (error) => {
-    console.error('WebSocket error:', error)
-  }
-
+  ws.onerror = (error) => console.error('WebSocket error:', error)
   socket.value = ws
 }
 
-const goBack = () => {
-  router.back()
-}
+const goBack = () => router.back()
 
-// 추가: 저축 입력 후 수동으로 로그 새로고침하는 함수
-defineExpose({
-  refreshLogs,
-})
-
-onMounted(async () => {
-  await fetchRoomDetail()
-  // 참가 여부와 관계없이 로그 조회 시도
-  await fetchSavingLogs()
-})
+onMounted(fetchRoomDetail)
 
 onBeforeUnmount(() => {
-  if (socket.value) {
-    socket.value.close()
-    socket.value = null
-  }
+  if (socket.value) socket.value.close()
+  socket.value = null
 })
 </script>
 
