@@ -40,6 +40,10 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.AllowAny',
     ],
+    
+    #페이지네이션
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 10,
 }
 
 # Application definition
@@ -55,6 +59,7 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'dj_rest_auth', # 추가
     'corsheaders',  # 추가
+    'django_dbml',
     ##
     'django.contrib.sites',
     'allauth',
