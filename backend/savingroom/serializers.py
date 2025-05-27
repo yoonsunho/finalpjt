@@ -27,15 +27,16 @@ class SavingParticipantSerializer(serializers.ModelSerializer):
         return obj.total_saved_amount()
 
 class SavingRoomListSerializer(serializers.ModelSerializer):
+    
     achievement_rate = serializers.SerializerMethodField()
+    created_by = serializers.CharField(source='created_by.nickname', read_only=True)  # nickname만
 
     class Meta:
         model = SavingRoom
-        fields = ['id', 'name', 'goal_amount', 'achievement_rate']
+        fields = ['id', 'name', 'goal_amount', 'achievement_rate','created_by',]
 
     def get_achievement_rate(self, obj):
         return obj.achievement_rate()
-
 class SavingRoomDetailSerializer(serializers.ModelSerializer):
     participants = SavingParticipantSerializer(many=True, read_only=True)
     total_saved = serializers.SerializerMethodField()
