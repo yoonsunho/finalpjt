@@ -12,10 +12,10 @@
 
       <select v-model="selectedOrdering">
         <option value="">기본 정렬</option>
-        <option value="interest_count">찜 많은 순</option>
-        <option value="-interest_count">찜 적은 순</option>
-        <option value="joined_count">가입 많은 순</option>
-        <option value="-joined_count">가입 적은 순</option>
+        <option value="-interest_count">찜 많은 순</option>
+        <option value="interest_count">찜 적은 순</option>
+        <option value="-joined_count">가입 많은 순</option>
+        <option value="joined_count">가입 적은 순</option>
       </select>
       <button type="submit">검색</button>
     </form>
@@ -38,6 +38,9 @@
         <fwb-table-head-cell>은행</fwb-table-head-cell>
         <fwb-table-head-cell>최고 우대 금리</fwb-table-head-cell>
         <fwb-table-head-cell>금리 유형</fwb-table-head-cell>
+
+        <fwb-table-head-cell>찜한 사람 수</fwb-table-head-cell>
+        <fwb-table-head-cell>가입자 수</fwb-table-head-cell>
       </fwb-table-head>
       <fwb-table-body>
         <fwb-table-row
@@ -51,6 +54,8 @@
           <fwb-table-cell>{{ product.kor_co_nm }}</fwb-table-cell>
           <fwb-table-cell>{{ product.max_intr_rate2 }}</fwb-table-cell>
           <fwb-table-cell>{{ product.intr_rate_type_nm }}</fwb-table-cell>
+          <fwb-table-cell>{{ product.interest_count }}</fwb-table-cell>
+          <fwb-table-cell>{{ product.joined_count }}</fwb-table-cell>
         </fwb-table-row>
       </fwb-table-body>
     </fwb-table>
