@@ -1,4 +1,12 @@
 <template>
+  <div>
+    <div class="header-content">
+      <h1 class="title">현물 시세 비교</h1>
+      <p class="subtext">기간에 따른 현물 자산의 시세 변화를 확인해요.</p>
+      <br /><br />
+      <hr />
+    </div>
+  </div>
   <div class="spot-page">
     <div class="controls">
       <button :class="{ active: asset === 'gold' }" @click="selectAsset('gold')">금</button>
@@ -71,58 +79,104 @@ onMounted(() => {
 })
 </script>
 <style scoped>
-* {
-  font-family: Pretendard;
-}
 .spot-page {
-  padding: 20px;
+  padding: 24px;
   font-family: 'Pretendard', sans-serif;
-  max-width: 800px;
+  /* max-width: 800px; */
+  width: 100%;
   margin: 0 auto;
+}
+
+.header {
+  text-align: center;
+  margin-top: 10px;
+  /* margin-bottom: 10px; */
+  /* padding-bottom: 50px; */
+}
+
+hr {
+  color: #eeeeee;
+  font-weight: bold;
+}
+.header-content h1 {
+  text-align: center;
+  font-size: 2.5rem;
+  font-weight: 700;
+  /* margin-bottom: 8px; */
+}
+
+.subtext {
+  text-align: center;
+  font-size: 1.1rem;
+  color: black;
+  /* margin-bottom: 30px; */
 }
 
 .controls {
   display: flex;
-  gap: 10px;
   flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 24px;
   align-items: center;
-  margin-bottom: 20px;
 }
 
 .controls button {
-  padding: 8px 16px;
-  border: 1px solid #ddd;
-  background-color: #f9f9f9;
-  border-radius: 6px;
+  padding: 10px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  background-color: #f9fafb;
+  color: #374151;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
   cursor: pointer;
-  font-weight: bold;
-  transition: background-color 0.2s ease;
 }
 
 .controls button:hover {
-  background-color: #eee;
+  background-color: #f3f4f6;
 }
 
 .controls button.active {
-  background-color: #333;
-  color: #fff;
+  background-color: #2563eb;
+  color: white;
+  border-color: #2563eb;
 }
+
 .controls button:disabled {
-  background-color: #ccc;
-  color: #666;
+  background-color: #e5e7eb;
+  color: #9ca3af;
   cursor: not-allowed;
 }
+
 .controls input[type='date'] {
-  padding: 6px 12px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
+  padding: 8px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 14px;
+  color: #374151;
+  background-color: white;
+}
+
+.error {
+  color: #ef4444;
+  font-size: 14px;
+  margin-bottom: 16px;
 }
 
 .chart-container {
-  background: #fff;
-  padding: 20px;
-  border: 1px solid #eee;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  background: #ffffff;
+  padding: 24px;
+  border-radius: 16px;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+}
+
+.no-data {
+  font-size: 14px;
+  color: #6b7280;
+  text-align: center;
+  padding: 40px 0;
 }
 </style>

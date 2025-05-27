@@ -116,40 +116,55 @@ const getBankImage = (bankName) => {
   return '' //fallback
 }
 </script>
-
 <style scoped>
 * {
-  font-family: Pretendard;
+  font-family: 'Pretendard', sans-serif;
+  box-sizing: border-box;
 }
+
 .recommend-container {
-  padding: 20px;
+  max-width: 960px;
+  margin: 32px auto;
+  padding: 0 16px;
 }
+
 h1 {
-  font-size: 2rem;
-  font-weight: 600;
+  font-size: 24px;
+  font-weight: 700;
   text-align: center;
+  color: #191f28;
+  margin-bottom: 32px;
+  line-height: 1.5;
 }
+
 h2 {
-  font-size: 1.5rem;
-  font-weight: 500;
+  font-size: 18px;
+  font-weight: 600;
+  color: #191f28;
+  margin: 24px 0 12px;
+  border-bottom: 1px solid #f2f4f6;
+  padding-bottom: 4px;
 }
+
 .product-card {
   display: flex;
   align-items: center;
-  border: 1px solid #ddd;
-  padding: 15px;
-  margin: 10px 0;
-  border-radius: 8px;
-  transition: box-shadow 0.3s;
+  background: #ffffff;
+  border: 1px solid #f2f4f6;
+  border-radius: 16px;
+  padding: 16px;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+  transition: box-shadow 0.2s ease;
 }
 
 .product-card:hover {
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
 }
 
 .bank-logo {
-  width: 80px;
-  height: 80px;
+  width: 64px;
+  height: 64px;
   object-fit: contain;
   margin-right: 20px;
   flex-shrink: 0;
@@ -160,43 +175,84 @@ h2 {
 }
 
 .product-name h3 {
-  margin: 0 0 10px 0;
-  color: #333;
-  transition: color 0.2s;
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #191f28;
 }
 
 .product-name:hover h3 {
-  color: #007bff;
+  color: #3182f6;
 }
-/* 
-.product-card p {
-  margin: 5px 0;
-  font-weight: bold;
-  color: #007bff;
+
+.product-info h3 {
+  font-size: 14px;
+  font-weight: 500;
+  color: #4e5968;
+  margin: 4px 0;
 }
-.product-card small {
-  color: #666;
-} */
+
+.product-info p {
+  font-size: 14px;
+  color: #3182f6;
+  font-weight: 500;
+  margin: 4px 0;
+}
+
+.product-info small {
+  font-size: 13px;
+  color: #8b95a1;
+}
 
 .loading-box {
   display: flex;
   flex-direction: column;
   align-items: center;
-  color: #555;
-  padding: 30px 0;
+  color: #6b7280;
+  padding: 40px 0;
+  text-align: center;
 }
+
 .spinner {
-  width: 40px;
-  height: 40px;
-  margin-bottom: 10px;
-  border: 5px solid #eee;
-  border-top: 5px solid #007bff;
+  width: 36px;
+  height: 36px;
+  margin-bottom: 16px;
+  border: 4px solid #f1f3f5;
+  border-top: 4px solid #3182f6;
   border-radius: 50%;
   animation: spin 1s linear infinite;
 }
+
 @keyframes spin {
   to {
     transform: rotate(360deg);
+  }
+}
+
+/* 반응형 */
+@media (max-width: 640px) {
+  .product-card {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .bank-logo {
+    margin: 0 0 8px 0;
+  }
+
+  h1 {
+    font-size: 20px;
+  }
+
+  h2 {
+    font-size: 16px;
+  }
+
+  .product-info p,
+  .product-info h3,
+  .product-info small {
+    font-size: 13px;
   }
 }
 </style>

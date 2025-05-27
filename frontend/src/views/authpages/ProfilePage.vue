@@ -56,52 +56,47 @@ const activeTab = ref('회원정보') // 초기메뉴
 .profile-wrapper {
   display: flex;
   flex-direction: column;
-  /* margin: auto; */
   min-width: 300px;
-  /* margin: auto; */
-
-  /* 수정해야함.임의설정 */
-  margin: 100px;
-
+  max-width: 800px;
+  margin: 80px auto;
   padding: 40px;
-  border-radius: 12px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  border-radius: 16px;
+  background: #ffffff;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
   gap: 20px;
 }
 
 .profile-name {
   font-size: 1.7rem;
-  /* font-weight: bold; */
-}
-.profile-container {
-  display: flex;
-  /* box-shadow: inset 0 0 3px orange; */
-  padding: 20px 0 0 0;
-  border-top: 1px solid #191f28;
+  font-weight: 600;
+  color: #1f2937;
 }
 
 .profile-tab-category {
   display: flex;
-  gap: 10px;
-  padding-right: 20px;
-  /* box-shadow: inset 0 0 3px dodgerblue; */
-  border-right: 1px solid #191f28;
   gap: 16px;
+  border-bottom: 1px solid #e5e7eb;
+  padding-bottom: 8px;
 }
-.profile-category-detail {
-  /* box-shadow: inset 0 0 3px pink; */
-  flex-grow: 1;
-  display: flex;
-  flex-direction: column;
+
+.profile-tab-category button {
+  background: none;
+  border: none;
+  padding: 8px 12px;
+  font-weight: 500;
+  font-size: 15px;
+  color: #6b7280;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.profile-tab-category button.active {
+  font-weight: 700;
+  color: #111827;
+  border-bottom: 2px solid #1f2937;
 }
 
 .profile-tab-content {
   margin-top: 20px;
-  padding: 10px;
-}
-
-button.active {
-  font-weight: bold;
-  border-bottom: 2px solid #191f28;
 }
 </style>

@@ -1,6 +1,5 @@
 <template>
   <div>
-    <h2>내가 입금한 공동 저축방</h2>
     <div v-if="loading">불러오는 중...</div>
     <div v-else-if="!depositedRooms.length">입금한 방이 없습니다.</div>
     <div v-else>
@@ -60,3 +59,43 @@ const fetchJoinedRooms = async () => {
 
 onMounted(fetchJoinedRooms)
 </script>
+
+<style scoped>
+.my-deposits {
+  max-width: 720px;
+  margin: 40px auto;
+  padding: 32px 20px;
+  background-color: #ffffff;
+  border-radius: 20px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+  font-family: 'Pretendard', sans-serif;
+}
+
+h1 {
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: #212529;
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.loading-text {
+  text-align: center;
+  font-size: 1rem;
+  color: #6c757d;
+  padding: 32px 0;
+}
+
+.no-data {
+  text-align: center;
+  font-size: 1rem;
+  color: #868e96;
+  padding: 48px 0;
+}
+
+.room-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+</style>

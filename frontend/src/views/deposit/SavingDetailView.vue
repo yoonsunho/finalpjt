@@ -1,4 +1,5 @@
 <template>
+  <!-- <h1>적금 상품 목록</h1> -->
   <div v-if="product">
     <h1 class="saving_product_name">{{ product.fin_prdt_nm }}</h1>
     <h5>id: {{ product.id }}</h5>
@@ -136,120 +137,164 @@ watch(
   { immediate: true },
 )
 </script>
-
 <style scoped>
-* {
-  font-family: Pretendard;
-}
-.product-detail {
-  max-width: 720px;
-  margin: 3rem auto;
-  padding: 2rem;
-  border: none;
-  border-radius: 16px;
-  background-color: #ffffff;
-  font-family: 'Pretendard', 'Apple SD Gothic Neo', sans-serif;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+.saving-log {
+  max-height: 400px;
+  overflow-y: auto;
+  padding: 0 8px;
 }
 
-.saving_product_name {
+.empty-state {
   text-align: center;
-  font-size: 2rem;
+  padding: 60px 20px;
+  color: #6b7684;
+}
+
+.empty-icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+  opacity: 0.6;
+}
+
+.empty-state h3 {
+  font-size: 18px;
   font-weight: 600;
-  margin-bottom: 1.5rem;
-  color: #1e1e1e;
-}
-
-p {
-  font-size: 1rem;
-  color: #444;
-  margin: 0.4rem 0;
-  line-height: 1.6;
-}
-
-h2 {
-  margin-top: 2rem;
-  margin-bottom: 1rem;
-  font-size: 1.2rem;
-  font-weight: 600;
-  color: #222;
-  border-bottom: 1px solid #e5e5e5;
-  padding-bottom: 0.5rem;
-}
-
-.option-box {
-  margin-bottom: 1rem;
-  padding: 1.2rem;
-  border-radius: 12px;
-  background-color: #f9fafb;
-  border: 1px solid #eaeaea;
-  transition: box-shadow 0.2s ease;
-}
-.option-box:hover {
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-}
-
-.button {
-  display: flex;
-  gap: 12px;
-  justify-content: center;
-  margin-top: 2rem;
-}
-
-.likebutton,
-.signupbutton {
-  flex: 1;
-  display: flex;
-  justify-content: center;
-}
-
-.like,
-.liked,
-.join,
-.joined {
-  width: 100%;
-  max-width: 160px;
-  padding: 0.75rem 1rem;
-  font-size: 0.95rem;
-  font-weight: 500;
-  border-radius: 9999px;
-  border: 1.5px solid #d1d5db;
-  background-color: white;
   color: #1f2937;
-  cursor: pointer;
-  transition: all 0.2s ease-in-out;
+  margin: 0 0 8px 0;
 }
 
-.like:hover,
-.liked:hover,
-.join:hover,
-.joined:hover {
-  background-color: #f3f4f6;
+.empty-state p {
+  font-size: 14px;
+  color: #6b7684;
+  margin: 0;
 }
 
-.liked {
-  background-color: #f0f0f0;
-  border-color: #999;
-  color: #111;
+.log-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
-.join {
-  background-color: #2563eb;
+.log-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 16px;
+  background: #ffffff;
+  border-radius: 12px;
+  transition: background-color 0.2s ease;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+}
+
+.log-item:hover {
+  background: #f9fafb;
+}
+
+.log-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
   color: white;
-  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 600;
+  flex-shrink: 0;
 }
 
-.join:hover {
-  background-color: #1d4ed8;
+.log-content {
+  flex: 1;
+  min-width: 0;
 }
 
-.joined {
-  background-color: #e0f2fe;
-  color: #0369a1;
-  border: 1.5px solid #38bdf8;
+.log-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
 }
 
-.joined:hover {
-  background-color: #bae6fd;
+.log-name {
+  font-size: 15px;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.log-amount {
+  font-size: 15px;
+  font-weight: 700;
+  color: #22c55e;
+}
+
+.log-details {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.log-memo {
+  font-size: 13px;
+  color: #475569;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.log-memo.placeholder {
+  font-style: italic;
+  opacity: 0.6;
+}
+
+.log-time {
+  font-size: 12px;
+  color: #94a3b8;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.saving-log::-webkit-scrollbar {
+  width: 4px;
+}
+
+.saving-log::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.saving-log::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 2px;
+}
+
+.saving-log::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+@media (max-width: 480px) {
+  .log-item {
+    padding: 12px;
+  }
+
+  .log-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+
+  .log-details {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+
+  .log-memo {
+    white-space: normal;
+    line-height: 1.4;
+  }
 }
 </style>

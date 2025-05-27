@@ -3,7 +3,10 @@
     <div class="header">
       <div class="header-content">
         <h1>내 주변 은행 찾기</h1>
-        <p class="subtitle">원하는 지역과 은행을 선택하여 가까운 지점을 찾아보세요</p>
+        <p class="subtitle">원하는 지역과 은행을 선택하여 가까운 지점을 찾아보세요.</p>
+        <br />
+        <br />
+        <hr />
       </div>
     </div>
 
@@ -323,7 +326,14 @@ onMounted(async () => {
 /* 헤더 */
 .header {
   text-align: center;
-  margin-bottom: 40px;
+  margin-top: 10px;
+  /* margin-bottom: 10px; */
+  /* padding-bottom: 50px; */
+}
+
+hr {
+  color: #eeeeee;
+  font-weight: bold;
 }
 
 .header-content h1 {
@@ -334,7 +344,7 @@ onMounted(async () => {
 
 .subtitle {
   font-size: 1.1rem;
-  color: rgba(255, 255, 255, 0.9);
+  color: black;
   margin: 0;
 }
 
@@ -343,10 +353,10 @@ onMounted(async () => {
   width: 100%;
   max-width: 1400px;
   margin: 0 auto;
-  padding: 0 20px;
+  /* padding: 0 0px; */
   display: flex;
   flex-direction: column;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+  /* box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1); */
   border-radius: 20px;
   /* gap: 32px; */
 }

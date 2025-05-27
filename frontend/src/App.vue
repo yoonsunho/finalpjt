@@ -8,7 +8,7 @@
         </keep-alive>
       </RouterView>
     </div>
-    <FooterComponent />
+    <!-- <FooterComponent /> -->
   </div>
 </template>
 
@@ -26,6 +26,7 @@ const route = useRoute()
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  margin-bottom: 80px;
 }
 
 .inner-wrapper {
@@ -36,7 +37,7 @@ const route = useRoute()
 
 .with-padding {
   max-width: 1200px;
-  margin: 0 auto;
+  margin: 30px auto;
   width: 100%;
 }
 </style>

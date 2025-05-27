@@ -63,22 +63,6 @@
       </div>
     </div>
   </div>
-
-  <div v-for="comment in store.comments" :key="comment.id" class="">
-    <!-- 수정 중일 때 -->
-    <div v-if="store.editCommentId === comment.id">
-      <input v-model="store.editContent" class="border p-1 w-full" />
-      <button @click="store.updateComment(comment.id)" class="text-blue-600 mr-2">저장</button>
-      <button @click="store.editCommentId = null" class="text-gray-500">취소</button>
-    </div>
-    <!-- 평소 표시 -->
-    <div v-else>
-      <div v-if="accountStore.isLogin && comment.user === accountStore.userInfo.nickname">
-        <button @click="store.startEdit(comment)" class="text-sm text-blue-600 mr-2">수정</button>
-        <button @click="store.deleteComment(comment.id)" class="text-sm text-red-600">삭제</button>
-      </div>
-    </div>
-  </div>
 </template>
 
 <script setup>
@@ -129,59 +113,60 @@ onMounted(() => {
   store.getComments(articleId)
 })
 </script>
-
 <style scoped>
 * {
   font-family: 'Pretendard', sans-serif;
   box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
 .article-container {
-  max-width: 800px;
-  margin: 2rem auto;
-  padding: 0 1rem;
+  width: 100%;
+  margin: 32px auto;
+  /* padding: 0 16px; */
 }
 
 .article-card {
   background: #ffffff;
+  border: 1px solid #f1f3f5;
   border-radius: 20px;
-  padding: 2.5rem;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+  padding: 50px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
   display: flex;
   flex-direction: column;
-  gap: 2rem;
+  gap: 32px;
 }
 
 .article-header {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 8px;
 }
 
 .article-category {
   font-size: 13px;
   font-weight: 600;
-  color: #3b82f6;
-  letter-spacing: 0.5px;
+  color: #3182f6;
 }
 
 .article-title {
-  font-size: 28px;
+  font-size: 26px;
   font-weight: 700;
-  color: #111827;
-  margin: 0;
+  color: #191f28;
+  margin-bottom: 4px;
 }
 
 .article-meta {
   font-size: 13px;
-  color: #6b7280;
+  color: #8b95a1;
   display: flex;
-  gap: 0.75rem;
+  gap: 8px;
 }
 
 .article-content {
   font-size: 15px;
-  color: #374151;
+  color: #4e5968;
   line-height: 1.7;
   white-space: pre-wrap;
 }
@@ -191,78 +176,82 @@ onMounted(() => {
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
+  gap: 8px;
 }
 
 .like-button {
-  background-color: #3b82f6;
-  color: white;
+  background-color: #3182f6;
+  color: #ffffff;
   font-weight: 600;
-  padding: 0.6rem 1.2rem;
+  padding: 10px 20px;
   border-radius: 9999px;
   font-size: 14px;
   border: none;
-  transition: background-color 0.2s ease;
   cursor: pointer;
+  transition: all 0.2s ease;
 }
 
 .like-button:hover {
-  background-color: #2563eb;
+  background-color: #1b64da;
 }
 
 .article-footer > div button {
-  margin-left: 0.5rem;
-  background: transparent;
-  border: 1px solid #d1d5db;
-  padding: 0.4rem 0.9rem;
+  margin-left: 8px;
+  background: #f9fafb;
+  border: 1px solid #e5e8eb;
+  padding: 8px 16px;
   font-size: 13px;
   border-radius: 9999px;
+  color: #4e5968;
   cursor: pointer;
-  color: #374151;
-  transition: background-color 0.2s ease;
+  transition: all 0.2s ease;
 }
 
 .article-footer > div button:hover {
-  background-color: #f3f4f6;
+  background-color: #f1f3f5;
 }
 
 .divider {
   border: none;
-  border-top: 1px solid #e5e7eb;
+  border-top: 1px solid #e5e8eb;
 }
 
 .comment-container {
-  max-width: 800px;
-  margin: 2rem auto;
-  padding: 0 1rem;
+  margin-top: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
 .comment-container .border {
-  background: #f9fafb;
+  background: #f8f9fa;
   border-radius: 12px;
-  padding: 1rem;
+  padding: 16px;
   font-size: 14px;
   color: #374151;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  border: 1px solid #e5e8eb;
 }
 
 .comment-container input {
   border: 1px solid #d1d5db;
-  padding: 0.5rem 0.75rem;
+  padding: 10px 14px;
   width: 100%;
-  border-radius: 8px;
-  margin-bottom: 0.5rem;
+  border-radius: 10px;
+  margin-bottom: 8px;
+  font-size: 14px;
 }
 
 .comment-container button {
   font-size: 13px;
-  margin-right: 0.5rem;
+  margin-right: 6px;
   border: none;
   background: none;
   cursor: pointer;
+  font-weight: 500;
 }
 
 .comment-container .text-blue-600 {
-  color: #3b82f6;
+  color: #3182f6;
 }
 
 .comment-container .text-red-600 {
@@ -270,11 +259,43 @@ onMounted(() => {
 }
 
 .comment-container .text-gray-500 {
-  color: #6b7280;
+  color: #8b95a1;
 }
 
 .text-xs {
   font-size: 12px;
   color: #9ca3af;
+}
+
+/* 반응형 */
+@media (max-width: 640px) {
+  .article-card {
+    padding: 24px;
+  }
+
+  .article-title {
+    font-size: 22px;
+  }
+
+  .like-button {
+    width: 100%;
+    text-align: center;
+  }
+
+  .article-footer {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .article-footer > div {
+    width: 100%;
+    margin-top: 8px;
+  }
+
+  .article-footer > div button {
+    width: 100%;
+    margin-left: 0;
+    margin-top: 8px;
+  }
 }
 </style>

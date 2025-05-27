@@ -145,38 +145,62 @@ const save = async () => {
 * {
   font-family: Pretendard;
 }
-form {
-  margin-top: 1rem;
+.profile-category-info {
+  background: #fff;
+  padding: 40px;
+  border-radius: 20px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+  max-width: 600px;
+  margin: 40px auto;
 }
 form label {
   display: block;
-  margin-bottom: 1rem;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 1.2rem;
 }
 input,
 select {
-  border: 1px solid #191f28;
-  padding: 0.5rem;
+  border: 1px solid #dcdcdc;
+  border-radius: 12px;
+  padding: 12px;
   width: 100%;
-  max-width: 400px;
-  margin-top: 0.25rem;
+  max-width: 100%;
+  margin-top: 0.4rem;
+  font-size: 15px;
+  background-color: #fdfdfd;
 }
 input[disabled] {
-  background-color: #f5f5f5;
-  color: #666;
+  background-color: #f0f0f0;
+  color: #888;
+}
+.button-group {
+  margin-top: 2rem;
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
 }
 .button-back,
 .button-save {
-  padding: 0.5rem 1rem;
+  padding: 10px 20px;
   border: none;
+  border-radius: 12px;
   color: white;
-  margin-right: 0.5rem;
-  cursor: pointer;
   font-weight: bold;
+  font-size: 15px;
+  cursor: pointer;
+  transition: background 0.3s;
 }
 .button-back {
-  background-color: dodgerblue;
+  background-color: #64748b;
 }
 .button-save {
   background-color: #191f28;
+}
+.button-back:hover {
+  background-color: #475569;
+}
+.button-save:hover {
+  background-color: #0f172a;
 }
 </style>

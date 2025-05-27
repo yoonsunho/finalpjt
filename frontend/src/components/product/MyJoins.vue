@@ -122,15 +122,13 @@ onMounted(() => {
 </script>
 
 <style scoped>
-* {
-  font-family: Pretendard;
-}
-.my-joins,
 .my-interests {
   max-width: 720px;
-  margin: 0 auto;
+  margin: 40px auto;
   padding: 32px 20px;
-  background-color: #f8f9fa;
+  background-color: #ffffff;
+  border-radius: 20px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
   font-family: 'Pretendard', sans-serif;
 }
 
@@ -139,7 +137,7 @@ h1 {
   font-weight: 600;
   color: #212529;
   text-align: center;
-  margin-bottom: 24px;
+  margin-bottom: 32px;
 }
 
 .section h2 {
@@ -147,25 +145,30 @@ h1 {
   font-weight: 500;
   border-left: 4px solid #00aaff;
   padding-left: 12px;
-  margin-bottom: 16px;
+  margin-bottom: 20px;
   color: #343a40;
 }
 
 .products-list {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 16px;
 }
 
 .product-item {
-  background-color: #ffffff;
+  background-color: #f9f9f9;
   border-radius: 16px;
   padding: 20px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
-  border: 1px solid #dee2e6;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+  border: 1px solid #e5e7eb;
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
+  transition: box-shadow 0.2s ease;
+}
+
+.product-item:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
 }
 
 .product-item h3 {
@@ -191,7 +194,7 @@ h1 {
   color: #ff4d4f;
   border: 1px solid #ff4d4f;
   padding: 6px 14px;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   border-radius: 8px;
   cursor: pointer;
   transition: all 0.2s ease-in-out;
@@ -204,7 +207,7 @@ h1 {
 
 .no-data {
   text-align: center;
-  padding: 40px;
+  padding: 48px 0;
   color: #868e96;
   font-size: 1rem;
 }

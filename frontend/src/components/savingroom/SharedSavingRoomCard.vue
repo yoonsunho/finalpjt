@@ -17,25 +17,40 @@ defineProps({
   },
 })
 </script>
+
 <style scoped>
 .room-card {
-  border: 1px solid #ddd;
-  padding: 1rem;
-  border-radius: 10px;
-  cursor: pointer;
-  transition: 0.2s;
+  padding: 24px;
+  border-radius: 16px;
   background: white;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+  transition: all 0.3s ease;
 }
 
 .room-card:hover {
-  background-color: #f9f9f9;
-  transform: scale(1.01);
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+  background-color: #f9fafb;
+}
+
+.room-card h3 {
+  font-size: 18px;
+  font-weight: 700;
+  color: #1f2937;
+  margin-bottom: 12px;
+}
+
+.room-card p {
+  font-size: 14px;
+  color: #475569;
+  margin: 4px 0;
+  line-height: 1.4;
 }
 
 .creator {
-  margin-top: 0.5rem;
+  margin-top: 12px;
+  font-size: 13px;
   color: #64748b;
-  font-size: 14px;
 }
 </style>

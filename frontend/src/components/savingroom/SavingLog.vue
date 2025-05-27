@@ -92,7 +92,7 @@ const formatTime = (dateString) => {
 .empty-state h3 {
   font-size: 18px;
   font-weight: 600;
-  color: #191f28;
+  color: #1f2937;
   margin: 0 0 8px 0;
 }
 
@@ -110,23 +110,25 @@ const formatTime = (dateString) => {
 
 .log-item {
   display: flex;
-  align-items: flex-start;
-  gap: 12px;
-  padding: 16px;
-  background: #f8f9fa;
-  border-radius: 12px;
-  transition: background-color 0.2s ease;
+  align-items: center;
+  padding: 12px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  min-height: 60px; /* 일정 높이 확보 */
+  justify-content: flex-start; /* center → flex-start */
+  gap: 12px; /* 간격 살짝 더 넓게 */
+  background: white;
 }
 
 .log-item:hover {
-  background: #f1f3f4;
+  background: #f1f5f9;
 }
 
 .log-avatar {
   width: 40px;
   height: 40px;
   border-radius: 20px;
-  background: linear-gradient(135deg, #4285f4, #34a853);
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
   color: white;
   display: flex;
   align-items: center;
@@ -151,13 +153,13 @@ const formatTime = (dateString) => {
 .log-name {
   font-size: 15px;
   font-weight: 600;
-  color: #191f28;
+  color: #1f2937;
 }
 
 .log-amount {
   font-size: 15px;
   font-weight: 700;
-  color: #34a853;
+  color: #22c55e;
 }
 
 .log-details {
@@ -169,7 +171,7 @@ const formatTime = (dateString) => {
 
 .log-memo {
   font-size: 13px;
-  color: #6b7684;
+  color: #475569;
   flex: 1;
   min-width: 0;
   overflow: hidden;
@@ -179,17 +181,16 @@ const formatTime = (dateString) => {
 
 .log-memo.placeholder {
   font-style: italic;
-  opacity: 0.7;
+  opacity: 0.6;
 }
 
 .log-time {
   font-size: 12px;
-  color: #9aa0a6;
+  color: #94a3b8;
   font-weight: 500;
   white-space: nowrap;
 }
 
-/* 스크롤바 스타일링 */
 .saving-log::-webkit-scrollbar {
   width: 4px;
 }
@@ -199,15 +200,14 @@ const formatTime = (dateString) => {
 }
 
 .saving-log::-webkit-scrollbar-thumb {
-  background: #dadce0;
+  background: #cbd5e1;
   border-radius: 2px;
 }
 
 .saving-log::-webkit-scrollbar-thumb:hover {
-  background: #bdc1c6;
+  background: #94a3b8;
 }
 
-/* 반응형 */
 @media (max-width: 480px) {
   .log-item {
     padding: 12px;

@@ -13,10 +13,11 @@
           <path d="M19 12H5M12 19l-7-7 7-7" />
         </svg>
       </button>
-      <div class="header-content">
-        <h1>{{ room.name }}</h1>
-        <p class="subtitle">{{ room.description }}</p>
-        <p class="owner">{{ room.created_by.nickname }}</p>
+
+      <div class="header-text">
+        <h1 class="room-title">{{ room.name }}</h1>
+        <p class="room-description">{{ room.description }}</p>
+        <p class="room-owner">by {{ room.created_by.nickname }}</p>
       </div>
     </div>
 
@@ -49,24 +50,24 @@
             </svg>
             <h2>목표 정보</h2>
           </div>
-          <div class="goal-details">
-            <div class="goal-item">
+          <ul class="goal-list">
+            <li class="goal-item">
               <span class="label">목표 금액</span>
-              <span class="value">{{ room.goal_amount?.toLocaleString?.() }}원</span>
-            </div>
-            <div class="goal-item">
+              <span class="value highlight">{{ room.goal_amount?.toLocaleString?.() }}원</span>
+            </li>
+            <li class="goal-item">
               <span class="label">현재 모은 금액</span>
               <span class="value">{{ room.total_saved?.toLocaleString?.() }}원</span>
-            </div>
-            <div class="goal-item">
+            </li>
+            <li class="goal-item">
               <span class="label">현재 달성률</span>
               <span class="value achievement-rate">{{ room.achievement_rate }}%</span>
-            </div>
-            <div class="goal-item">
+            </li>
+            <li class="goal-item">
               <span class="label">마감일</span>
               <span class="value">{{ formatDate(room.deadline) }}</span>
-            </div>
-          </div>
+            </li>
+          </ul>
           <div class="progress-bar">
             <div
               class="progress-fill"
@@ -373,196 +374,159 @@ onBeforeUnmount(() => {
   socket.value = null
 })
 </script>
-
 <style scoped>
 .room-detail {
-  max-width: 1200px;
+  /* max-width: 720px; */
+  width: 100%;
   margin: 0 auto;
-  padding: 32px 24px;
-  min-height: 100vh;
-  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  padding: 24px 16px;
+  background: #fff;
 }
-
 .header {
   display: flex;
-  align-items: flex-start;
-  gap: 20px;
-  margin-bottom: 40px;
+  align-items: flex-start; /* center → flex-start */
+  flex-direction: column; /* 모바일에서도 자연스럽게 유지되도록 */
+  gap: 8px;
+  margin-bottom: 24px;
 }
 
 .btn-back {
-  background: white;
+  background: none;
   border: none;
-  padding: 12px;
-  border-radius: 12px;
+  padding: 8px;
+  border-radius: 8px;
   cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  color: #64748b;
+  color: #4b5563;
+  flex-shrink: 0;
 }
-
 .btn-back:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
-  color: #3b82f6;
+  background: #f1f5f9;
 }
 
-.header-content h1 {
-  color: #1e293b;
-  margin: 0 0 8px 0;
-  font-size: 32px;
-  font-weight: 700;
-  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-.subtitle {
-  color: #64748b;
-  margin: 0;
-  font-size: 16px;
-  font-weight: 400;
-  line-height: 1.6;
-}
-
-.loading {
+.header-text {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 80px 20px;
-  background: white;
-  border-radius: 20px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  gap: 4px;
 }
-
-.spinner {
-  width: 40px;
-  height: 40px;
-  border: 3px solid #e2e8f0;
-  border-top: 3px solid #3b82f6;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-  margin-bottom: 16px;
-}
-
-@keyframes spin {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
-}
-
-.loading p {
-  color: #64748b;
-  font-size: 16px;
-  margin: 0;
-}
-
-.error {
-  text-align: center;
-  padding: 60px 40px;
-  background: white;
-  border-radius: 20px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-  border-left: 4px solid #ef4444;
-}
-
-.error-icon {
-  font-size: 48px;
-  margin-bottom: 16px;
-}
-
-.error h3 {
-  color: #1e293b;
-  margin: 0 0 12px 0;
+.header-content h1 {
   font-size: 24px;
   font-weight: 600;
+  color: #1f2937;
+}
+.subtitle,
+.owner {
+  font-size: 14px;
+  color: #6b7280;
+}
+.room-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: #111827;
 }
 
-.error p {
-  color: #64748b;
-  margin: 0 0 24px 0;
-  font-size: 16px;
+.room-description {
+  font-size: 14px;
+  color: #6b7280;
 }
 
+.room-owner {
+  font-size: 13px;
+  color: #9ca3af;
+  font-style: italic;
+}
+.loading,
+.error {
+  text-align: center;
+  padding: 32px;
+  background: #f9fafb;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+}
+.error-icon {
+  font-size: 32px;
+  color: #ef4444;
+}
 .btn-retry {
-  background: linear-gradient(135deg, #ef4444, #dc2626);
+  background: #ef4444;
   color: white;
   border: none;
-  padding: 12px 24px;
+  padding: 10px 20px;
   border-radius: 8px;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.btn-retry:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+  margin-top: 16px;
 }
 
 .content {
   display: flex;
   flex-direction: column;
-  gap: 32px;
+  gap: 24px;
 }
 
-.goal-section {
-  background: white;
-  border-radius: 20px;
-  padding: 32px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+.goal-section,
+.saving-section,
+.participants-section,
+.log-section {
+  background: #f9fafb;
+  border-radius: 12px;
+  padding: 20px;
+  border: 1px solid #e5e7eb;
+}
+
+.goal-details {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  font-size: 14px;
+  color: #374151;
+  row-gap: 12px;
+  column-gap: 32px; /* 기존 16px보다 넉넉하게 */
+}
+.goal-card {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 
 .goal-header {
   display: flex;
   align-items: center;
-  gap: 12px;
-  margin-bottom: 24px;
-}
-
-.goal-header svg {
-  color: #3b82f6;
-}
-
-.goal-header h2 {
-  color: #1e293b;
-  font-size: 24px;
+  gap: 8px;
+  font-size: 18px;
   font-weight: 600;
-  margin: 0;
+  color: #1f2937;
 }
 
-.goal-details {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 24px;
-  margin-bottom: 24px;
+.goal-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
 .goal-item {
   display: flex;
-  flex-direction: column;
-  gap: 8px;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid #e5e7eb;
+}
+.goal-item:last-child {
+  border-bottom: none;
 }
 
 .goal-item .label {
-  color: #64748b;
+  color: #6b7280;
   font-size: 14px;
   font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
 }
-
 .goal-item .value {
-  color: #1e293b;
-  font-size: 20px;
-  font-weight: 700;
+  font-size: 15px;
+  font-weight: 600;
+  color: #1f2937;
+}
+.goal-item .value.highlight {
+  color: #3b82f6;
+}
+.goal-item .value.achievement-rate {
+  color: #10b981;
 }
 
 .achievement-rate {
@@ -570,193 +534,103 @@ onBeforeUnmount(() => {
 }
 
 .progress-bar {
-  width: 100%;
-  height: 12px;
-  background: #e2e8f0;
-  border-radius: 6px;
+  margin-top: 16px;
+  height: 8px;
+  background: #e5e7eb;
+  border-radius: 4px;
   overflow: hidden;
 }
-
 .progress-fill {
   height: 100%;
-  background: linear-gradient(135deg, #10b981, #059669);
-  border-radius: 6px;
+  background: #10b981;
   transition: width 0.3s ease;
 }
 
-.join-section {
-  text-align: center;
-  padding: 40px;
-  background: white;
-  border-radius: 20px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-}
-
 .btn-join {
-  background: linear-gradient(135deg, #10b981, #059669);
+  background: #3b82f6;
   color: white;
   border: none;
-  padding: 16px 32px;
-  border-radius: 12px;
-  font-size: 16px;
+  padding: 12px 24px;
+  border-radius: 8px;
   font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+  font-size: 14px;
+  transition: background 0.2s ease;
 }
-
-.btn-join:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
-}
-
 .btn-join:disabled {
-  opacity: 0.7;
-  cursor: not-allowed;
-  transform: none;
+  background: #9ca3af;
 }
-
-.saving-section,
-.participants-section,
-.log-section {
-  background: white;
-  border-radius: 20px;
-  padding: 32px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+.btn-join:hover:not(:disabled) {
+  background: #2563eb; /* 살짝 어두운 파랑으로 반응 */
 }
-
 .section-header {
   display: flex;
   align-items: center;
-  gap: 12px;
-  margin-bottom: 24px;
-  padding-bottom: 16px;
-  border-bottom: 2px solid #e2e8f0;
-}
-
-.section-header svg {
-  color: #3b82f6;
-}
-
-.section-header h2 {
-  color: #1e293b;
-  font-size: 20px;
+  gap: 8px;
+  font-size: 16px;
   font-weight: 600;
-  margin: 0;
-  flex: 1;
-}
-
-.btn-refresh {
-  background: #f1f5f9;
-  border: 1px solid #e2e8f0;
-  padding: 8px;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  color: #64748b;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.btn-refresh:hover {
-  background: #e2e8f0;
-  color: #3b82f6;
-  transform: rotate(90deg);
+  margin-bottom: 16px;
+  color: #1f2937;
 }
 
 .participants-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 16px;
+  grid-template-columns: 1fr;
+  gap: 12px;
 }
 
 .participant-card {
   display: flex;
   align-items: center;
-  gap: 16px;
-  padding: 20px;
-  background: #f8fafc;
-  border-radius: 12px;
-  border: 1px solid #e2e8f0;
-  transition: all 0.3s ease;
-}
-
-.participant-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  padding: 12px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  min-height: 60px; /* 일정 높이 확보 */
+  justify-content: flex-start; /* center → flex-start */
+  gap: 12px; /* 간격 살짝 더 넓게 */
+  background: white;
 }
 
 .participant-avatar {
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  border-radius: 20px;
   background: linear-gradient(135deg, #3b82f6, #1d4ed8);
   color: white;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: 700;
-  font-size: 18px;
+  font-size: 14px;
+  font-weight: 600;
+  flex-shrink: 0;
 }
 
 .participant-info h3 {
-  color: #1e293b;
-  font-size: 16px;
-  font-weight: 600;
-  margin: 0 0 4px 0;
-}
-
-.participant-amount {
-  color: #10b981;
   font-size: 14px;
   font-weight: 600;
+  color: #1f2937;
   margin: 0;
 }
+.participant-amount {
+  font-size: 13px;
+  color: #10b981;
+  font-weight: 500;
+}
 
-/* 반응형 디자인 */
 @media (max-width: 768px) {
-  .room-detail {
-    padding: 16px;
-  }
-
-  .header {
-    flex-direction: column;
-    gap: 16px;
-  }
-
-  .header-content h1 {
-    font-size: 24px;
-  }
-
-  .goal-section,
-  .saving-section,
-  .participants-section,
-  .log-section {
-    padding: 24px;
-  }
-
   .goal-details {
     grid-template-columns: 1fr;
   }
-
   .participants-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr 1fr;
   }
-}
-
-@media (max-width: 480px) {
+  .header {
+    flex-direction: column;
+  }
   .header-content h1 {
     font-size: 20px;
   }
-
   .btn-join {
-    padding: 12px 24px;
-    font-size: 14px;
+    width: 100%;
   }
 }
 </style>

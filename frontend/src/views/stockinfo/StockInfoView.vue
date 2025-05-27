@@ -1,4 +1,12 @@
 <template>
+  <div>
+    <div class="header-content">
+      <h1 class="title">주식 정보 검색</h1>
+      <p class="subtext">관심 종목과 관련된 동영상을 검색할 수 있어요.</p>
+      <br /><br />
+      <hr />
+    </div>
+  </div>
   <div class="container">
     <div class="search-container">
       <div class="search-box">
@@ -6,7 +14,7 @@
           type="text"
           ref="searchInput"
           v-model="searchQuery"
-          placeholder="YouTube 동영상을 검색해보세요"
+          placeholder="YouTube 동영상을 검색해 보세요."
           @keyup.enter="searchVideos"
           class="search-input"
         />
@@ -42,7 +50,7 @@
       <div v-else-if="!hasSearched" class="status-message welcome-state">
         <div class="search-icon">🔍</div>
         <h3>영상을 찾아보세요</h3>
-        <p>관심 있는 주제나 키워드를 검색해보세요</p>
+        <p>관심 있는 주제나 키워드를 검색해 보세요.</p>
       </div>
 
       <div v-else-if="videos.length === 0" class="status-message no-results">
@@ -171,28 +179,34 @@ const searchVideos = () => {
 </script>
 
 <style scoped>
+* {
+  font-family: 'Pretendard', sans-serif;
+  box-sizing: border-box;
+}
+
 .container {
   min-height: 100vh;
-
   padding: 20px;
 }
 
 .search-container {
   display: flex;
   justify-content: center;
-  margin-bottom: 40px;
   padding-top: 40px;
+  margin-bottom: 40px;
 }
 
 .search-box {
   display: flex;
-  background: rgba(255, 255, 255, 0.95);
-  border-radius: 50px;
-  padding: 8px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-  backdrop-filter: blur(10px);
+  align-items: center;
+  gap: 8px;
   max-width: 600px;
   width: 100%;
+  padding: 8px;
+  border-radius: 50px;
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.03);
+  backdrop-filter: blur(10px);
 }
 
 .search-input {
@@ -201,81 +215,101 @@ const searchVideos = () => {
   border: none;
   background: transparent;
   font-size: 16px;
-  outline: none;
   color: #333;
+  outline: none;
 }
 
 .search-input::placeholder {
   color: #888;
 }
+
 .search-input:focus {
-  outline: none;
   border: 2px solid dodgerblue;
   border-radius: 50px;
 }
+
 .search-button {
   display: flex;
   align-items: center;
   gap: 8px;
   padding: 16px 24px;
   background: dodgerblue;
-  /* background: linear-gradient(135deg, #ff5252, #e91e63); */
   color: white;
   border: none;
   border-radius: 50px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
-  white-space: nowrap;
 }
 
 .search-button:hover {
-  /* background: linear-gradient(135deg, #ff5252, #e91e63); */
-
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(255, 107, 107, 0.4);
+  box-shadow: 0 4px 10px rgba(30, 144, 255, 0.4);
 }
 
 .content {
-  max-width: 1200px;
+  /* max-width: 1200px; */
+  width: 100%;
   margin: 0 auto;
 }
 
+.header {
+  text-align: center;
+  margin-top: 10px;
+  /* margin-bottom: 10px; */
+  /* padding-bottom: 50px; */
+}
+
+hr {
+  color: #eeeeee;
+  font-weight: bold;
+}
+.header-content h1 {
+  text-align: center;
+  font-size: 2.5rem;
+  font-weight: 700;
+  /* margin-bottom: 8px; */
+}
+
+.subtext {
+  text-align: center;
+  font-size: 1.1rem;
+  color: black;
+  /* margin-bottom: 30px; */
+}
+
+/* 상태 메시지 공통 */
 .status-message {
   text-align: center;
   padding: 60px 20px;
   background: rgba(255, 255, 255, 0.95);
   border-radius: 20px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.04);
   backdrop-filter: blur(10px);
 }
 
-.welcome-state .search-icon {
+.welcome-state .search-icon,
+.error-state .error-icon,
+.no-results .empty-icon {
   font-size: 48px;
   margin-bottom: 20px;
 }
 
-.welcome-state h3 {
-  font-size: 28px;
+.welcome-state h3,
+.no-results h3 {
+  font-size: 24px;
+  font-weight: 600;
   color: #333;
   margin-bottom: 12px;
-  font-weight: 600;
 }
 
-.welcome-state p {
+.status-message p {
   font-size: 16px;
   color: #666;
-  margin: 0;
-}
-
-.error-state .error-icon {
-  font-size: 48px;
-  margin-bottom: 20px;
 }
 
 .error-state p {
   color: #e74c3c;
-  font-size: 16px;
   margin-bottom: 20px;
 }
 
@@ -285,8 +319,8 @@ const searchVideos = () => {
   color: white;
   border: none;
   border-radius: 25px;
-  cursor: pointer;
   font-weight: 600;
+  cursor: pointer;
   transition: background-color 0.3s;
 }
 
@@ -294,65 +328,45 @@ const searchVideos = () => {
   background: #2980b9;
 }
 
-.no-results .empty-icon {
-  font-size: 48px;
-  margin-bottom: 20px;
-}
-
-.no-results h3 {
-  font-size: 24px;
-  color: #333;
-  margin-bottom: 12px;
-}
-
-.no-results p {
-  color: #666;
-  font-size: 16px;
-}
-
 .spinner {
   width: 40px;
   height: 40px;
+  margin: 0 auto 20px;
   border: 4px solid #f3f3f3;
   border-top: 4px solid #3498db;
   border-radius: 50%;
   animation: spin 1s linear infinite;
-  margin: 0 auto 20px;
 }
 
 @keyframes spin {
-  0% {
-    transform: rotate(0deg);
-  }
   100% {
     transform: rotate(360deg);
   }
 }
 
 .results {
-  background: rgba(255, 255, 255, 0.95);
-  border-radius: 20px;
   padding: 30px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.95);
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
   backdrop-filter: blur(10px);
 }
 
 .results-header {
-  margin-bottom: 30px;
   text-align: center;
+  margin-bottom: 30px;
 }
 
 .results-header h3 {
   font-size: 24px;
+  font-weight: 600;
   color: #333;
   margin-bottom: 8px;
-  font-weight: 600;
 }
 
 .results-header p {
-  color: #666;
   font-size: 14px;
-  margin: 0;
+  color: #666;
 }
 
 .video-grid {
@@ -373,11 +387,11 @@ const searchVideos = () => {
 
 .video-link {
   display: block;
-  text-decoration: none;
-  color: inherit;
-  background: white;
   border-radius: 16px;
   overflow: hidden;
+  background: white;
+  text-decoration: none;
+  color: inherit;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
   transition: all 0.3s ease;
 }
@@ -389,17 +403,17 @@ const searchVideos = () => {
 .thumbnail-container {
   position: relative;
   width: 100%;
-  padding-bottom: 56.25%; /* 16:9 비율 */
+  padding-bottom: 56.25%;
   overflow: hidden;
 }
 
 .thumbnail {
   position: absolute;
-  top: 0;
-  left: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
+  top: 0;
+  left: 0;
   transition: transform 0.3s ease;
 }
 
@@ -412,10 +426,10 @@ const searchVideos = () => {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background: rgba(0, 0, 0, 0.7);
-  border-radius: 50%;
   width: 60px;
   height: 60px;
+  background: rgba(0, 0, 0, 0.7);
+  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -434,9 +448,9 @@ const searchVideos = () => {
 .video-title {
   font-size: 16px;
   font-weight: 600;
-  line-height: 1.4;
-  margin-bottom: 12px;
   color: #333;
+  margin-bottom: 12px;
+  line-height: 1.4;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
@@ -453,10 +467,9 @@ const searchVideos = () => {
 .upload-date {
   font-size: 12px;
   color: #999;
-  margin: 0;
 }
 
-/* 반응형 디자인 */
+/* 반응형 */
 @media (max-width: 768px) {
   .container {
     padding: 10px;
@@ -469,14 +482,13 @@ const searchVideos = () => {
 
   .search-box {
     flex-direction: column;
-    gap: 8px;
     border-radius: 16px;
     padding: 16px;
   }
 
   .search-button {
-    border-radius: 12px;
     justify-content: center;
+    border-radius: 12px;
   }
 
   .video-grid {
@@ -489,7 +501,7 @@ const searchVideos = () => {
   }
 
   .welcome-state h3 {
-    font-size: 24px;
+    font-size: 22px;
   }
 }
 
@@ -499,7 +511,7 @@ const searchVideos = () => {
   }
 
   .search-input {
-    font-size: 16px; /* iOS 줌 방지 */
+    font-size: 16px;
   }
 }
 </style>

@@ -114,60 +114,81 @@ const handleDelete = () => {
   }
 }
 </script>
-
 <style scoped>
 * {
-  font-family: Pretendard;
+  font-family: 'Pretendard', sans-serif;
+  box-sizing: border-box;
 }
+
 .create-article {
-  max-width: 600px;
-  margin: 0 auto;
-  padding: 2rem 1rem;
+  max-width: 640px;
+  margin: 40px auto;
+  padding: 32px 20px;
+  background-color: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
 }
 
 .form-title {
-  font-size: 1.5rem;
-  font-weight: 600;
-  margin-bottom: 2rem;
+  font-size: 24px;
+  font-weight: 700;
+  color: #191f28;
   text-align: center;
+  margin-bottom: 32px;
 }
 
 .input,
 .textarea {
   width: 100%;
-  border: none;
-  border-bottom: 1px solid #ccc;
-  padding: 0.75rem 0;
-  font-size: 1rem;
-  margin-bottom: 1.5rem;
-  background-color: transparent;
+  padding: 14px 16px;
+  font-size: 15px;
+  border: 1px solid #e5e8eb;
+  border-radius: 12px;
+  background-color: #f9fafb;
+  margin-bottom: 20px;
+  transition: border-color 0.2s ease;
 }
 
 .input:focus,
 .textarea:focus {
-  border-bottom: 1px solid #000;
+  border-color: #3182f6;
+  background-color: #ffffff;
   outline: none;
+}
+
+.textarea {
+  resize: vertical;
+  min-height: 180px;
 }
 
 .submit-btn,
 .delete-btn {
   width: 100%;
-  padding: 0.9rem 0;
+  padding: 14px;
+  font-size: 15px;
   font-weight: 600;
-  font-size: 1rem;
-  border: none;
-  border-radius: 10px;
+  border-radius: 12px;
   cursor: pointer;
-  margin-bottom: 1rem;
+  transition: background-color 0.2s ease;
+  border: none;
+  margin-bottom: 12px;
 }
 
 .submit-btn {
-  background: #000;
-  color: #fff;
+  background-color: #3182f6;
+  color: white;
+}
+
+.submit-btn:hover {
+  background-color: #1b64da;
 }
 
 .delete-btn {
-  background: #eee;
-  color: #000;
+  background-color: #f1f3f5;
+  color: #4e5968;
+}
+
+.delete-btn:hover {
+  background-color: #e5e8eb;
 }
 </style>

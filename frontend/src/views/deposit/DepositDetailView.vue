@@ -1,4 +1,5 @@
 <template>
+  <!-- <h1>예금 상품 목록</h1> -->
   <div v-if="product">
     <h1 class="deposit_product_name">{{ product.fin_prdt_nm }}</h1>
     <!-- <h5>id: {{ product.id }}</h5> -->
@@ -138,76 +139,72 @@ watch(
 * {
   font-family: 'Pretendard', sans-serif;
   box-sizing: border-box;
-}
-
-.product-detail {
-  max-width: 760px;
-  margin: 3rem auto;
-  padding: 2.5rem;
-  border-radius: 20px;
-  background-color: #ffffff;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+  margin: 0;
+  padding: 0;
 }
 
 .deposit_product_name {
-  text-align: center;
-  font-size: 28px;
+  font-size: 24px;
   font-weight: 700;
-  color: #111827;
-  margin-bottom: 2rem;
+  color: #191f28;
+  text-align: center;
+  margin-bottom: 24px;
 }
 
-h5 {
-  text-align: center;
-  color: #6b7280;
-  margin-bottom: 1.5rem;
+.product-detail {
+  max-width: 700px;
+  margin: 32px auto;
+  padding: 24px;
+  background: #ffffff;
+  border-radius: 16px;
+  border: 1px solid #f2f4f6;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
 }
 
 p {
-  font-size: 15px;
-  color: #374151;
-  margin: 0.5rem 0;
-  line-height: 1.6;
+  font-size: 14px;
+  color: #4e5968;
+  margin-bottom: 10px;
+  line-height: 1.5;
 }
 
 h2 {
-  margin-top: 2rem;
   font-size: 18px;
   font-weight: 600;
-  color: #1f2937;
-  border-bottom: 1px solid #e5e7eb;
-  padding-bottom: 0.4rem;
-  margin-bottom: 1rem;
+  color: #191f28;
+  border-bottom: 1px solid #e5e8eb;
+  padding-bottom: 8px;
+  margin-top: 32px;
+  margin-bottom: 16px;
 }
 
 .option-box {
-  margin-bottom: 1rem;
-  padding: 1.25rem 1.5rem;
-  background-color: #f9fafb;
-  border: 1px solid #e5e7eb;
-  border-radius: 16px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+  background: #f9fafb;
+  border: 1px solid #e5e8eb;
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 12px;
 }
 
 .option-box h3 {
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 600;
-  color: #2563eb;
-  margin-bottom: 0.5rem;
+  color: #3182f6;
+  margin-bottom: 8px;
 }
 
 .button {
   display: flex;
-  gap: 12px;
+  flex-wrap: wrap;
   justify-content: center;
-  margin-top: 2.5rem;
+  gap: 12px;
+  margin-top: 28px;
 }
 
 .likebutton,
 .signupbutton {
   flex: 1;
-  display: flex;
-  justify-content: center;
+  max-width: 180px;
 }
 
 .like,
@@ -215,53 +212,72 @@ h2 {
 .join,
 .joined {
   width: 100%;
-  max-width: 160px;
-  padding: 0.75rem 1.25rem;
-  font-size: 15px;
+  padding: 12px;
+  font-size: 14px;
   font-weight: 600;
-  border-radius: 9999px;
-  border: 1px solid transparent;
+  border-radius: 12px;
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .like {
-  background-color: white;
-  border: 1.5px solid #d1d5db;
-  color: #374151;
+  background: #ffffff;
+  border: 1px solid #d1d6db;
+  color: #4e5968;
 }
 
 .like:hover {
-  background-color: #f3f4f6;
+  border-color: #3182f6;
+  color: #3182f6;
+  background: #f0f4f8;
 }
 
 .liked {
-  background-color: #f3f4f6;
-  border: 1.5px solid #9ca3af;
-  color: #1f2937;
-}
-
-.liked:hover {
-  background-color: #e5e7eb;
+  background: #f2f4f6;
+  border: 1px solid #d1d6db;
+  color: #191f28;
 }
 
 .join {
-  background-color: #2563eb;
-  color: white;
+  background: #3182f6;
   border: none;
+  color: #ffffff;
 }
 
 .join:hover {
-  background-color: #1d4ed8;
+  background: #1b64da;
 }
 
 .joined {
-  background-color: #e0f2fe;
+  background: #e8f3ff;
   color: #0369a1;
-  border: 1.5px solid #38bdf8;
+  border: 1px solid #a4d8ff;
 }
 
 .joined:hover {
-  background-color: #bae6fd;
+  background: #d3ecff;
+}
+
+/* 반응형 */
+@media (max-width: 768px) {
+  .product-detail {
+    margin: 24px 16px;
+    padding: 20px;
+  }
+
+  .deposit_product_name {
+    font-size: 20px;
+  }
+
+  .button {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .likebutton,
+  .signupbutton {
+    max-width: none;
+    width: 100%;
+  }
 }
 </style>
