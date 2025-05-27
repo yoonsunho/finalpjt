@@ -218,6 +218,7 @@ const triggerToast = (message) => {
     showToast.value = false
   }, 5000)
 }
+
 const formatDate = (dateString) => {
   if (!dateString) return ''
   const date = new Date(dateString)
@@ -227,21 +228,51 @@ const formatDate = (dateString) => {
     day: 'numeric',
   })
 }
+const checkIfUserJoined = async () => {
+  console.log('=== checkIfUserJoined 시작 ===')
 
-const checkIfUserJoined = () => {
-  if (!room.value?.participants || !accountStore.user?.id) return
-  const isParticipant = room.value.participants.some(
-    (participant) => participant.user.id === accountStore.user.id,
-  )
-  if (isParticipant) joined.value = true
+  if (!accountStore.userInfo) {
+    console.log('사용자 정보가 없어서 가져오는 중...')
+    try {
+      await accountStore.fetchUserInfo()
+    } catch (err) {
+      console.error('사용자 정보를 가져올 수 없습니다:', err)
+      joined.value = false
+      return
+    }
+  }
+
+  const myNickname = accountStore.userInfo?.nickname
+  if (!room.value?.participants || !myNickname) {
+    console.warn('참가자 목록이 없거나 닉네임 없음')
+    joined.value = false
+    return
+  }
+
+  const isUserParticipant = room.value.participants.some((participant, index) => {
+    const participantNickname = participant.user?.nickname
+    console.log(`비교 ${index}:`, participantNickname, 'vs', myNickname)
+    return participantNickname === myNickname
+  })
+
+  joined.value = isUserParticipant
+  console.log('✅ 최종 joined.value 결과:', joined.value)
+
+  if (joined.value && !socket.value) {
+    console.log('WebSocket 설정 시작...')
+    setupWebSocket()
+  }
+
+  console.log('=== checkIfUserJoined 종료 ===')
 }
+
 const buildLogListFromParticipants = () => {
   const logs = []
 
   if (!room.value?.participants) return
 
   for (const participant of room.value.participants) {
-    if (!participant.deposits) continue // <- deposits 없으면 패스
+    if (!participant.deposits) continue
     for (const deposit of participant.deposits) {
       logs.push({
         ...deposit,
@@ -259,118 +290,169 @@ const updateRoomData = async () => {
       headers: { Authorization: `Token ${accountStore.token}` },
     })
     room.value = res.data
-    checkIfUserJoined()
     buildLogListFromParticipants()
+    await checkIfUserJoined()
   } catch (err) {
     console.error('Failed to update room data:', err)
   }
 }
-
 const fetchRoomDetail = async () => {
   try {
     loading.value = true
     error.value = ''
+
+    // ✅ 유저 정보 먼저 불러오기
+    await accountStore.fetchUserInfo()
+
     const res = await axios.get(`${API_URL}/savingroom/${route.params.id}/`, {
       headers: { Authorization: `Token ${accountStore.token}` },
     })
+
     room.value = res.data
-    checkIfUserJoined()
     buildLogListFromParticipants()
-    if (!joined.value) {
-      await tryJoinRoom()
-    } else if (!socket.value) {
-      setupWebSocket()
-    }
+
+    // ✅ 이제 참가 여부 확인
+    await checkIfUserJoined()
+    console.log('현재 유저 ID:', accountStore.userInfo?.id)
+    console.log('최종 joined 상태:', joined.value)
   } catch (err) {
-    console.error('Failed to fetch room detail:', err)
-    if (err.response) {
-      if (err.response.status === 401) error.value = '로그인이 필요합니다.'
-      else if (err.response.status === 404) error.value = '존재하지 않는 저축방입니다.'
-      else if (err.response.status === 500) error.value = '서버에 일시적인 문제가 발생했습니다.'
-      else error.value = '저축방 정보를 불러오는데 실패했습니다.'
-    } else if (err.request) error.value = '네트워크 연결을 확인해주세요.'
-    else error.value = '알 수 없는 오류가 발생했습니다.'
+    error.value = '방 정보를 불러오지 못했어요!'
+    console.error(err)
   } finally {
     loading.value = false
   }
 }
 
-const tryJoinRoom = async () => {
-  try {
-    await axios.post(
-      `${API_URL}/savingroom/${route.params.id}/join/`,
-      {},
-      {
-        headers: { Authorization: `Token ${accountStore.token}` },
-      },
-    )
-    joined.value = true
-    setupWebSocket()
-  } catch (err) {
-    if (err.response?.status === 400 && err.response?.data?.detail === '이미 참가한 방입니다.') {
-      joined.value = true
-      setupWebSocket()
-    }
+// WebSocket 연결 상태를 확인하는 함수 추가
+const checkWebSocketConnection = () => {
+  if (socket.value && socket.value.readyState === WebSocket.OPEN) {
+    return true
   }
+  return false
 }
 
+// 개선된 setupWebSocket 함수
+const setupWebSocket = () => {
+  // 이미 연결되어 있거나 참가하지 않은 경우 건너뛰기
+  if ((socket.value && socket.value.readyState === WebSocket.OPEN) || !joined.value) {
+    console.log('WebSocket 설정 건너뛰기:', {
+      hasActiveSocket: checkWebSocketConnection(),
+      joined: joined.value,
+    })
+    return
+  }
+
+  // 기존 연결이 있으면 정리
+  if (socket.value) {
+    socket.value.close()
+    socket.value = null
+  }
+
+  const token = accountStore.token
+  const ws = new WebSocket(`ws://localhost:8000/ws/savings/${route.params.id}/?token=${token}`)
+
+  ws.onopen = () => {
+    console.log('WebSocket connected successfully')
+  }
+
+  ws.onmessage = (e) => {
+    const data = JSON.parse(e.data)
+    console.log('WebSocket message received:', data)
+
+    // 중복 방지를 위해 기존 로그와 비교
+    const exists = logList.value.some((log) => log.id === data.id)
+    if (!exists) {
+      updateRoomData()
+    }
+  }
+
+  ws.onclose = (e) => {
+    console.log('WebSocket disconnected', e.code, e.reason)
+    socket.value = null
+
+    // 연결이 예기치 않게 끊어진 경우 재연결 시도
+    if (joined.value && e.code !== 1000) {
+      setTimeout(() => {
+        console.log('WebSocket 재연결 시도...')
+        setupWebSocket()
+      }, 3000)
+    }
+  }
+
+  ws.onerror = (error) => {
+    console.error('WebSocket error:', error)
+  }
+
+  socket.value = ws
+}
+
+// 개선된 joinRoom 함수
 const joinRoom = async () => {
-  if (isJoining.value) return
+  console.log('joinRoom() 호출됨')
+  console.log('joined.value:', joined.value)
+  console.log('isJoining.value:', isJoining.value)
+
+  if (isJoining.value || joined.value) {
+    console.log('joinRoom() 실행 안 함 - 이미 참가중이거나 처리중')
+    return
+  }
+
   try {
     isJoining.value = true
-    await axios.post(
+
+    const res = await axios.post(
       `${API_URL}/savingroom/${room.value.id}/join/`,
       {},
       {
         headers: { Authorization: `Token ${accountStore.token}` },
       },
     )
+
+    console.log('참가 성공!', res.data)
+
+    // 참가 성공 후 즉시 상태 업데이트
     joined.value = true
+
+    // 방 데이터 새로고침
     await updateRoomData()
+
+    // WebSocket 연결 설정
     setupWebSocket()
+
+    triggerToast('저축방에 참가했습니다!')
   } catch (err) {
-    let errorMessage = '참가에 실패했습니다.'
-    if (err.response?.status === 400) {
-      errorMessage = '이미 참가한 방입니다.'
+    console.log('joinRoom error:', err.response?.data)
+
+    // 이미 참가한 방인 경우 처리
+    if (
+      err.response?.status === 400 &&
+      (err.response?.data?.detail === '이미 참가한 방입니다.' ||
+        err.response?.data?.error === '이미 참가한 방입니다.')
+    ) {
+      console.log('이미 참가한 방 - joined를 true로 설정')
       joined.value = true
       await updateRoomData()
       setupWebSocket()
-    } else if (err.response?.status === 401) {
-      errorMessage = '로그인이 필요합니다.'
+      triggerToast('이미 참가한 방입니다.')
+    } else {
+      triggerToast('참가에 실패했습니다. 다시 시도해주세요.')
     }
-    if (err.response?.status !== 400) alert(errorMessage)
   } finally {
     isJoining.value = false
   }
 }
 
-const setupWebSocket = () => {
-  if (socket.value || !joined.value) return
-  const token = accountStore.token
-  const ws = new WebSocket(`ws://localhost:8000/ws/savings/${route.params.id}/?token=${token}`)
-  ws.onopen = () => console.log('WebSocket connected')
-  ws.onmessage = (e) => {
-    const data = JSON.parse(e.data)
-    const exists = logList.value.some((log) => log.id === data.id)
-    if (!exists) {
-      updateRoomData()
-    }
-  }
-  ws.onclose = () => {
-    console.log('WebSocket disconnected')
-    socket.value = null
-  }
-  ws.onerror = (error) => console.error('WebSocket error:', error)
-  socket.value = ws
-}
-
 const goBack = () => router.back()
 
-onMounted(fetchRoomDetail)
+onMounted(() => {
+  fetchRoomDetail()
+})
 
 onBeforeUnmount(() => {
-  if (socket.value) socket.value.close()
-  socket.value = null
+  if (socket.value) {
+    socket.value.close()
+    socket.value = null
+  }
 })
 </script>
 
