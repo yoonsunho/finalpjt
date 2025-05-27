@@ -93,18 +93,10 @@
       </div>
     </section>
 
-    <!-- 맞춤 추천 -->
-    <section ref="recommend" class="section recommend">
-      <h2>나에게 맞는 예적금을 추천 받아요.</h2>
-      <p>몇 가지 질문에만 답하면 끝!</p>
-      <RouterLink :to="{ name: 'RecommendView' }">
-        <button class="cta">추천받기</button>
-      </RouterLink>
-    </section>
-
     <!-- 커뮤니티 -->
     <section ref="community" class="section community">
-      <h2>혼자보다 함께 더 똑똑한 금융 생활!</h2>
+      <h2 class="community-title1">혼자보다 함께 더 똑똑한 금융 생활!</h2>
+      <p class="community-title2">금융 고민, 함께 나눠요</p>
       <div
         v-for="(articles, category) in store.popularArticlesByCategory"
         :key="category"
@@ -112,7 +104,7 @@
       >
         <h3 class="category-header"># {{ categoryLabels[category] || category }}</h3>
         <div class="community-container">
-          <div v-for="article in articles" :key="article.id" class="community-card">
+          <div v-for="article in articles.slice(0, 3)" :key="article.id" class="community-card">
             <div class="community-title">{{ article.title }}</div>
             <div class="community-tags">
               <span class="community-tag"
@@ -127,18 +119,6 @@
           </div>
         </div>
       </div>
-    </section>
-
-    <!-- 금/은 시세 -->
-    <section ref="market" class="section market">
-      <h2>실시간 금/은 시세 비교</h2>
-      <div class="graph">📈 실시간 그래프 자리</div>
-    </section>
-
-    <!-- 지도 -->
-    <section ref="map" class="section map">
-      <h2>지금 나와 가까운 은행을 검색해요.</h2>
-      <div class="map-container">지도 컴포넌트</div>
     </section>
 
     <!-- CTA -->
@@ -157,7 +137,7 @@ import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { RouterLink } from 'vue-router'
 import { useArticleStore } from '@/stores/article'
-
+import SpotChart from '@/components/SpotChart.vue'
 const bankImages = import.meta.glob('@/assets/images/*', { eager: true, import: 'default' })
 const store = useArticleStore()
 
@@ -173,6 +153,17 @@ const API_URL = 'http://127.0.0.1:8000'
 const topDeposits = ref([])
 const topSavings = ref([])
 
+const mapContainerRef = ref(null)
+
+const initLandingMap = () => {
+  const { kakao } = window
+  const options = {
+    center: new kakao.maps.LatLng(37.566826, 126.9786567),
+    level: 3,
+  }
+  const kakaoMap = new kakao.maps.Map(mapContainerRef.value, options)
+  map.value = kakaoMap
+}
 const depositCarousel = ref(null)
 const savingCarousel = ref(null)
 
@@ -260,12 +251,28 @@ onMounted(async () => {
     })
   }
 })
+onMounted(async () => {
+  const waitForKakao = () =>
+    new Promise((resolve) => {
+      const check = () => {
+        if (window.kakao && kakao.maps && typeof kakao.maps.Map === 'function') {
+          resolve()
+        } else setTimeout(check, 100)
+      }
+      check()
+    })
+
+  await waitForKakao()
+  await nextTick()
+  initLandingMap()
+})
 </script>
 
 <style scoped>
 * {
   font-family: Pretendard;
 }
+
 html,
 body {
   scroll-behavior: smooth;
@@ -295,10 +302,40 @@ h2 {
   margin-bottom: 150px;
   /* padding: none !important; */
 }
+.section.community {
+  background-color: black;
+}
 
+.section.community::after {
+}
 .section.recommend {
   font-size: 2rem;
   font-weight: 600;
+}
+.section.market {
+  background: #f3f4f6; /* 연한 그레이 */
+  padding: 5rem 2rem;
+  text-align: center;
+}
+
+.section.market h2 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 2rem;
+}
+
+.graph {
+  width: 100%;
+  height: 400px;
+  background-color: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  color: #94a3b8;
 }
 
 .section.recommend p {
@@ -317,6 +354,9 @@ h2 {
   text-align: center;
   color: white;
 }
+.community-title1 {
+  color: white;
+}
 
 .hero::after {
   content: '';
@@ -328,7 +368,10 @@ h2 {
   background: linear-gradient(to bottom, transparent, #ffffff);
   z-index: 1;
 }
-
+.community-title2 {
+  color: white;
+  font-size: 1.5rem;
+}
 .hero-title {
   display: block;
   word-break: keep-all;
@@ -390,10 +433,11 @@ h2 {
   background-color: white;
 }
 
-.final-cta {
+.section .final-cta {
   background-color: #2563eb;
   color: white;
   text-align: center;
+  /* height: 100px; */
 }
 
 .cards.products {
@@ -457,7 +501,7 @@ h2 {
 
 .community-container {
   display: flex;
-  flex-direction: column;
+  /* flex-direction: column; */
   gap: 1rem;
   flex-wrap: wrap;
   justify-content: flex-start;
@@ -481,6 +525,7 @@ h2 {
   color: #111827;
   line-height: 1.4;
   margin-bottom: 0.8rem;
+  text-align: start;
 }
 
 .community-tags {
@@ -506,6 +551,7 @@ h2 {
   padding: 0.8rem;
   border-radius: 12px;
   margin-top: auto;
+  text-align: start;
 }
 
 .cards-section {
@@ -626,5 +672,82 @@ h2 {
   font-size: 1.25rem;
   font-weight: bold;
   margin: 2rem 0 1rem;
+}
+.section.recommend {
+  background: #e0f2fe;
+  padding: 5rem 2rem;
+  text-align: center;
+}
+
+.section.recommend h2 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  color: #0f172a;
+}
+
+.section.recommend p {
+  font-size: 1.3rem;
+  color: #334155;
+  margin-bottom: 2rem;
+}
+
+/* 커뮤니티 섹션 */
+.section.community {
+  /* background: #ecfdf5; */
+  padding: 5rem 2rem;
+  text-align: center;
+}
+
+.section.community h2 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: white;
+  margin-bottom: 2rem;
+}
+
+.category-header {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: white;
+  margin-bottom: 1rem;
+  text-align: left;
+}
+
+.community-container {
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  /* justify-content: center; */
+}
+
+/* 마지막 CTA */
+.section.final-cta {
+  padding: 6rem 2rem;
+  background-color: rgb(1, 112, 223);
+  color: white;
+  text-align: center;
+  min-height: 30vh;
+}
+
+.section.final-cta h2 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 2rem;
+}
+
+.cta-buttons button {
+  padding: 1rem 2rem;
+  background-color: #ffffff;
+  color: #2563eb;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 0.5rem;
+  transition: background 0.3s ease;
+  border: none;
+}
+
+.cta-buttons button:hover {
+  background-color: #e0e7ff;
 }
 </style>

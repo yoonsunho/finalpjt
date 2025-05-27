@@ -20,7 +20,7 @@
         />
       </svg>
     </div>
-    <span>Google로 로그인 / 회원가입</span>
+    <span>Google로<br />로그인 / 회원가입</span>
   </button>
 </template>
 
@@ -72,6 +72,8 @@ const handleGoogleLogin = async () => {
 .google-login-button {
   display: flex;
   align-items: center;
+  justify-content: center;
+  text-align: center;
   gap: 12px;
   background-color: #ffffff;
   border: 1px solid #dadce0;

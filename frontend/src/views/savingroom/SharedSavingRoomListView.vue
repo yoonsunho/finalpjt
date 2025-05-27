@@ -256,6 +256,69 @@ hr {
   border-radius: 8px;
   flex: 1 1 200px;
 }
+.blur-wrapper {
+  position: relative;
+  padding: 20px;
+  background: #f9fafb;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.blur-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+  filter: blur(4px);
+  pointer-events: none;
+}
+
+.blur-list-item {
+  background: #e5e7eb;
+  border-radius: 12px;
+  height: 200px;
+}
+
+.blur-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  backdrop-filter: blur(6px);
+  background-color: rgba(255, 255, 255, 0.5);
+  z-index: 1;
+}
+
+.blur-message {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+  text-align: center;
+  color: #111827;
+}
+
+.blur-message p {
+  font-size: 1rem;
+  font-weight: 500;
+  margin-bottom: 12px;
+}
+
+.btn-login {
+  background: #3182f6;
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn-login:hover {
+  background: #2563eb;
+}
 
 .btn-search {
   background: #3182f6;

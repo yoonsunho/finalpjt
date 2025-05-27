@@ -58,8 +58,10 @@
           <option value="over_2y">2년 이상</option>
         </select> </label
       ><br />
-      <button class="button-back" type="button" @click="$router.back()">취소</button>
-      <button class="button-save" type="submit">저장</button>
+      <div class="btn">
+        <button class="button-back" type="button" @click="$router.back()">취소</button>
+        <button class="button-save" type="submit">저장</button>
+      </div>
     </form>
   </div>
 </template>
@@ -150,7 +152,8 @@ const save = async () => {
   padding: 40px;
   border-radius: 20px;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
-  max-width: 600px;
+  /* max-width: 600px; */
+  width: 100%;
   margin: 40px auto;
 }
 form label {
@@ -179,6 +182,12 @@ input[disabled] {
   display: flex;
   justify-content: flex-end;
   gap: 12px;
+}
+.btn {
+  display: flex;
+  justify-content: end;
+  /* width: 100%; */
+  gap: 25px;
 }
 .button-back,
 .button-save {

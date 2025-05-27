@@ -512,6 +512,31 @@ select:disabled {
   font-size: 14px;
   font-weight: 500;
 }
+.section.market {
+  background: #f3f4f6; /* 연한 그레이 */
+  padding: 5rem 2rem;
+  text-align: center;
+}
+
+.section.market h2 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 2rem;
+}
+
+.graph {
+  width: 100%;
+  height: 400px;
+  background-color: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  color: #94a3b8;
+}
 
 .clear-button {
   background: #fee2e2;

@@ -5,9 +5,10 @@
       <label>현재 비밀번호: <input type="password" v-model="form.password" /></label><br />
       <label>새 비밀번호: <input type="password" v-model="form.password1" /></label><br />
       <label>새 비밀번호 확인: <input type="password" v-model="form.password2" /></label><br />
-
-      <button class="button-back" type="button" @click="$router.back()">취소</button>
-      <button class="button-save" type="submit">저장</button>
+      <div class="btn">
+        <button class="button-back" type="button" @click="$router.back()">취소</button>
+        <button class="button-save" type="submit">저장</button>
+      </div>
     </form>
   </div>
 </template>
@@ -123,6 +124,12 @@ input {
   margin-top: 0.4rem;
   font-size: 15px;
   background-color: #fdfdfd;
+}
+.btn {
+  display: flex;
+  justify-content: end;
+  /* width: 100%; */
+  gap: 25px;
 }
 .button-group {
   margin-top: 2rem;

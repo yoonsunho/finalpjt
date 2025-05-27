@@ -4,6 +4,10 @@
     <div class="signup-container" v-if="step === 1 || step === 2">
       <div class="signup-info">
         <h3>회원가입</h3>
+        <p v-if="step === 1">기본 정보를 입력해 주세요.</p>
+        <p v-else>
+          추가 정보를 입력해 주세요.<br />추가 정보는 맞춤 데이터를 제공하는 데 활용됩니다.
+        </p>
         <div class="login-link">
           이미 계정이 있으신가요?
           <RouterLink :to="{ name: 'LoginView' }" class="login-link-text">로그인</RouterLink>
@@ -12,30 +16,29 @@
           <div class="divider">간편 가입</div>
           <GoogleLoginButton />
         </div>
-        <p v-if="step === 1">기본 정보를 입력해 주세요.</p>
-        <p v-else>
-          추가 정보를 입력해 주세요.<br />추가 정보는 맞춤 데이터를 제공하는 데 활용됩니다.
-        </p>
       </div>
 
       <div ref="formContainer" class="signup-form">
         <form @submit.prevent="onSignUp">
           <!-- STEP 1 -->
           <div v-if="step === 1">
+            <!-- 이메일 -->
             <div class="form-group">
               <label for="email">이메일</label>
-              <input
-                type="email"
-                id="email"
-                v-model="email"
-                @input="
-                  () => {
-                    errors.email = ''
-                  }
-                "
-                required
-              />
-              <button type="button" @click="checkEmailDuplicate">중복확인</button>
+              <div class="input-with-button">
+                <input
+                  type="email"
+                  id="email"
+                  v-model="email"
+                  @input="
+                    () => {
+                      errors.email = ''
+                    }
+                  "
+                  required
+                />
+                <button type="button" @click="checkEmailDuplicate">중복확인</button>
+              </div>
               <div
                 v-if="emailCheckMessage"
                 :class="{ error: !isEmailAvailable, success: isEmailAvailable }"
@@ -45,27 +48,29 @@
               <div v-if="errors.email" class="error">{{ errors.email }}</div>
             </div>
 
+            <!-- 닉네임 -->
             <div class="form-group">
               <label for="nickname">닉네임</label>
-              <input
-                type="text"
-                id="nickname"
-                v-model="nickname"
-                @input="
-                  () => {
-                    errors.nickname = ''
-                  }
-                "
-                required
-              />
-              <button type="button" @click="checkNicknameDuplicate">중복확인</button>
+              <div class="input-with-button">
+                <input
+                  type="text"
+                  id="nickname"
+                  v-model="nickname"
+                  @input="
+                    () => {
+                      errors.nickname = ''
+                    }
+                  "
+                  required
+                />
+                <button type="button" @click="checkNicknameDuplicate">중복확인</button>
+              </div>
               <div
                 v-if="nicknameCheckMessage"
                 :class="{ error: !isNicknameAvailable, success: isNicknameAvailable }"
               >
                 {{ nicknameCheckMessage }}
               </div>
-
               <div v-if="errors.nickname" class="error">{{ errors.nickname }}</div>
             </div>
 
@@ -87,8 +92,10 @@
               <input type="password" id="password2" v-model="password2" required />
               <div v-if="errors.password2" class="error">{{ errors.password2 }}</div>
             </div>
-
-            <button type="button" @click="goToStep2">다음</button>
+            <!-- 다음 버튼 -->
+            <div class="next-button-wrapper">
+              <button type="button" @click="goToStep2">다음</button>
+            </div>
           </div>
 
           <!-- STEP 2 -->
@@ -334,76 +341,96 @@ const onSignUp = async () => {
 
 <style scoped>
 .signup-wrapper {
-  /* max-width: 800px; */
-  /* margin: 40px auto; */
-  /* padding: 20px; */
+  padding: 80px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  /* background-color: #f9fafb; */
+  min-height: 100vh;
 }
 
 .signup-container {
   display: flex;
-  gap: 40px;
-  align-items: flex-start;
-  /* background-color: #ffffff; */
-  border-radius: 16px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
-  padding: 40px;
+  flex-wrap: wrap;
+  gap: 48px;
+  width: 100%;
+  max-width: 880px;
+  background-color: #ffffff;
+  border-radius: 20px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.06);
+  padding: 48px 40px;
 }
 
 .signup-info {
   flex: 1;
-  /* border-right: 1px solid #e5e7eb; */
-  padding-right: 20px;
+  padding-right: 32px;
 }
 
 .signup-info h3 {
-  font-size: 2rem;
-  font-weight: 600;
-  /* color: #3182f6; */
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #212529;
   margin-bottom: 12px;
 }
 
 .signup-info p {
   font-size: 1rem;
+  color: #495057;
+  margin-top: 8px;
+  line-height: 1.5;
+}
+
+.login-link {
+  margin-top: 24px;
+  font-size: 0.95rem;
+  color: #495057;
+}
+
+.login-link-text {
+  color: #1c64f2;
+  font-weight: 600;
+  margin-left: 6px;
+  cursor: pointer;
+}
+
+.login-link-text:hover {
+  text-decoration: underline;
+}
+
+.social-signup-section {
+  margin-top: 32px;
+}
+
+.divider {
+  text-align: center;
+  color: #adb5bd;
+  font-size: 0.9rem;
+  margin: 16px 0;
+}
+.next-button-wrapper {
+  text-align: right;
+  margin-top: 24px;
 }
 
 .signup-form {
   flex: 2;
 }
-
-.signup-complete {
-  max-width: 500px;
-  margin: 0 auto;
-  padding: 40px 20px;
-  background: #fff;
-  border-radius: 16px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
-  text-align: center;
+.input-with-button {
+  display: flex;
+  gap: 8px;
 }
 
-.progress-bar {
-  width: 100%;
-  height: 6px;
-  background: #e0e7ff;
-  margin-top: 20px;
-  border-radius: 3px;
-  overflow: hidden;
+.input-with-button input {
+  flex: 1;
 }
-
-.progress {
-  height: 100%;
-  background-color: #3182f6;
-  transition: width 0.3s ease;
-}
-
 .form-group {
-  font-size: 1rem;
-  color: black;
   margin-bottom: 20px;
 }
 
 label {
   display: block;
   margin-bottom: 6px;
+  font-size: 0.95rem;
   font-weight: 500;
   color: #374151;
 }
@@ -413,47 +440,49 @@ select {
   width: 100%;
   padding: 12px;
   border: 1px solid #d1d5db;
-  border-radius: 8px;
+  border-radius: 10px;
   font-size: 14px;
-  transition: border 0.2s;
+  transition: all 0.2s ease;
 }
 
 input:focus,
 select:focus {
   border-color: #3182f6;
   outline: none;
-  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+  box-shadow: 0 0 0 2px rgba(49, 130, 246, 0.2);
 }
 
 button {
-  margin-top: 10px;
-  padding: 10px 16px;
+  padding: 12px 20px;
   border: none;
-  border-radius: 8px;
+  border-radius: 12px;
   background-color: #3182f6;
   color: white;
+  font-size: 0.95rem;
   font-weight: 600;
   cursor: pointer;
+  transition: background-color 0.2s ease;
 }
 
 button:hover {
-  background-color: #2563eb;
+  background-color: #1d4ed8;
 }
 
 .button-group {
   display: flex;
+  justify-content: flex-end;
   gap: 12px;
-  margin-top: 20px;
+  margin-top: 24px;
 }
 
 .error {
-  color: #bd0000;
+  color: #e03131;
   font-size: 0.9rem;
   margin-top: 6px;
 }
 
 .success {
-  color: #3182f6;
+  color: #1c64f2;
   font-size: 0.9rem;
   margin-top: 6px;
 }
@@ -464,27 +493,44 @@ button:hover {
   margin-top: 6px;
   padding-left: 18px;
 }
-.next-btn-wrapper {
-  display: flex;
-  justify-content: flex-end;
+
+.signup-complete {
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 48px 32px;
+  background: #ffffff;
+  border-radius: 20px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.06);
+  text-align: center;
 }
 
-.next-btn {
-  background-color: transparent;
+.primary-btn {
+  padding: 12px 24px;
+  background-color: #3182f6;
   border: none;
+  border-radius: 12px;
+  color: white;
+  font-weight: 600;
+  margin-top: 24px;
   cursor: pointer;
-  padding: 8px;
-  border-radius: 50%;
-  transition: background-color 0.2s;
 }
 
-.next-btn:hover {
-  background-color: #f3f4f6;
+.primary-btn:hover {
+  background-color: #1e4dd8;
 }
 
-.arrow-icon {
-  width: 32px;
-  height: 32px;
-  color: #3182f6;
+.progress-bar {
+  width: 75%;
+  height: 6px;
+  background: #e0e7ff;
+  margin-top: 32px;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.progress {
+  height: 100%;
+  background-color: #3182f6;
+  transition: width 0.3s ease;
 }
 </style>

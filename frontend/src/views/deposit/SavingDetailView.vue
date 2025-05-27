@@ -2,7 +2,7 @@
   <!-- <h1>적금 상품 목록</h1> -->
   <div v-if="product">
     <h1 class="saving_product_name">{{ product.fin_prdt_nm }}</h1>
-    <h5>id: {{ product.id }}</h5>
+    <!-- <h5>id: {{ product.id }}</h5> -->
     <p>금융회사 명: {{ product.kor_co_nm }}</p>
     <p>가입 방법: {{ product.join_way }}</p>
     <p>만기 후 이자율: {{ product.mtrt_int }}</p>
@@ -137,7 +137,7 @@ watch(
   { immediate: true },
 )
 </script>
-<style scoped>
+<!-- 
 .saving-log {
   max-height: 400px;
   overflow-y: auto;
@@ -295,6 +295,151 @@ watch(
   .log-memo {
     white-space: normal;
     line-height: 1.4;
+  }
+} -->
+<style scoped>
+* {
+  font-family: 'Pretendard', sans-serif;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+.saving_product_name {
+  font-size: 24px;
+  font-weight: 700;
+  color: #191f28;
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.product-detail {
+  max-width: 700px;
+  margin: 32px auto;
+  padding: 24px;
+  background: #ffffff;
+  border-radius: 16px;
+  border: 1px solid #f2f4f6;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+}
+
+p {
+  font-size: 14px;
+  color: #4e5968;
+  margin-bottom: 10px;
+  line-height: 1.5;
+}
+
+h2 {
+  font-size: 18px;
+  font-weight: 600;
+  color: #191f28;
+  border-bottom: 1px solid #e5e8eb;
+  padding-bottom: 8px;
+  margin-top: 32px;
+  margin-bottom: 16px;
+}
+
+.option-box {
+  background: #f9fafb;
+  border: 1px solid #e5e8eb;
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 12px;
+}
+
+.option-box h3 {
+  font-size: 15px;
+  font-weight: 600;
+  color: #3182f6;
+  margin-bottom: 8px;
+}
+
+.button {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 28px;
+}
+
+.likebutton,
+.signupbutton {
+  flex: 1;
+  max-width: 180px;
+}
+
+.like,
+.liked,
+.join,
+.joined {
+  width: 100%;
+  padding: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.like {
+  background: #ffffff;
+  border: 1px solid #d1d6db;
+  color: #4e5968;
+}
+
+.like:hover {
+  border-color: #3182f6;
+  color: #3182f6;
+  background: #f0f4f8;
+}
+
+.liked {
+  background: #f2f4f6;
+  border: 1px solid #d1d6db;
+  color: #191f28;
+}
+
+.join {
+  background: #3182f6;
+  border: none;
+  color: #ffffff;
+}
+
+.join:hover {
+  background: #1b64da;
+}
+
+.joined {
+  background: #e8f3ff;
+  color: #0369a1;
+  border: 1px solid #a4d8ff;
+}
+
+.joined:hover {
+  background: #d3ecff;
+}
+
+/* 반응형 */
+@media (max-width: 768px) {
+  .product-detail {
+    margin: 24px 16px;
+    padding: 20px;
+  }
+
+  .deposit_product_name {
+    font-size: 20px;
+  }
+
+  .button {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .likebutton,
+  .signupbutton {
+    max-width: none;
+    width: 100%;
   }
 }
 </style>

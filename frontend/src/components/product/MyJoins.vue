@@ -1,6 +1,6 @@
 <template>
   <div class="my-joins">
-    <h1>가입한 상품</h1>
+    <!-- <h1>가입한 상품</h1> -->
     <div class="section" v-if="depositJoins.length > 0">
       <h2>예금 상품</h2>
       <div class="products-list">
@@ -20,7 +20,7 @@
       </div>
     </div>
     <div class="section" v-if="savingJoins.length > 0">
-      <h2>적금 상품</h2>
+      <h2 class="title2">적금 상품</h2>
       <div class="products-list">
         <div v-for="item in savingJoins" :key="item.id" class="product-item">
           <RouterLink
@@ -128,8 +128,12 @@ onMounted(() => {
   padding: 32px 20px;
   background-color: #ffffff;
   border-radius: 20px;
+
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
   font-family: 'Pretendard', sans-serif;
+}
+.title2 {
+  margin-top: 50px;
 }
 
 h1 {

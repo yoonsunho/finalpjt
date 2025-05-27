@@ -1,6 +1,6 @@
 <template>
   <div class="my-interests">
-    <h1>찜한 상품</h1>
+    <!-- <h1>찜한 상품</h1> -->
     <div class="section" v-if="depositInterests.length > 0">
       <h2>예금 상품</h2>
       <div class="products-list">
@@ -20,7 +20,7 @@
       </div>
     </div>
     <div class="section" v-if="savingInterests.length > 0">
-      <h2>적금 상품</h2>
+      <h2 class="title2">적금 상품</h2>
       <div class="products-list">
         <div v-for="item in savingInterests" :key="item.id" class="product-item">
           <RouterLink
@@ -128,7 +128,9 @@ onMounted(() => {
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
   font-family: 'Pretendard', sans-serif;
 }
-
+.title2 {
+  margin-top: 50px;
+}
 h1 {
   font-size: 1.8rem;
   font-weight: 600;

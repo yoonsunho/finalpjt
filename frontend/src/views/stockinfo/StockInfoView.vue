@@ -185,19 +185,24 @@ const searchVideos = () => {
 }
 
 .container {
+  justify-self: center;
   min-height: 100vh;
+  margin: 0 auto;
   padding: 20px;
 }
 
 .search-container {
   display: flex;
   justify-content: center;
+  justify-self: center;
   padding-top: 40px;
   margin-bottom: 40px;
 }
 
 .search-box {
   display: flex;
+  justify-self: center;
+  justify-content: center;
   align-items: center;
   gap: 8px;
   max-width: 600px;
@@ -250,6 +255,7 @@ const searchVideos = () => {
 .content {
   /* max-width: 1200px; */
   width: 100%;
+  justify-content: center;
   margin: 0 auto;
 }
 
@@ -288,13 +294,25 @@ hr {
   backdrop-filter: blur(10px);
 }
 
+.welcome-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
 .welcome-state .search-icon,
 .error-state .error-icon,
 .no-results .empty-icon {
   font-size: 48px;
   margin-bottom: 20px;
 }
-
+.welcome-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
 .welcome-state h3,
 .no-results h3 {
   font-size: 24px;

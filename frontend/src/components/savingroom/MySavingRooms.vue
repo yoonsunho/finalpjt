@@ -1,8 +1,9 @@
 <template>
-  <div>
-    <div v-if="loading">불러오는 중...</div>
-    <div v-else-if="!depositedRooms.length">입금한 방이 없습니다.</div>
-    <div v-else>
+  <div class="my-deposits">
+    <!-- <h1>내가 입금한 저축방</h1> -->
+    <div v-if="loading" class="loading-text">불러오는 중...</div>
+    <div v-else-if="!depositedRooms.length" class="no-data">입금한 방이 없습니다.</div>
+    <div v-else class="room-list">
       <SharedSavingRoomCard v-for="room in depositedRooms" :key="room.id" :room="room" />
     </div>
   </div>
@@ -63,11 +64,11 @@ onMounted(fetchJoinedRooms)
 <style scoped>
 .my-deposits {
   max-width: 720px;
-  margin: 40px auto;
-  padding: 32px 20px;
+  margin: 0 auto;
+  /* padding: 32px 20px; */
   background-color: #ffffff;
   border-radius: 20px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+  /* box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06); */
   font-family: 'Pretendard', sans-serif;
 }
 
@@ -79,20 +80,20 @@ h1 {
   margin-bottom: 32px;
 }
 
-.loading-text {
-  text-align: center;
-  font-size: 1rem;
-  color: #6c757d;
-  padding: 32px 0;
-}
-
+/* 상태 메시지 공통 스타일 */
+.loading-text,
 .no-data {
   text-align: center;
-  font-size: 1rem;
+  font-size: 1.1rem;
+  font-weight: 500;
   color: #868e96;
-  padding: 48px 0;
+  padding: 40px 0;
+  border-radius: 12px;
+  background-color: #f9fafb;
+  box-shadow: inset 0 0 0 1px #e9ecef;
 }
 
+/* 카드 리스트 */
 .room-list {
   display: flex;
   flex-direction: column;

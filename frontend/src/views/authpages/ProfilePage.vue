@@ -16,7 +16,7 @@
         가입한 상품
       </button>
       <button @click="activeTab = '공동저축방'" :class="{ active: activeTab === '공동저축방' }">
-        공동저축방
+        내가 참여한 공유저축방
       </button>
     </div>
 
@@ -56,9 +56,11 @@ const activeTab = ref('회원정보') // 초기메뉴
 .profile-wrapper {
   display: flex;
   flex-direction: column;
-  min-width: 300px;
-  max-width: 800px;
+  /* min-width: 300px; */
+  /* max-width: 800px; */
+  width: 100%;
   margin: 80px auto;
+
   padding: 40px;
   border-radius: 16px;
   background: #ffffff;
@@ -84,7 +86,7 @@ const activeTab = ref('회원정보') // 초기메뉴
   border: none;
   padding: 8px 12px;
   font-weight: 500;
-  font-size: 15px;
+  /* font-size: 15px; */
   color: #6b7280;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -93,7 +95,7 @@ const activeTab = ref('회원정보') // 초기메뉴
 .profile-tab-category button.active {
   font-weight: 700;
   color: #111827;
-  border-bottom: 2px solid #1f2937;
+  /* border-bottom: 2px solid #1f2937; */
 }
 
 .profile-tab-content {

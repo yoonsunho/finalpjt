@@ -23,16 +23,18 @@
       <p>{{ depositPeriodMap[user?.deposit_period] }}</p>
     </div>
   </div>
-  <button class="profile-edit" type="button" @click="$router.push({ name: 'ProfileEdit' })">
-    회원정보 수정
-  </button>
-  <button
-    v-if="!accountStore.isGoogleUser"
-    class="password-edit"
-    @click="$router.push({ name: 'PasswordEdit' })"
-  >
-    비밀번호 수정
-  </button>
+  <div class="btn">
+    <button class="profile-edit" type="button" @click="$router.push({ name: 'ProfileEdit' })">
+      회원정보 수정
+    </button>
+    <button
+      v-if="!accountStore.isGoogleUser"
+      class="password-edit"
+      @click="$router.push({ name: 'PasswordEdit' })"
+    >
+      비밀번호 수정
+    </button>
+  </div>
 </template>
 
 <script setup>
@@ -71,28 +73,64 @@ const depositPeriodMap = {
 
 <style scoped>
 * {
-  font-family: Pretendard;
+  font-family: Pretendard, sans-serif;
 }
+
 .profile-category-info {
-  /* border: 1px solid red; */
   display: flex;
-  flex-direction: row;
-  padding-left: 20px;
-  gap: 50px;
+  /* justify-content: center; */
+  align-items: flex-start;
+  gap: 60px;
+  padding: 26px 15px;
+  background-color: #ffffff;
+  border-radius: 16px;
+  /* box-shadow: 0 6px 20px rgba(0, 0, 0, 0.04); */
 }
+
+.profile-info-title p,
+.profile-info-data p {
+  margin: 6px 0;
+  gap: 10px;
+  font-size: 15px;
+  color: #343a40;
+  line-height: 1.6;
+}
+
 .profile-info-title {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+  font-weight: 600;
+  color: #495057;
 }
+
 .profile-info-data {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+  font-weight: 500;
+  color: #212529;
 }
+.btn {
+  display: flex;
+}
+/* 버튼 공통 스타일 */
 button {
-  background-color: dodgerblue;
-  width: 100px;
-  margin: 10px auto;
+  display: block;
+  width: 100%;
+  max-width: 180px;
+  padding: 12px 16px;
+  margin: 12px auto 0;
+  border: none;
+  border-radius: 12px;
+  background-color: #f1f3f5;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #495057;
+  text-align: center;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #1c64f2;
+  color: white;
 }
 </style>

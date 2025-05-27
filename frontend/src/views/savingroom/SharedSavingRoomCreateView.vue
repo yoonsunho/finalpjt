@@ -252,7 +252,8 @@ const goBack = () => {
 
 <style scoped>
 .create-room {
-  max-width: 720px;
+  /* max-width: 720px; */
+  width: 100%;
   margin: 0 auto;
   padding: 24px 16px;
   background: #ffffff;
