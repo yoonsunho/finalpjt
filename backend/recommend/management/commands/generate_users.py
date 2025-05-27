@@ -13,8 +13,16 @@ class Command(BaseCommand):
         parser.add_argument(
             '--total',
             type=int,
-            default=300,
-            help='생성할 사용자 수 (기본값: 300)'
+            default=250,
+            help='생성할 사용자 수 (기본값: 250)'
+        )
+        
+    def clean_text(self, text):
+        return ''.join(
+            c for c in text 
+            if (ord('가') <= ord(c) <= ord('힣')) or 
+               (ord('0') <= ord(c) <= ord('9')) or 
+               (c in [' ', '.', '!', '?', ',', '\n'])
         )
 
     def handle(self, *args, **kwargs):
@@ -111,50 +119,88 @@ class Command(BaseCommand):
             f'✅ 완료! 유저 {total_users}명 + 예적금 찜/가입 + 카테고리별 게시글 15개씩 + 댓글/좋아요 생성'
         ))
 
-    # 아래는 동일 (앞서 제공한 코드와 동일)
     def generate_korean_title(self, category, product=None):
         fake = Faker('ko_KR')
         title = ""
         if category == 'REVIEW' and product:
-            title = f"[후기] {product.fin_prdt_nm} {fake.word(ext_word_list=['사용기', '체험기', '리뷰'])}"
+            review_types = [
+                f"{product.fin_prdt_nm} {fake.random_int(1, 12)}개월 사용 후기",
+                f"{product.kor_co_nm} {product.fin_prdt_nm} 실사용 체험기",
+                f"[{product.fin_prdt_nm}] 이 상품의 숨은 장점은?"
+            ]
+            title = random.choice(review_types)
         elif category == 'TIP':
-            title = f"[꿀팁] {fake.word(ext_word_list=['절약', '관리', '저축'])}하는 방법 {fake.random_int(1,5)}가지"
+            tip_keywords = ["재테크", "절약", "신용관리", "목표금액"]
+            title = f"[{random.choice(tip_keywords)}] {fake.random_int(1,5)}가지 실천 방법"
         else:
-            title = f"[자유] {self.clean_text(fake.sentence())}"
+            free_keywords = ["가입인사", "자유주제", "고민상담", "정보공유"]
+            title = f"[{random.choice(free_keywords)}] {self.clean_text(fake.sentence())}"
         return title[:255]
+
 
     def generate_korean_content(self, category, product):
         fake = Faker('ko_KR')
         content = []
+        
         if category == 'REVIEW' and product:
+            # 상품 특성 반영
+            features = ["금리", "유연한 인출", "가입 절차", "고객 서비스"]
+            pros = random.sample(features, 2)
+            cons = list(set(features) - set(pros))[:1]
+            
             content.append(f"### {product.fin_prdt_nm} {fake.random_int(1,12)}개월 후기")
             content.append("\n" + self.clean_text(fake.paragraph(nb_sentences=3)))
-            content.append("\n**장점**\n- " + self.clean_text(fake.sentence()))
-            content.append("\n**단점**\n- " + self.clean_text(fake.sentence()))
+            content.append("\n** 만족한 점**")
+            for p in pros:
+                content.append(f"- {p} 부분이 {fake.word(ext_word_list=['훌륭해요', '만족스러웠어요', '편리했어요'])}")
+            content.append("\n** 아쉬운 점**")
+            for c in cons:
+                content.append(f"- {c} 측면에서 {fake.word(ext_word_list=['개선이 필요해요', '아쉬웠어요', '불편했어요'])}")
+            content.append("\n" + fake.sentence() + " 다른 분들도 한번 고려해보세요!")
+
         elif category == 'TIP':
-            tip = fake.word(ext_word_list=['커피값', '통장', '할인카드','적금'])
-            content.append(f"### {tip} {fake.word(ext_word_list=['절약', '관리', '활용'])} 팁")
-            content.append("\n" + self.clean_text(fake.paragraph(nb_sentences=3)))
+            steps = [
+                "매월 급여의 10% 자동 이체",
+                "카드 사용 내역 주간 점검",
+                "복리 효과를 위한 장기 적금"
+            ]
+            content.append(f"### {fake.random_int(1,5)}년 차 직장인이 알려주는 {fake.word(ext_word_list=['절약', '저축', '투자'])} 비법")
+            content.append("\n" + self.clean_text(fake.paragraph(nb_sentences=2)))
+            content.append("\n** 실천 단계**")
+            for idx, step in enumerate(random.sample(steps, 3), 1):
+                content.append(f"{idx}. {step}")
+            content.append("\n" + fake.sentence() + " 꾸준함이 중요합니다!")
+
         else:
-            content.append(f"### {fake.word(ext_word_list=['안녕하세요', '반갑습니다', '가입인사'])}!")
+            content.append(f"### {fake.word(ext_word_list=['안녕하세요', '반갑습니다'])}! {fake.name()}입니다")
             content.append("\n" + self.clean_text(fake.paragraph(nb_sentences=3)))
+            content.append("\n** 함께 이야기 나누고 싶은 주제**")
+            content.append(f"- {fake.sentence()}")
+            content.append(f"- {fake.sentence()}")
+            content.append("\n잘 부탁드립니다~ ")
+
         return '\n'.join(content)
 
     def generate_korean_comment(self, category):
         fake = Faker('ko_KR')
-        comment = ""
+        
         if category == 'REVIEW':
-            comment = f"저도 이 상품 {fake.word(ext_word_list=['사용중', '관심있어요'])}! " + self.clean_text(fake.sentence())
+            comments = [
+                f"저도 이 상품 {fake.random_int(1,3)}년째 사용중인데요, {fake.word(ext_word_list=['금리', '유연성'])} 부분이 정말 좋아요!",
+                f"{fake.random_int(1,5)}% 금리라니... 다음 달에 가입해봐야겠네요!",
+                "고객센터 응대가 좀 느리다는 점이 아쉽다고 생각해요"
+            ]
         elif category == 'TIP':
-            comment = f"이 방법 {fake.word(ext_word_list=['좋아요', '추천해요'])}! " + self.clean_text(fake.sentence())
+            comments = [
+                f"이 방법 {fake.random_int(1,6)}개월째 실천중인데 효과 확실히 있어요!",
+                "추가로 추천할만한 방법이 있을까요?",
+                "예산 관리 앱과 함께 사용하면 더 효과적이에요!"
+            ]
         else:
-            comment = f"{fake.word(ext_word_list=['좋은 글', '감사합니다'])}! " + self.clean_text(fake.sentence())
-        return comment
-
-    def clean_text(self, text):
-        return ''.join(
-            c for c in text 
-            if (ord('가') <= ord(c) <= ord('힣')) or 
-               (ord('0') <= ord(c) <= ord('9')) or 
-               (c in [' ', '.', '!', '?', ',', '\n'])
-        )
+            comments = [
+                "안녕하세요! 좋은 정보 감사합니다 ",
+                "비슷한 고민을 겪은 분들 계신가요?",
+                "오늘도 화이팅하세요 "
+            ]
+        
+        return self.clean_text(random.choice(comments))
