@@ -50,7 +50,7 @@
       </tbody>
     </table>
 
-    <div class="write-button">
+    <div class="write-button" v-if="accountStore.isLogin">
       <RouterLink :to="{ name: 'CreateArticle' }">
         <button>글 작성하기</button>
       </RouterLink>
@@ -62,7 +62,8 @@
 import { onMounted, watch, ref } from 'vue'
 import { useArticleStore } from '@/stores/article'
 import { useRoute, RouterLink } from 'vue-router'
-
+import { useAccountStore } from '@/stores/user'
+const accountStore = useAccountStore()
 const store = useArticleStore()
 const route = useRoute()
 const searchField = ref('title')

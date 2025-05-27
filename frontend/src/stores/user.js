@@ -9,6 +9,7 @@ export const useAccountStore = defineStore(
     const ACCOUNT_API_URL = 'http://127.0.0.1:8000/accounts'
     const router = useRouter()
     const token = ref('')
+    const isGoogleUser = ref(false)
 
     const isLogin = computed(() => {
       return token.value ? true : false

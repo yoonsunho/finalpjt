@@ -45,6 +45,8 @@ const handleGoogleLogin = async () => {
     const data = response.data
 
     if (data.status === 'additional_info_required' || data.has_completed_profile === false) {
+      accountStore.token = data.key
+      accountStore.isGoogleUser = true
       router.push({
         name: 'GoogleAdditionalInfoView',
         query: {
@@ -54,6 +56,7 @@ const handleGoogleLogin = async () => {
       })
     } else if (data?.key) {
       accountStore.token = data.key
+      accountStore.isGoogleUser = true
       await accountStore.fetchUserInfo()
       router.push({ name: 'MainPage' })
     } else {
