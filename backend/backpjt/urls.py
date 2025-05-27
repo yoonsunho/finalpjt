@@ -10,5 +10,6 @@ urlpatterns = [
     path('community/',include('community.urls')),
     path('map/', include('map.urls')),
     path('recommend/',include('recommend.urls')),
-    path('spot/',include('spot.urls'))
+    path('spot/',include('spot.urls')),
+    path('savingroom/',include('savingroom.urls')),
 ]

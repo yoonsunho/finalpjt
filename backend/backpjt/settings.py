@@ -55,6 +55,8 @@ INSTALLED_APPS = [
     'map',
     'recommend',
     'spot',
+    'savingroom',
+    'channels',
     'rest_framework',
     'rest_framework.authtoken',
     'dj_rest_auth', # 추가
@@ -75,6 +77,19 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 ]
+
+####web socket관련#####
+ASGI_APPLICATION = 'backpjt.asgi.application'
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [("127.0.0.1", 6379)],
+        },
+    },
+}
+####
 
 
 

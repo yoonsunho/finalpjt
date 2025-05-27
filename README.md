@@ -13,3 +13,19 @@ pip install pandas openpyxl
 - db에 넣는 명령
 python spot/gold_price_upload.py
 
+# 공동저축 + web socket
+[프론트엔드]
+   |           \
+[HTTP 요청]   [WebSocket 연결]
+   |                |
+[urls.py]        [asgi.py → routing.py]
+   |                |
+[views.py]       [consumers.py]
+   |                |
+[models.py]      [models.py]
+   |                |
+[DB]             [DB]
+
+REST API: urls.py → views.py → models.py → DB
+
+WebSocket: asgi.py + routing.py → consumers.py → models.py → DB
