@@ -23,7 +23,7 @@
     <!-- 검색창 -->
     <form class="search-bar" @submit.prevent="applyFilter">
       <input v-model="filters.name" type="text" placeholder="방 제목" />
-      <input v-model="filters.description" type="text" placeholder="방 설명" />
+
       <input v-model="filters.owner" type="text" placeholder="방장 닉네임" />
       <button type="submit" class="btn-search">검색</button>
     </form>

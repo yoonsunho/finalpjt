@@ -16,6 +16,7 @@
       <div class="header-content">
         <h1>{{ room.name }}</h1>
         <p class="subtitle">{{ room.description }}</p>
+        <p class="owner">{{ room.created_by.nickname }}</p>
       </div>
     </div>
 
@@ -122,7 +123,13 @@
           </svg>
           <h2>저축하기</h2>
         </div>
-        <SavingInput :roomId="room.id" :socket="socket" :achievementRate="room.achievement_rate" />
+        <SavingInput
+          :roomId="room.id"
+          :socket="socket"
+          :achievementRate="room.achievement_rate"
+          :totalSaved="room.total_saved"
+          :goalAmount="room.goal_amount"
+        />
       </div>
 
       <div class="participants-section">
