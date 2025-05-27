@@ -1,5 +1,7 @@
 from django.db import models
 from django.conf import settings
+from django.utils import timezone
+
 
 class Article(models.Model):
     CATEGORY_CHOICES = [
@@ -15,8 +17,8 @@ class Article(models.Model):
     category = models.CharField(max_length=20, choices=CATEGORY_CHOICES)
     title = models.CharField(max_length=255)
     content = models.TextField()
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)  # 수정일시
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_at = models.DateTimeField(default=timezone.now)  # 수정일시
 
     def __str__(self):
         return self.title
@@ -40,8 +42,8 @@ class Comment(models.Model):
         related_name='replies'
     )
     content = models.TextField()
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)  # 수정일시
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_at = models.DateTimeField(default=timezone.now)  # 수정일시
 
     def __str__(self):
         return f'Comment by {self.user}'
