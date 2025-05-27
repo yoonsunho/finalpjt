@@ -48,13 +48,16 @@
 import { ref, computed } from 'vue'
 import axios from 'axios'
 import { useRouter } from 'vue-router'
-
+import { useAccountStore } from '@/stores/user'
+const accountStore = useAccountStore()
 const name = ref('')
 const description = ref('')
 const goalAmount = ref(null)
 const deadline = ref('')
 const isSubmitting = ref(false)
 const router = useRouter()
+
+const API_URL = 'http://127.0.0.1:8000'
 
 // 오늘 날짜를 YYYY-MM-DD 형식으로 반환
 const today = computed(() => {
@@ -67,12 +70,20 @@ const createRoom = async () => {
   try {
     isSubmitting.value = true
 
-    const res = await axios.post('/savingroom/', {
-      name: name.value,
-      description: description.value,
-      goal_amount: goalAmount.value,
-      deadline: deadline.value,
-    })
+    const res = await axios.post(
+      `${API_URL}/savingroom/`,
+      {
+        name: name.value,
+        description: description.value,
+        goal_amount: goalAmount.value,
+        deadline: deadline.value,
+      },
+      {
+        headers: {
+          Authorization: `Token ${accountStore.token}`,
+        },
+      },
+    )
 
     // 성공 시 상세 페이지로 이동
     router.push({

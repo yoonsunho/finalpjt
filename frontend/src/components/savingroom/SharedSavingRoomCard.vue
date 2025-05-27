@@ -1,13 +1,18 @@
 <template>
-  <div class="room-card" @click="$emit('click')">
+  <div v-if="room" class="room-card" @click="$emit('click')">
     <h3>{{ room.name }}</h3>
-    <p>목표: {{ room.goal_amount.toLocaleString() }}원</p>
+    <p>목표: {{ room.goal_amount?.toLocaleString?.() }}원</p>
     <p>달성률: {{ room.achievement_rate }}%</p>
   </div>
 </template>
 
 <script setup>
-defineProps({ room: Object })
+defineProps({
+  room: {
+    type: Object,
+    default: () => ({}),
+  },
+})
 </script>
 
 <style scoped>
